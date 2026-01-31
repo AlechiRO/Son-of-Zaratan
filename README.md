@@ -1,2 +1,2 @@
 # Son-of-Zaratan
-Windows native shell along with a custom terminal.
+Linux native shell along with a custom terminal.
