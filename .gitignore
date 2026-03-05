@@ -1,0 +1,4 @@
+.vscode
+shell
+/build
+.gdb_history
