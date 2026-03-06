@@ -31,6 +31,7 @@ void test_initialize(void) {
     stack = initialize();
     CU_ASSERT_EQUAL(sizeof(stack->array), sizeof(void**)*100);
     CU_ASSERT_EQUAL(stack->top, -1);
+    destroy(stack);
 }
 
 
@@ -40,7 +41,7 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
 
-    CU_pSuite stack_suite = create_suite("stack suite", clean_up);
+    CU_pSuite stack_suite = create_suite("stack suite", NULL);
     CU_add_test(stack_suite, "initialize", test_initialize);
 
     

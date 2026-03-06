@@ -36,7 +36,7 @@ Check if the stack is full
 @return Integer 1 if true and 0 if false
 */
 int isFull(stack_s* stack) {
-    return stack->top == stack->size - 1;
+    return stack->top ==  -1;
 }
 
 /*
@@ -92,7 +92,14 @@ Free the memory allocated for the stack buffer
 @param stack Pointer to a stack struct
 */
 void destroy(stack_s* stack) {
-    free(stack->array);
+    if (stack == NULL) {
+        return;
+    }
+    if (stack->array != NULL) {
+        free(stack->array);
+        stack->array = NULL;
+    }
     free(stack);
+    stack = NULL;
     printf("The stack %p has been destructed", stack);
 }
