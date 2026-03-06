@@ -7,13 +7,12 @@ typedef struct stack {
     int size;
 } stack_s;
 
-stack_s* initialize();
-int isEmpty(stack_s* stack);
-int isFull(stack_s* stack);
-void increase_capacity(stack_s* stack);
-void* peek(stack_s* stack);
-void push(stack_s* stack, void* delimiter);
-void* pop(stack_s* stack);
-void destroy(stack_s* stack);
+stack_s* initialize_stack();
+int isEmpty_stack(stack_s* stack);
+int isFull_stack(stack_s* stack);
+void* peek_stack(stack_s* stack);
+void push_stack(stack_s* stack, void* delimiter);
+void* pop_stack(stack_s* stack);
+void destroy_stack(stack_s* stack);
 
 #endif

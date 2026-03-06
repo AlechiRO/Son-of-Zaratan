@@ -13,7 +13,7 @@ stack_s* stack;
 Helper function to free the memory for the stack
 */
 static void clean_up() {
-    destroy(stack);
+    destroy_stack(stack);
 }
 /* 
 Helper function to create a suite
@@ -28,10 +28,13 @@ static CU_pSuite create_suite(const char* name, void(*tear)()) {
 }
 
 void test_initialize(void) {
-    stack = initialize();
+    stack = initialize_stack();
     CU_ASSERT_EQUAL(sizeof(stack->array), sizeof(void**)*100);
     CU_ASSERT_EQUAL(stack->top, -1);
-    destroy(stack);
+}
+
+void test_is_full(void) {
+    stack = initialize_stack();
 }
 
 
@@ -41,7 +44,7 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
 
-    CU_pSuite stack_suite = create_suite("stack suite", NULL);
+    CU_pSuite stack_suite = create_suite("stack suite", clean_up);
     CU_add_test(stack_suite, "initialize", test_initialize);
 
     
