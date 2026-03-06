@@ -8,11 +8,11 @@ typedef struct stack {
 } stack_s;
 
 stack_s* initialize_stack();
-int isEmpty_stack(stack_s* stack);
-int isFull_stack(stack_s* stack);
+int is_empty_stack(stack_s* stack);
 void* peek_stack(stack_s* stack);
 void push_stack(stack_s* stack, void* delimiter);
 void* pop_stack(stack_s* stack);
 void destroy_stack(stack_s* stack);
+int size_stack(stack_s* stack);
 
 #endif

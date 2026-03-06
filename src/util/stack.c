@@ -26,8 +26,17 @@ Check if the stack is empty
 @param stack Pointer to stack struct
 @return Integer 1 if true and 0 if false
 */
-int isEmpty_stack(stack_s* stack) {
+int is_empty_stack(stack_s* stack) {
     return stack->top == -1;
+}
+
+/*
+Get the number of objects stored in the stack
+@param stack Pointer to stack struct
+@return number of objects stored in the stack
+*/
+int size_stack(stack_s* stack) {
+    return stack->top;
 }
 
 /*
@@ -35,8 +44,8 @@ Check if the stack is full
 @param stack Pointer to stack struct
 @return Integer 1 if true and 0 if false
 */
-int isFull_stack(stack_s* stack) {
-    return stack->top ==  stack->size-1;
+int static is_full(stack_s* stack) {
+    return stack->top ==  (stack->size/sizeof(void**))-1;
 }
 
 /*
@@ -55,7 +64,7 @@ View the element at the top of the stack
 @return Pointer to the element at the top of the stack
 */
 void* peek_stack(stack_s* stack) {
-    if(isEmpty_stack(stack)) {
+    if(is_empty_stack(stack)) {
         printf("The stack is empty, there is nothing to retrieve!");
         return NULL;
     }
@@ -68,7 +77,7 @@ Push an element on the stack
 @param object Pointer to data
 */
 void push_stack(stack_s* stack, void* object) {
-    if(isFull_stack(stack))
+    if(is_full(stack))
         increase_capacity(stack);
     stack->array[++stack->top] = object;
 }
@@ -79,7 +88,7 @@ Pop and element from the stack
 @return Pointer to the element at the top of the stack
 */
 void* pop_stack(stack_s* stack) {
-    if(isEmpty_stack(stack)) {
+    if(is_empty_stack(stack)) {
         printf("The stack is empty,there is nothing to retrieve!");
         return NULL;
     }
