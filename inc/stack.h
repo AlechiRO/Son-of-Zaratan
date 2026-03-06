@@ -7,7 +7,7 @@ typedef struct stack {
     int size;
 } stack_s;
 
-void initialize(stack_s* stack);
+stack_s* initialize();
 int isEmpty(stack_s* stack);
 int isFull(stack_s* stack);
 void increase_capacity(stack_s* stack);

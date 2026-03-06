@@ -8,34 +8,20 @@ find_path(CUNIT_INCLUDE_DIRS NAMES CUnit/CUnit.h)
 
 if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
 
-    SET(TEST_SOURCES
-        ${STACK_TEST_FILE} 
+    SET(ADDITIONAL_SOURCE_FILES
+    $<TARGET_OBJECTS:util_logic>
     )
-
-    create_test_sourcelist (
-        DRIVER_SOURCES
-        TEST_DRIVER.c 
-        ${TEST_SOURCES}
+    # Stack test executable
+    add_executable (STACK_TEST_DRIVER 
+        ${STACK_TEST_SOURCE}
+        ${ADDITIONAL_SOURCE_FILES}
     )
-
-    add_executable (TEST_DRIVER 
-        ${DRIVER_SOURCES}
-        $<TARGET_OBJECTS:util_logic>
-    )
-
-    target_link_libraries(TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
-    
-    # Add the header files to the target
-    target_include_directories(TEST_DRIVER PRIVATE 
+    target_link_libraries(STACK_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
+    target_include_directories(STACK_TEST_DRIVER PRIVATE 
         ${CUNIT_INCLUDE_DIRS} 
         ${CMAKE_SOURCE_DIR}/inc
     )
-
-    # Add all the ADD_TEST for each test
-    foreach (test ${TEST_SOURCES})
-        get_filename_component (TName ${test} NAME_WE)
-        add_test (NAME ${TName} COMMAND TEST_DRIVER ${TName})
-    endforeach ()
+    add_test(NAME test_stack COMMAND STACK_TEST_DRIVER)
 
 else()
     message(WARNING "CUnit not found!")
