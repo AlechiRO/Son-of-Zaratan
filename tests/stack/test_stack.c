@@ -38,24 +38,67 @@ void test_is_empty(void) {
     CU_ASSERT_TRUE(is_empty_stack(stack));
 }
 
+void test_is_empty_push(void) {
+    stack = initialize_stack();
+    push_stack(stack, "obj");
+    CU_ASSERT_FALSE(is_empty_stack(stack));
+}
+
+void test_size_2(void) {
+    stack = initialize_stack();
+    push_stack(stack, "obj");
+    push_stack(stack, "obj");
+    push_stack(stack, "obj");
+    CU_ASSERT_EQUAL(size_stack(stack), 2);
+}
+
+void test_peek_empty(void) {
+    stack = initialize_stack();
+    CU_ASSERT_PTR_NULL(peek_stack(stack));
+}
+
+void test_peek_element(void) {
+    stack = initialize_stack();
+    char* word = "ragaitura";
+    push_stack(stack, word);
+    CU_ASSERT_EQUAL(word, peek_stack(stack));
+}
+
+
 
 int main(void) {
 
     // initialize registry
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
-    /* Initialize stack suite */
+    /* Initialize suite */
     CU_pSuite initialize_suite = create_suite("initialize suite", clean_up);
     CU_add_test(initialize_suite, "initialize", test_initialize);
 
+    /* Empty suite */
     CU_pSuite is_empty_suite = create_suite("is empty suite", clean_up);
-    CU_add_test(is_empty_suite, "is empty", test_is_empty);
+    CU_add_test(is_empty_suite, "is_empty", test_is_empty);
+    CU_add_test(is_empty_suite, "is_empty_push", test_is_empty_push);
 
+    /* Size suite */
+    CU_pSuite size_suite = create_suite("size suite", clean_up);
+    CU_add_test(size_suite, "size_3", test_size_2);
+
+    /* Peek suite */
+    CU_pSuite peek_suite = create_suite("peek suite", clean_up);
+    CU_add_test(peek_suite, "peek_empty", test_peek_empty);
+    CU_add_test(peek_suite, "peek_element", test_peek_element);
+
+    
+
+
+    // record the number of failures
+    int failures = CU_get_number_of_failures();
     
     // run the tests
     CU_basic_run_tests();
 
     // clean the registry
     CU_cleanup_registry();
-    return 0;
+    return failures == 0 ? 0 : 1;
 }
