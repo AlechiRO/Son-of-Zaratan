@@ -13,7 +13,7 @@ stack_s* stack;
 Helper function to free the memory for the stack
 */
 static void clean_up() {
-    destroy_stack(stack);
+    destroy_stack(&stack);
 }
 /* 
 Helper function to create a suite
@@ -59,10 +59,43 @@ void test_peek_empty(void) {
 
 void test_peek_element(void) {
     stack = initialize_stack();
-    char* word = "ragaitura";
+    char* word = "the hound";
     push_stack(stack, word);
     CU_ASSERT_EQUAL(word, peek_stack(stack));
 }
+
+void test_push(void) {
+    stack = initialize_stack();
+    push_stack(stack, "arya");
+    CU_ASSERT_FALSE(is_empty_stack(stack));
+}
+
+void test_push_NULL(void) {
+    stack = initialize_stack(); 
+    push_stack(stack, NULL);
+    CU_ASSERT_FALSE(is_empty_stack(stack));
+}
+
+void test_pop_empty(void) {
+    stack = initialize_stack();
+    CU_ASSERT_PTR_NULL(pop_stack(stack));
+}
+
+void test_pop_two_elements(void) {
+    stack = initialize_stack();
+    push_stack(stack, "baelish");
+    push_stack(stack, "sansa");
+    CU_ASSERT_EQUAL(pop_stack(stack), "sansa");
+    CU_ASSERT_EQUAL(pop_stack(stack), "baelish");
+    CU_ASSERT_TRUE(is_empty_stack(stack));
+}
+
+void test_destroy_empty_stack(void) {
+    stack = initialize_stack();
+    destroy_stack(&stack);
+    CU_ASSERT_PTR_NULL(stack);
+}
+
 
 
 
@@ -89,14 +122,25 @@ int main(void) {
     CU_add_test(peek_suite, "peek_empty", test_peek_empty);
     CU_add_test(peek_suite, "peek_element", test_peek_element);
 
-    
+    /* Push suite */
+    CU_pSuite push_suite = create_suite("push suite", clean_up);
+    CU_add_test(push_suite, "push", test_push);
+    CU_add_test(push_suite, "push_NULL", test_push_NULL);
 
+    /* Pop suite */
+    CU_pSuite pop_suite = create_suite("pop suite", clean_up);
+    CU_add_test(pop_suite, "pop_empty", test_pop_empty);
+    CU_add_test(pop_suite, "pop_two_elements", test_pop_two_elements);
 
-    // record the number of failures
-    int failures = CU_get_number_of_failures();
+    /* Destroy suite */
+    CU_pSuite destroy_suite = create_suite("destroy suite", NULL);
+    CU_add_test(destroy_suite, "destroy_empty_stack", test_destroy_empty_stack);
     
     // run the tests
     CU_basic_run_tests();
+
+    // record the number of failures
+    int failures = CU_get_number_of_failures();
 
     // clean the registry
     CU_cleanup_registry();

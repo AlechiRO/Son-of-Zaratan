@@ -44,7 +44,7 @@ Check if the stack is full
 @param stack Pointer to stack struct
 @return Integer 1 if true and 0 if false
 */
-int static is_full(stack_s* stack) {
+static int is_full(stack_s* stack) {
     return stack->top ==  (stack->size/sizeof(void**))-1;
 }
 
@@ -53,7 +53,7 @@ Helper function
 Double the capacity of the stack
 @param stack Pointer to stack struct
 */
-void static increase_capacity(stack_s* stack) {
+static void increase_capacity(stack_s* stack) {
     stack->size *= 2;
     stack->array = realloc(stack->array, stack->size);
 }
@@ -100,15 +100,15 @@ Destructor
 Free the memory allocated for the stack buffer
 @param stack Pointer to a stack struct
 */
-void destroy_stack(stack_s* stack) {
-    if (stack == NULL) {
+void destroy_stack(stack_s** stack) {
+    if ((*stack) == NULL || *stack == NULL) {
         return;
     }
-    if (stack->array != NULL) {
-        free(stack->array);
-        stack->array = NULL;
+    printf("The stack %p has been destructed!\n", (void*)*stack);
+    if ((*stack)->array != NULL) {
+        free((*stack)->array);
+        (*stack)->array = NULL;
     }
-    free(stack);
-    stack = NULL;
-    printf("The stack %p has been destructed", stack);
+    free((*stack));
+    *stack = NULL;
 }
