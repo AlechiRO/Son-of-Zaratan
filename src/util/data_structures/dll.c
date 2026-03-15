@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "dll.h"
 
-// Node definition for dll implementation
-typedef struct node {
-    struct node* next;
-    struct node* prev;
-    void* payload;
-} node_s;
+
 
 
 /*
@@ -83,13 +79,6 @@ void destroy_node_dll(node_s** node) {
     free((*node));
     (*node) = NULL;
 }
-
-// DLL definition with sentinel head and tail
-typedef struct dll {
-    node_s* head;
-    node_s* tail;
-    int size;
-} dll_s;
 
 /*
 Initialize the dll
