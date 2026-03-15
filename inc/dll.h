@@ -16,7 +16,7 @@ typedef struct dll {
 } dll_s;
 
 
-node_s* create_node_dll(void* payload, node_s* prev, node_s* next);
+node_s* initialize_node_dll(void* payload, node_s* prev, node_s* next);
 void* get_payload_dll(node_s* node);
 node_s* get_next_dll(node_s* node);
 node_s* get_prev_dll(node_s* node);

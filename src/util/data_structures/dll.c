@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include "dll.h"
 
-
-
-
 /*
 Create a new node 
 @param payload Pointer to the node payload
@@ -12,7 +9,7 @@ Create a new node
 @param next The next node
 @return Pointer to the node
 */
-node_s* create_node_dll(void* payload, node_s* prev, node_s* next) {
+node_s* initialize_node_dll(void* payload, node_s* prev, node_s* next) {
     node_s* node = malloc(sizeof(node_s));
     if(!node)
         return NULL;
@@ -88,8 +85,8 @@ dll_s* initialize_dll(void) {
     dll_s* dll = malloc(sizeof(dll_s));
     if(dll == NULL) 
         return NULL;
-    dll->head = create_node_dll(NULL, NULL, NULL);
-    dll->tail = create_node_dll(NULL, NULL, NULL);
+    dll->head = initialize_node_dll(NULL, NULL, NULL);
+    dll->tail = initialize_node_dll(NULL, NULL, NULL);
 
     if (!dll->head || !dll->tail) 
         return NULL;
@@ -99,6 +96,7 @@ dll_s* initialize_dll(void) {
     dll->size = 0;
     return dll;
 }
+
 /*
 Insert a node between two nodes
 @param dll Pointer to dll struct
@@ -107,7 +105,7 @@ Insert a node between two nodes
 @param next The node after the inserted node
 */
 void insert_between_dll(dll_s* dll, void* payload, node_s* prev, node_s* next) {
-    node_s* node = create_node_dll(payload, prev, next);
+    node_s* node = initialize_node_dll(payload, prev, next);
 
     set_prev_dll(next, node);
     set_next_dll(prev, node);

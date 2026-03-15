@@ -44,7 +44,7 @@ void test_is_empty_push(void) {
     CU_ASSERT_FALSE(is_empty_stack(stack));
 }
 
-void test_size_2(void) {
+void test_size_3(void) {
     stack = initialize_stack();
     push_stack(stack, "obj");
     push_stack(stack, "obj");
@@ -110,31 +110,31 @@ int main(void) {
 
     /* Empty suite */
     CU_pSuite is_empty_suite = create_suite("is empty suite", clean_up);
-    CU_add_test(is_empty_suite, "is_empty", test_is_empty);
-    CU_add_test(is_empty_suite, "is_empty_push", test_is_empty_push);
+    CU_add_test(is_empty_suite, "is empty", test_is_empty);
+    CU_add_test(is_empty_suite, "is empty push", test_is_empty_push);
 
     /* Size suite */
     CU_pSuite size_suite = create_suite("size suite", clean_up);
-    CU_add_test(size_suite, "size_3", test_size_2);
+    CU_add_test(size_suite, "size 3", test_size_3);
 
     /* Peek suite */
     CU_pSuite peek_suite = create_suite("peek suite", clean_up);
-    CU_add_test(peek_suite, "peek_empty", test_peek_empty);
-    CU_add_test(peek_suite, "peek_element", test_peek_element);
+    CU_add_test(peek_suite, "peek empty", test_peek_empty);
+    CU_add_test(peek_suite, "peek element", test_peek_element);
 
     /* Push suite */
     CU_pSuite push_suite = create_suite("push suite", clean_up);
     CU_add_test(push_suite, "push", test_push);
-    CU_add_test(push_suite, "push_NULL", test_push_NULL);
+    CU_add_test(push_suite, "push NULL", test_push_NULL);
 
     /* Pop suite */
     CU_pSuite pop_suite = create_suite("pop suite", clean_up);
-    CU_add_test(pop_suite, "pop_empty", test_pop_empty);
-    CU_add_test(pop_suite, "pop_two_elements", test_pop_two_elements);
+    CU_add_test(pop_suite, "pop empty", test_pop_empty);
+    CU_add_test(pop_suite, "pop two elements", test_pop_two_elements);
 
     /* Destroy suite */
     CU_pSuite destroy_suite = create_suite("destroy suite", NULL);
-    CU_add_test(destroy_suite, "destroy_empty_stack", test_destroy_empty_stack);
+    CU_add_test(destroy_suite, "destroy empty stack", test_destroy_empty_stack);
     
     // run the tests
     CU_basic_run_tests();
