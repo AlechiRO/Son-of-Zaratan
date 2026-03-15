@@ -13,7 +13,7 @@ Constructor
 Alocate memory for the stack buffer and set the initial size
 @param stack Pointer to a stack struct
 */
-stack_s* initialize_stack() {
+stack_s* initialize_stack(void) {
     stack_s* stack = malloc(sizeof(stack_s));
     stack->top = -1;
     stack->size = sizeof(void**) * 100;
@@ -36,7 +36,7 @@ Get the number of objects stored in the stack
 @return number of objects stored in the stack
 */
 int size_stack(stack_s* stack) {
-    return stack->top;
+    return stack->top+1;
 }
 
 /*

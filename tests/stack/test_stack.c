@@ -49,7 +49,7 @@ void test_size_2(void) {
     push_stack(stack, "obj");
     push_stack(stack, "obj");
     push_stack(stack, "obj");
-    CU_ASSERT_EQUAL(size_stack(stack), 2);
+    CU_ASSERT_EQUAL(size_stack(stack), 3);
 }
 
 void test_peek_empty(void) {
