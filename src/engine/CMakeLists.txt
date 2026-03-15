@@ -1,3 +1,3 @@
-
-add_library(engine_logic OBJECT parser.c reader.c)
-target_include_directories(engine_logic PRIVATE ${CMAKE_SOURCE_DIR}/inc)
+add_subdirectory(lexer)
+add_subdirectory(printer)
+target_include_directories(lexer_logic PRIVATE ${CMAKE_SOURCE_DIR}/inc)

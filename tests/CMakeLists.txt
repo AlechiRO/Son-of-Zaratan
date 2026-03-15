@@ -9,7 +9,7 @@ find_path(CUNIT_INCLUDE_DIRS NAMES CUnit/CUnit.h)
 if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
 
     SET(ADDITIONAL_SOURCE_FILES
-    $<TARGET_OBJECTS:util_logic>
+    $<TARGET_OBJECTS:stack_logic>
     )
     # Stack test executable
     add_executable (STACK_TEST_DRIVER 

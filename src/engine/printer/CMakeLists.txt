@@ -1,0 +1,1 @@
+add_library(printer_logic OBJECT printer.c)

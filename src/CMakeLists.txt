@@ -2,8 +2,9 @@ add_subdirectory(util)
 add_subdirectory(engine)
 
 add_executable(shell shell.c 
-    $<TARGET_OBJECTS:util_logic> 
-    $<TARGET_OBJECTS:engine_logic>
+    $<TARGET_OBJECTS:stack_logic> 
+    $<TARGET_OBJECTS:lexer_logic>
+    $<TARGET_OBJECTS:printer_logic>
 )
 
 
