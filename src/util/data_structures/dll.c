@@ -206,6 +206,9 @@ Destroy the DLL and all associated nodes
 @param dll Pointer to a pointer of DLL struct
 */
 void destroy_dll(dll_s** dll) {
+    if (dll == NULL || (*dll) == NULL) 
+        return;
+
     node_s* current = (*dll)->head;
     while(current != NULL) {
         node_s* next = get_next_dll(current);
