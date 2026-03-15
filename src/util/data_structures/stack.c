@@ -101,7 +101,7 @@ Free the memory allocated for the stack buffer
 @param stack Pointer to a stack struct
 */
 void destroy_stack(stack_s** stack) {
-    if ((*stack) == NULL || *stack == NULL) {
+    if ((*stack) == NULL || stack == NULL) {
         return;
     }
     printf("The stack %p has been destructed!\n", (void*)*stack);
