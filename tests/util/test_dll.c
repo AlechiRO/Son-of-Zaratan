@@ -12,13 +12,13 @@ dll_s* dll;
 /*
 Helper function to free the memory for the dll
 */
-static void clean_up() {
+static void clean_up(void) {
     destroy_dll(&dll);
 }
 /*
 Helper function to initialize the dll
 */
-static void set_up() {
+static void set_up(void) {
     dll = initialize_dll();
 }
 
