@@ -15,14 +15,20 @@ Helper function to free the memory for the dll
 static void clean_up() {
     destroy_dll(&dll);
 }
+/*
+Helper function to initialize the dll
+*/
+static void set_up() {
+    dll = initialize_dll();
+}
 
 /* 
 Helper function to create a suite
 @param name Pointer to the name of the suite
 @return CUnit suite object
 */
-static CU_pSuite create_suite(const char* name, void(*tear)()) {
-    CU_pSuite suite = CU_add_suite_with_setup_and_teardown(name, NULL, NULL, NULL, tear); 
+static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()) {
+    CU_pSuite suite = CU_add_suite_with_setup_and_teardown(name, NULL, NULL, set_up, tear); 
     if (CU_get_error() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "%s", CU_get_error_msg());
     return suite;
@@ -37,7 +43,6 @@ void test_initialize_dll(void) {
 }
 
 void test_get_size(void) {
-    dll = initialize_dll();
     CU_ASSERT_EQUAL(get_size_dll(dll), 0);
     int a = 1;
     int* p = &a;
@@ -46,7 +51,6 @@ void test_get_size(void) {
 }
 
 void test_insert_between_head_tail(void) {
-    dll = initialize_dll();
     char* word = malloc(6);
     strcpy(word, "Aaron");
     insert_between_dll(dll, word, dll->head, dll->tail);
@@ -58,7 +62,6 @@ void test_insert_between_head_tail(void) {
 }
 
 void test_insert_between_3_nodes(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int c = 3;
@@ -77,7 +80,6 @@ void test_insert_between_3_nodes(void) {
 }
 
 void test_insert_first_simple(void) {
-    dll = initialize_dll();
     int a = 1;
     int* p = &a; 
     insert_first_dll(dll, p);
@@ -86,7 +88,6 @@ void test_insert_first_simple(void) {
 }
 
 void test_insert_first_2(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -100,7 +101,6 @@ void test_insert_first_2(void) {
 }
 
 void test_insert_last_2(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -114,7 +114,6 @@ void test_insert_last_2(void) {
 }
 
 void test_remove_node(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int c = 3;
@@ -131,7 +130,6 @@ void test_remove_node(void) {
 }
 
 void test_remove_first(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -144,7 +142,6 @@ void test_remove_first(void) {
 }
 
 void test_remove_last(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -157,7 +154,6 @@ void test_remove_last(void) {
 }
 
 void test_get_first(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -168,7 +164,6 @@ void test_get_first(void) {
 }
 
 void test_get_last(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -179,17 +174,14 @@ void test_get_last(void) {
 }
 
 void test_get_first_empty(void) {
-    dll = initialize_dll();
     CU_ASSERT_PTR_NULL(get_first_dll(dll));
 }
 
 void test_get_last_empty(void) {
-    dll = initialize_dll();
     CU_ASSERT_PTR_NULL(get_last_dll(dll));
 }
 
 void test_destroy_dll(void) {
-    dll = initialize_dll();
     int a = 1;
     int b = 2;
     int* p1 = &a;
@@ -208,52 +200,52 @@ int main(void) {
         errx(EXIT_FAILURE, "can't initialize test registry");
 
     /* Initialize DLL suite */
-    CU_pSuite initialize_dll_suite = create_suite("initialize dll suite", clean_up);
+    CU_pSuite initialize_dll_suite = create_suite("initialize dll suite", NULL, clean_up);
     CU_add_test(initialize_dll_suite, "initialize dll", test_initialize_dll);
 
     /* Get Size suite */
-    CU_pSuite get_size_suite = create_suite("get size suite", clean_up);
+    CU_pSuite get_size_suite = create_suite("get size suite", set_up, clean_up);
     CU_add_test(get_size_suite, "get size", test_get_size);
 
     /* Insert Between suite */
-    CU_pSuite insert_between_dll_suite = create_suite("insert between dll suite", clean_up);
+    CU_pSuite insert_between_dll_suite = create_suite("insert between dll suite", set_up, clean_up);
     CU_add_test(insert_between_dll_suite, "insert between head tail", test_insert_between_head_tail);
     CU_add_test(insert_between_dll_suite, "insert between 3 nodes", test_insert_between_3_nodes);
 
     /* Insert First suite */
-    CU_pSuite insert_first_suite = create_suite("insert first suite", clean_up);
+    CU_pSuite insert_first_suite = create_suite("insert first suite", set_up, clean_up);
     CU_add_test(insert_first_suite, "insert first simple", test_insert_first_simple);
     CU_add_test(insert_first_suite, "insert first 2", test_insert_first_2);
     
     /* Insert Last suite */
-    CU_pSuite insert_last_suite = create_suite("insert last suite", clean_up);
+    CU_pSuite insert_last_suite = create_suite("insert last suite", set_up, clean_up);
     CU_add_test(insert_last_suite, "insert last 2", test_insert_last_2);
 
     /* Remove Node suite */
-    CU_pSuite remove_node_suite = create_suite("remove node suite", clean_up);
+    CU_pSuite remove_node_suite = create_suite("remove node suite", set_up, clean_up);
     CU_add_test(remove_node_suite, "remove node", test_remove_node);
     
     /* Remove First suite */
-    CU_pSuite remove_first_suite = create_suite("remove first suite", clean_up);
+    CU_pSuite remove_first_suite = create_suite("remove first suite", set_up, clean_up);
     CU_add_test(remove_first_suite, "remove first", test_remove_first);
 
     /* Remove Last suite */
-    CU_pSuite remove_last_suite = create_suite("remove last suite", clean_up);
+    CU_pSuite remove_last_suite = create_suite("remove last suite", set_up, clean_up);
     CU_add_test(remove_last_suite, "remove last", test_remove_last);
 
     /* Get First suite */
-    CU_pSuite get_first_suite = create_suite("get first suite", clean_up);
+    CU_pSuite get_first_suite = create_suite("get first suite", set_up, clean_up);
     CU_add_test(get_first_suite, "get first", test_get_first);
     CU_add_test(get_first_suite, "get first empty", test_get_first_empty);
     
     /* Get Last suite */
-    CU_pSuite get_last_suite = create_suite("get last suite", clean_up);
+    CU_pSuite get_last_suite = create_suite("get last suite", set_up, clean_up);
     CU_add_test(get_last_suite, "get last", test_get_last);
     CU_add_test(get_last_suite, "get last empty", test_get_last_empty);
     
 
     /* Destroy DLL suite */
-    CU_pSuite destroy_suite = create_suite("destroy suite", NULL);
+    CU_pSuite destroy_suite = create_suite("destroy suite", set_up, NULL);
     CU_add_test(destroy_suite, "destroy", test_destroy_dll);
 
     // run the tests
