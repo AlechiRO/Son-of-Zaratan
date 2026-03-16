@@ -36,6 +36,15 @@ void test_initialize_dll(void) {
     CU_ASSERT_EQUAL(dll->size, 0);
 }
 
+void test_get_size(void) {
+    dll = initialize_dll();
+    CU_ASSERT_EQUAL(get_size_dll(dll), 0);
+    int a = 1;
+    int* p = &a;
+    insert_first_dll(dll, p);
+    CU_ASSERT_EQUAL(get_size_dll(dll), 1);
+}
+
 void test_insert_between_head_tail(void) {
     dll = initialize_dll();
     char* word = malloc(6);
@@ -45,7 +54,152 @@ void test_insert_between_head_tail(void) {
     CU_ASSERT_PTR_NOT_NULL(node);
     CU_ASSERT_EQUAL(node, get_prev_dll(dll->tail));
     CU_ASSERT_EQUAL(get_payload_dll(node), word);
+    free(word);
 }
+
+void test_insert_between_3_nodes(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int c = 3;
+    int* p1 = &a;
+    int* p2 = &b;
+    int* p3 = &c;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    insert_between_dll(dll, p3, dll->head->next->next, dll->tail);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next->next);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next->next->next);
+    CU_ASSERT_EQUAL(*(int*)(get_payload_dll(dll->head->next)), 1);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next->next), 2);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next->next->next), 3);
+}
+
+void test_insert_first_simple(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int* p = &a; 
+    insert_first_dll(dll, p);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next), 1);
+}
+
+void test_insert_first_2(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_first_dll(dll, p1);
+    insert_first_dll(dll, p2);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next->next);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next), 2);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next->next), 1);
+}
+
+void test_insert_last_2(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_last_dll(dll, p1);
+    insert_last_dll(dll, p2);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next->next);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next), 1);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next->next), 2);
+}
+
+void test_remove_node(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int c = 3;
+    int* p1 = &a;
+    int* p2 = &b;
+    int* p3 = &c;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    insert_between_dll(dll, p3, dll->head->next->next, dll->tail);
+    remove_node_dll(dll, dll->head->next);
+    remove_node_dll(dll, dll->head->next->next);
+    CU_ASSERT_EQUAL(get_size_dll(dll), 1);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next),2);
+}
+
+void test_remove_first(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    remove_first_dll(dll);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next), 2);
+}
+
+void test_remove_last(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    remove_last_dll(dll);
+    CU_ASSERT_PTR_NOT_NULL(dll->head->next);
+    CU_ASSERT_EQUAL(*(int*)get_payload_dll(dll->head->next), 1);
+}
+
+void test_get_first(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    CU_ASSERT_EQUAL(*(int*)get_first_dll(dll), 1);
+}
+
+void test_get_last(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    CU_ASSERT_EQUAL(*(int*)get_last_dll(dll), 2);
+}
+
+void test_get_first_empty(void) {
+    dll = initialize_dll();
+    CU_ASSERT_PTR_NULL(get_first_dll(dll));
+}
+
+void test_get_last_empty(void) {
+    dll = initialize_dll();
+    CU_ASSERT_PTR_NULL(get_last_dll(dll));
+}
+
+void test_destroy_dll(void) {
+    dll = initialize_dll();
+    int a = 1;
+    int b = 2;
+    int* p1 = &a;
+    int* p2 = &b;
+    insert_between_dll(dll, p1, dll->head, dll->tail);
+    insert_between_dll(dll, p2, dll->head->next, dll->tail);
+    destroy_dll(&dll);
+    CU_ASSERT_PTR_NULL(dll);
+}
+
 
 int main(void) {
 
@@ -57,10 +211,51 @@ int main(void) {
     CU_pSuite initialize_dll_suite = create_suite("initialize dll suite", clean_up);
     CU_add_test(initialize_dll_suite, "initialize dll", test_initialize_dll);
 
+    /* Get Size suite */
+    CU_pSuite get_size_suite = create_suite("get size suite", clean_up);
+    CU_add_test(get_size_suite, "get size", test_get_size);
+
     /* Insert Between suite */
     CU_pSuite insert_between_dll_suite = create_suite("insert between dll suite", clean_up);
     CU_add_test(insert_between_dll_suite, "insert between head tail", test_insert_between_head_tail);
+    CU_add_test(insert_between_dll_suite, "insert between 3 nodes", test_insert_between_3_nodes);
+
+    /* Insert First suite */
+    CU_pSuite insert_first_suite = create_suite("insert first suite", clean_up);
+    CU_add_test(insert_first_suite, "insert first simple", test_insert_first_simple);
+    CU_add_test(insert_first_suite, "insert first 2", test_insert_first_2);
     
+    /* Insert Last suite */
+    CU_pSuite insert_last_suite = create_suite("insert last suite", clean_up);
+    CU_add_test(insert_last_suite, "insert last 2", test_insert_last_2);
+
+    /* Remove Node suite */
+    CU_pSuite remove_node_suite = create_suite("remove node suite", clean_up);
+    CU_add_test(remove_node_suite, "remove node", test_remove_node);
+    
+    /* Remove First suite */
+    CU_pSuite remove_first_suite = create_suite("remove first suite", clean_up);
+    CU_add_test(remove_first_suite, "remove first", test_remove_first);
+
+    /* Remove Last suite */
+    CU_pSuite remove_last_suite = create_suite("remove last suite", clean_up);
+    CU_add_test(remove_last_suite, "remove last", test_remove_last);
+
+    /* Get First suite */
+    CU_pSuite get_first_suite = create_suite("get first suite", clean_up);
+    CU_add_test(get_first_suite, "get first", test_get_first);
+    CU_add_test(get_first_suite, "get first empty", test_get_first_empty);
+    
+    /* Get Last suite */
+    CU_pSuite get_last_suite = create_suite("get last suite", clean_up);
+    CU_add_test(get_last_suite, "get last", test_get_last);
+    CU_add_test(get_last_suite, "get last empty", test_get_last_empty);
+    
+
+    /* Destroy DLL suite */
+    CU_pSuite destroy_suite = create_suite("destroy suite", NULL);
+    CU_add_test(destroy_suite, "destroy", test_destroy_dll);
+
     // run the tests
     CU_basic_run_tests();
 

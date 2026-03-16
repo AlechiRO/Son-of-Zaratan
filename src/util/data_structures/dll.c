@@ -98,6 +98,15 @@ dll_s* initialize_dll(void) {
 }
 
 /*
+Get the size of the DLL
+@param Pointer to DLL struct
+@return size of DLL
+*/
+int get_size_dll(dll_s* dll) {
+    return dll->size;
+}
+
+/*
 Insert a node between two nodes
 @param dll Pointer to dll struct
 @param paylaod Pointer to the node payload
