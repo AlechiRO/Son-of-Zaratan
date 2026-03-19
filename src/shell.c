@@ -9,6 +9,10 @@
 
 
 int main(void) {
-    default_prompt();
+    // REPL State
+    while(1) {
+        default_prompt();
+        break;
+    }
     return 0;
 }
