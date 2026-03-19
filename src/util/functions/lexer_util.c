@@ -23,13 +23,13 @@ Wrapper function for the getline() function
 @param line Pointer to line struct
 @param input Pointer to FILE struct
 */
-void getline_wrap(line_s* line, FILE* input) {
+int getline_wrap(line_s* line, FILE* input) {
     if(line == NULL) {
-        printf("Line can't be read, memory has not been allocated!");
-        return;
+        printf("Line can't be read, memory has not been allocated!\n");
+        return -1;
     }
     line->input = input;
-    getline(&line->buffer, &line->length, input);
+    return getline(&line->buffer, &line->length, input);
 }
 
 /*
@@ -38,7 +38,7 @@ Free the memory allocated for a line struct
 */
 void destroy_line(line_s** line) {
     if((*line) == NULL || line == NULL) {
-        printf("Could not destroy line struct!");
+        printf("Could not destroy line struct!\n");
         return;
     }
     if((*line)->buffer != NULL) 
@@ -46,5 +46,5 @@ void destroy_line(line_s** line) {
 
     free((*line));
     (*line) = NULL;
-    printf("Line struct has been destroied!");
+    printf("Line struct has been destroyed!\n");
 }

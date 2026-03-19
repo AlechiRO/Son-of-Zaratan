@@ -7,6 +7,7 @@
 
 #define ANSI_COLOR_GREEN "\x1b[32m"
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_DEFAULT "\033[39m"
 /*
 Display the default prompt of the format: "[USER]@[HOST]:~[cwd]$"
 */
@@ -15,6 +16,6 @@ void default_prompt(void) {
     char hostname[HOST_NAME_MAX];
     char cwd[4096];
     getcwd(cwd, sizeof(cwd));
-    gethostname(hostname, HOST_NAME_MAX);
-    printf(ANSI_COLOR_GREEN "%s@%s:" ANSI_COLOR_MAGENTA"~%s$ ", user, hostname, cwd);
+    gethostname(hostname, HOST_NAME_MAX); 
+    printf(ANSI_COLOR_GREEN "%s@%s:" ANSI_COLOR_MAGENTA"~%s" ANSI_COLOR_DEFAULT "$ ", user, hostname, cwd);
 }
