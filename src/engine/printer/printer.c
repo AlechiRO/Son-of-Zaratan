@@ -8,6 +8,8 @@
 #define ANSI_COLOR_GREEN "\x1b[32m"
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_DEFAULT "\033[39m"
+
+
 /*
 Display the default prompt of the format: "[USER]@[HOST]:~[cwd]$"
 */

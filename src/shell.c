@@ -15,7 +15,12 @@ int main(void) {
     while(1) {
         default_prompt();
         
+        // Read line from stdin 
         if(getline_wrap(line, stdin) == -1)
+            break;
+
+        lex(line);    
+        if(check_error())  
             break;
     }
     destroy_line(&line);
