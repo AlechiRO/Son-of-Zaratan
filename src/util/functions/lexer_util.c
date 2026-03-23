@@ -22,6 +22,7 @@ line_s* initialize_line(void) {
 Wrapper function for the getline() function
 @param line Pointer to line struct
 @param input Pointer to FILE struct
+@return the number of characters read
 */
 int getline_wrap(line_s* line, FILE* input) {
     if(line == NULL) {

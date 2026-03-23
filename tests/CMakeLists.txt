@@ -30,6 +30,18 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CMAKE_SOURCE_DIR}/inc
     )
 
+    # Lexer Util test executable
+    add_executable(LEXER_UTIL_TEST_DRIVER
+        ${LEXER_UTIL_SOURCE}
+        $<TARGET_OBJECTS:lexer_util_logic>
+    )
+
+    target_link_libraries(LEXER_UTIL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
+    target_include_directories(LEXER_UTIL_TEST_DRIVER PRIVATE 
+        ${CUNIT_INCLUDE_DIRS} 
+        ${CMAKE_SOURCE_DIR}/inc
+    )
+
     # Adding Tests
     add_test(NAME test_stack COMMAND STACK_TEST_DRIVER)
     add_test(NAME test_dll COMMAND DLL_TEST_DRIVER)
