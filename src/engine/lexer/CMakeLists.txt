@@ -1,1 +1,1 @@
-add_library(lexer_logic OBJECT lexer.c)
+add_library(lexer_logic OBJECT lexer.c token.c)

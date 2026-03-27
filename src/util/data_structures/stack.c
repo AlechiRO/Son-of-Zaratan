@@ -10,7 +10,7 @@ typedef struct stack {
 
 /*
 Constructor
-Alocate memory for the stack buffer and set the initial size
+Allocate memory for the stack buffer and set the initial size
 @param stack Pointer to a stack struct
 */
 stack_s* initialize_stack(void) {
@@ -98,12 +98,11 @@ void* pop_stack(stack_s* stack) {
 /*
 Destructor
 Free the memory allocated for the stack buffer
-@param stack Pointer to a stack struct
+@param stack Pointer to a pointer to a stack struct
 */
 void destroy_stack(stack_s** stack) {
-    if ((*stack) == NULL || stack == NULL) {
+    if ((*stack) == NULL || stack == NULL) 
         return;
-    }
     printf("The stack %p has been destructed!\n", (void*)*stack);
     if ((*stack)->array != NULL) {
         free((*stack)->array);
