@@ -3,6 +3,14 @@
 #include <stdlib.h>
 #include "array_list.h"
 
+
+
+
+
+// #define DECLARE_LIST(type, name) \
+//     typedef struct {
+
+//     }
 /*
 Constructor
 Allocate memory for the stack buffer and set the initial size

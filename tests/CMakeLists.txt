@@ -42,9 +42,24 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CMAKE_SOURCE_DIR}/inc
     )
 
+    # Array List add_executable
+
+    add_executable(ARRAY_LIST_TEST_DRIVER
+        ${ARRAY_LIST_SOURCE}
+        $<TARGET_OBJECTS:array_list_logic>
+    )
+
+    target_link_libraries(ARRAY_LIST_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
+    target_include_directories(ARRAY_LIST_TEST_DRIVER PRIVATE 
+        ${CUNIT_INCLUDE_DIRS} 
+        ${CMAKE_SOURCE_DIR}/inc
+    )
+
     # Adding Tests
     add_test(NAME test_stack COMMAND STACK_TEST_DRIVER)
     add_test(NAME test_dll COMMAND DLL_TEST_DRIVER)
+    add_test(NAME test_lexer_util COMMAND LEXER_UTIL_TEST_DRIVER)
+    add_test(NAME test_array_list COMMAND ARRAY_LIST_TEST_DRIVER)
 
 else()
     message(WARNING "CUnit not found!")
