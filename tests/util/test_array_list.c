@@ -6,20 +6,19 @@
 #include <string.h>
 #include "array_list.h"
 
-// Global dll struct pointer
-array_list_s* list;
-
+DECLARE_LIST(int, integer_list)
+integer_list* list;
 /*
 Helper function to free the memory for the dll
 */
 static void clean_up(void) {
-    destroy_array_list(&list);
+    integer_list_destroy(&list);
 }
 /*
 Helper function to initialize the dll
 */
 static void set_up(void) {
-    list = initialize_array_list();
+    list = integer_list_initialize();
 }
 
 /* 

@@ -1,5 +1,9 @@
 #ifndef LEXER_H
 #define LEXER_H
+#include <stdio.h>
+#include <stdlib.h>
+
+
 
 // Node definition for dll implementation
 typedef struct node {

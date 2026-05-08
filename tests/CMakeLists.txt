@@ -46,7 +46,6 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
 
     add_executable(ARRAY_LIST_TEST_DRIVER
         ${ARRAY_LIST_SOURCE}
-        $<TARGET_OBJECTS:array_list_logic>
     )
 
     target_link_libraries(ARRAY_LIST_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
