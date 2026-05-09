@@ -39,9 +39,19 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
     return suite;
 }
 
-void test_initialize_array_list(void) {
-    
+void test_initialize(void) {
+    list = int_list_initialize();
+    CU_ASSERT_PTR_NOT_NULL(list);
+    CU_ASSERT_PTR_NOT_NULL(list->array);
+    CU_ASSERT_EQUAL(list->size, 0);
+    CU_ASSERT_EQUAL(list->capacity, 10);
 }
+
+void test_is_empty(void) {
+    CU_ASSERT_TRUE(int_list_is_empty(list));
+}
+
+
 
 
 int main(void) {
@@ -50,8 +60,13 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
 
-    CU_pSuite initialize_array_list_suite = create_suite("initialize array list suite", NULL, clean_up);
-    CU_add_test(initialize_array_list_suite, "initialize array list", test_initialize_array_list);
+    // initialize suite
+    CU_pSuite initialize_suite = create_suite("initialize suite", NULL, clean_up);
+    CU_add_test(initialize_suite, "initialize", test_initialize);
+
+    // is_empty suite
+    CU_pSuite is_empty_suite = create_suite("is empty suite", set_up, clean_up);
+    CU_add_test(is_empty_suite, "is empty", test_is_empty);
 
     // run the tests
     CU_basic_run_tests();
