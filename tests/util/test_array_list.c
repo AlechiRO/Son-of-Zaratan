@@ -4,21 +4,27 @@
 #include <stdlib.h>
 #include <err.h>
 #include <string.h>
+
+#define ARRAY_LIST_ITEM_TYPE int
+#define ARRAY_LIST_TAG int_list
 #include "array_list.h"
 
-DECLARE_LIST(int, integer_list)
-integer_list* list;
+
+
+
+int_list* list;
+
 /*
-Helper function to free the memory for the dll
+Helper function to free the memory for the Array List
 */
 static void clean_up(void) {
-    integer_list_destroy(&list);
+    int_list_destroy(&list);
 }
 /*
-Helper function to initialize the dll
+Helper function to initialize the Array List
 */
 static void set_up(void) {
-    list = integer_list_initialize();
+    list = int_list_initialize();
 }
 
 /* 
