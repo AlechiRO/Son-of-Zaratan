@@ -22,7 +22,6 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     # DLL test executable
     add_executable (DLL_TEST_DRIVER
         ${DLL_TEST_SOURCE}
-        $<TARGET_OBJECTS:dll_logic>
     )
     target_link_libraries(DLL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(DLL_TEST_DRIVER PRIVATE 
