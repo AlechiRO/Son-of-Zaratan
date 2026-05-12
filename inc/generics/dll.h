@@ -179,7 +179,7 @@ Remove a node from the list
 DLL_ITEM_TYPE DLL_FN(remove_node)(DLL_TAG* dll,  NODE_TAG* node) {    
     if(dll->size == 0) {                                             
         fprintf(stderr, "ERROR: DLL is empty, node can't be removed!");              
-        return (DLL_ITEM_TYPE) 0;                                                 
+        return (DLL_ITEM_TYPE) NULL;                                                 
     }                                                                
      NODE_TAG* prev = DLL_FN(get_prev)(node);                        
      NODE_TAG* next = DLL_FN(get_next)(node);                        
@@ -215,7 +215,7 @@ DLL_ITEM_TYPE DLL_FN(get_first)(DLL_TAG* dll) {
     if(dll->size != 0)                                           
         return DLL_FN(get_payload)(DLL_FN(get_next)(dll->head));   
     fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
-    return (DLL_ITEM_TYPE) 0;
+    return (DLL_ITEM_TYPE) NULL;
 }                                                                
                                                                  
 /*                                                               
@@ -226,7 +226,7 @@ DLL_ITEM_TYPE DLL_FN(get_last)(DLL_TAG* dll) {
     if(dll->size != 0)                                           
         return DLL_FN(get_payload)(DLL_FN(get_prev)(dll->tail));      
     fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
-    return (DLL_ITEM_TYPE) 0;                                                 
+    return (DLL_ITEM_TYPE) NULL;                                                 
 }                                                                
                                                                  
 /*                                                               
