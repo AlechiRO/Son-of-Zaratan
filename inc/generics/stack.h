@@ -134,4 +134,10 @@ void STACK_FN(destroy)(STACK_TAG** stack) {
     *stack = NULL;
 }
 
+#undef STACK_ITEM_TYPE
+#undef STACK_TAG
+#undef STACK_CONCAT
+#undef STACK_CONCAT_EXP
+#undef STACK_FN
+
 #endif

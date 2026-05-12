@@ -72,13 +72,22 @@ static void AL_FN(increase_capacity)(ARRAY_LIST_TAG* list) {
                                                                     
 /*                                                                  
 Check if the array list is empty                                    
-@param list Pointer to a array list struct                          
+@param list Pointer to an array list struct                          
 @return true if the array list is empty and false otherwise         
 */                                                                  
 int AL_FN(is_empty)(ARRAY_LIST_TAG* list) {          
     return list->size == 0;                                         
 }                                                                   
-                                                                    
+
+/*
+Get the number of elements in the array list
+@param list Pointer to an array list struct
+@return size of the array list
+*/
+int AL_FN(get_size)(ARRAY_LIST_TAG* list) {
+    return list->size;
+}
+
 /*                                                                  
 Adds an element after a specific index                              
 @param list Pointer to array list struct                            
