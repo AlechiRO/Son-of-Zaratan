@@ -35,8 +35,10 @@ Create a new node
 */                                              
 static dll_node* initialize_node(DLL_ITEM_TYPE payload,  dll_node* prev,  dll_node* next) {    
      dll_node* node = malloc(sizeof( dll_node));              
-    if(!node)                                                   
-        return NULL;                                            
+    if(!node) {     
+        fprintf(stderr, "FATAL: Could not allocate memory for DLL node!");                                             
+        return NULL;
+    }                                            
     node->payload = payload;                                       
     set_next(node, next);                                    
     set_prev(node, prev);                                    
@@ -107,8 +109,10 @@ Initialize the dll
 */                                   
 DLL_TAG* DLL_FN(initialize)(void) {    
     DLL_TAG* dll = malloc(sizeof(DLL_TAG));            
-    if(dll == NULL)                              
-        return NULL;                             
+    if(dll == NULL) {
+        fprintf(stderr, "FATAL: Could not allocate memory for DLL!");                             
+        return NULL; 
+    }                            
                                                  
     DLL_ITEM_TYPE dummy_payload;                          
     memset(&dummy_payload, 0, sizeof(DLL_ITEM_TYPE));                             
@@ -173,7 +177,7 @@ Remove a node from the list
 */                                   
 DLL_ITEM_TYPE DLL_FN(remove_node)(DLL_TAG* dll,  dll_node* node) {    
     if(dll->size == 0) {                                             
-        printf("DLL is empty, node can't be removed!");              
+        fprintf(stderr, "ERROR: DLL is empty, node can't be removed!");              
         return NULL;                                                 
     }                                                                
      dll_node* prev = get_prev(node);                        
@@ -209,7 +213,7 @@ Get the payload of the first node in the DLL
 DLL_ITEM_TYPE DLL_FN(get_first)(DLL_TAG* dll) {                    
     if(dll->size != 0)                                           
         return get_payload(get_next(dll->head));   
-    printf("DLL is empty, can't retrieve payload!");             
+    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
     return NULL;                                                 
 }                                                                
                                                                  
@@ -220,7 +224,7 @@ Get the payload of the first node in the DLL
 DLL_ITEM_TYPE DLL_FN(get_last)(DLL_TAG* dll) {                  
     if(dll->size != 0)                                           
         return get_payload(get_prev(dll->tail));      
-    printf("DLL is empty, can't retrieve payload!");             
+    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
     return NULL;                                                 
 }                                                                
                                                                  
@@ -237,10 +241,15 @@ void DLL_FN(destroy)(DLL_TAG** dll) {
          dll_node* next = get_next(current);             
         destroy_node(&current);                           
         current = next;                                          
-    }                                                            
-    printf("The DLL %p has been destructed!", (DLL_ITEM_TYPE)*dll);     
+    }                                                                 
     free((*dll));                                                
     (*dll) = NULL;                                               
 }
+
+#undef DLL_TAG
+#undef DLL_ITEM_TYPE
+#undef DLL_CONCAT
+#undef DLL_CONCAT_EXP
+#undef DLL_FN
 
 #endif
