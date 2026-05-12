@@ -3,24 +3,27 @@
 #include <CUnit/CUnit.h>
 #include <stdlib.h>
 #include <err.h>
+
+#define STACK_TAG string_stack
+#define STACK_ITEM_TYPE char*
 #include "stack.h"
 
 
 // Global stack struct pointer
-stack_s* stack;
+string_stack* stack;
 
 /*
 Helper function to free the memory for the stack
 */
 static void clean_up(void) {
-    destroy_stack(&stack);
+    string_stack_destroy(&stack);
 }
 
 /*
 Helper function to initialize the stack
 */
 static void set_up(void) {
-    stack = initialize_stack();
+    stack = string_stack_initialize();
 }
 
 /* 
@@ -36,61 +39,61 @@ static CU_pSuite create_suite(const char* name,void(*set_up)(), void(*tear)()) {
 }
 
 void test_initialize(void) {
-    stack = initialize_stack();
-    CU_ASSERT_EQUAL(stack->size, sizeof(void**)*100);
+    stack = string_stack_initialize();
+    CU_ASSERT_EQUAL(stack->size, sizeof(char*)*10);
     CU_ASSERT_EQUAL(stack->top, -1);
 }
 
 void test_is_empty(void) {
-    CU_ASSERT_TRUE(is_empty_stack(stack));
+    CU_ASSERT_TRUE(string_stack_is_empty(stack));
 }
 
 void test_is_empty_push(void) {
-    push_stack(stack, "obj");
-    CU_ASSERT_FALSE(is_empty_stack(stack));
+    string_stack_push(stack, "obj");
+    CU_ASSERT_FALSE(string_stack_is_empty(stack));
 }
 
 void test_size_3(void) {
-    push_stack(stack, "obj");
-    push_stack(stack, "obj");
-    push_stack(stack, "obj");
-    CU_ASSERT_EQUAL(size_stack(stack), 3);
+    string_stack_push(stack, "obj");
+    string_stack_push(stack, "obj");
+    string_stack_push(stack, "obj");
+    CU_ASSERT_EQUAL(string_stack_size(stack), 3);
 }
 
 void test_peek_empty(void) {
-    CU_ASSERT_PTR_NULL(peek_stack(stack));
+    CU_ASSERT_PTR_NULL(string_stack_peek(stack));
 }
 
 void test_peek_element(void) {
     char* word = "the hound";
-    push_stack(stack, word);
-    CU_ASSERT_EQUAL(word, peek_stack(stack));
+    string_stack_push(stack, word);
+    CU_ASSERT_EQUAL(word, string_stack_peek(stack));
 }
 
 void test_push(void) {
-    push_stack(stack, "arya");
-    CU_ASSERT_FALSE(is_empty_stack(stack));
+    string_stack_push(stack, "arya");
+    CU_ASSERT_FALSE(string_stack_is_empty(stack));
 }
 
 void test_push_NULL(void) {
-    push_stack(stack, NULL);
-    CU_ASSERT_FALSE(is_empty_stack(stack));
+    string_stack_push(stack, NULL);
+    CU_ASSERT_FALSE(string_stack_is_empty(stack));
 }
 
 void test_pop_empty(void) {
-    CU_ASSERT_PTR_NULL(pop_stack(stack));
+    CU_ASSERT_PTR_NULL(string_stack_pop(stack));
 }
 
 void test_pop_two_elements(void) {
-    push_stack(stack, "baelish");
-    push_stack(stack, "sansa");
-    CU_ASSERT_EQUAL(pop_stack(stack), "sansa");
-    CU_ASSERT_EQUAL(pop_stack(stack), "baelish");
-    CU_ASSERT_TRUE(is_empty_stack(stack));
+    string_stack_push(stack, "baelish");
+    string_stack_push(stack, "sansa");
+    CU_ASSERT_EQUAL(string_stack_pop(stack), "sansa");
+    CU_ASSERT_EQUAL(string_stack_pop(stack), "baelish");
+    CU_ASSERT_TRUE(string_stack_is_empty(stack));
 }
 
 void test_destroy_empty_stack(void) {
-    destroy_stack(&stack);
+    string_stack_destroy(&stack);
     CU_ASSERT_PTR_NULL(stack);
 }
 

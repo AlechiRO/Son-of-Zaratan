@@ -9,4 +9,7 @@ add_executable(shell shell.c
 )
 
 
-target_include_directories(shell PRIVATE ../inc)
+target_include_directories(shell PRIVATE 
+    ${CMAKE_SOURCE_DIR}/inc/modules 
+    ${CMAKE_SOURCE_DIR}/inc/generics
+)

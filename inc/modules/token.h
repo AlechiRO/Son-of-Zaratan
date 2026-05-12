@@ -1,14 +1,8 @@
-#ifndef LEXER_UTIL_h
-#define LEXER_UTIL_h
+#ifndef TOKEN_H
+#define TOEKN_H
 
-typedef struct line {
-    char* buffer;
-    size_t length;
-    FILE* input;
-}line_s;
-
-
-enum token_type{
+/* Token Enum */
+typedef enum token_type{
 
     // Literal Tokens
     TOKEN_NUMBER,               // 123.33 or 43
@@ -75,11 +69,14 @@ enum token_type{
     // Terminator Tokens
     TOKEN_EOF,                  // END OF FILE
     TOKEN_ERROR,                // (If sequence of chars can't be turned into a token)
-};
+} token_e;
 
-
-line_s* initialize_line(void);
-int getline_wrap(line_s* line, FILE* input);
-void destroy_line(line_s** line);
+/* Token struct */
+typedef struct token {
+    token_e type;
+    char* lexeme;
+    void* literal; 
+    int line;
+}token_s;
 
 #endif
