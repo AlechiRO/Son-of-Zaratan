@@ -16,7 +16,8 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     target_link_libraries(STACK_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(STACK_TEST_DRIVER PRIVATE 
         ${CUNIT_INCLUDE_DIRS} 
-        ${CMAKE_SOURCE_DIR}/inc
+        ${CMAKE_SOURCE_DIR}/inc/modules
+        ${CMAKE_SOURCE_DIR}/inc/generics
     )
 
     # DLL test executable
@@ -26,7 +27,8 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     target_link_libraries(DLL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(DLL_TEST_DRIVER PRIVATE 
         ${CUNIT_INCLUDE_DIRS} 
-        ${CMAKE_SOURCE_DIR}/inc
+        ${CMAKE_SOURCE_DIR}/inc/modules
+        ${CMAKE_SOURCE_DIR}/inc/generics
     )
 
     # Lexer Util test executable
@@ -38,7 +40,8 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     target_link_libraries(LEXER_UTIL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(LEXER_UTIL_TEST_DRIVER PRIVATE 
         ${CUNIT_INCLUDE_DIRS} 
-        ${CMAKE_SOURCE_DIR}/inc
+        ${CMAKE_SOURCE_DIR}/inc/modules
+        ${CMAKE_SOURCE_DIR}/inc/generics
     )
 
     # Array List add_executable
@@ -50,7 +53,8 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     target_link_libraries(ARRAY_LIST_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(ARRAY_LIST_TEST_DRIVER PRIVATE 
         ${CUNIT_INCLUDE_DIRS} 
-        ${CMAKE_SOURCE_DIR}/inc
+        ${CMAKE_SOURCE_DIR}/inc/modules
+        ${CMAKE_SOURCE_DIR}/inc/generics
     )
 
     # Adding Tests
