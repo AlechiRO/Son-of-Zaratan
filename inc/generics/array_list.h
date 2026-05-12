@@ -142,7 +142,13 @@ void AL_FN(set)(ARRAY_LIST_TAG* list, int index, ARRAY_LIST_ITEM_TYPE element) {
     if(index < 0 || index >= list->size) {                              
         fprintf(stderr, "ERROR: Invalid index Array List!");                            
         exit(EXIT_FAILURE);                                                         
-    }                                                                   
+    }
+
+    if(AL_FN(is_empty(list))) {
+        fprintf(stderr, "ERROR: List is empty, could not set element!");
+        exit(EXIT_FAILURE);
+    }
+
     (list->array)[index] = element;                                     
 }                                                                       
                                                                         
@@ -156,7 +162,13 @@ ARRAY_LIST_ITEM_TYPE AL_FN(get)(ARRAY_LIST_TAG* list, int index) {
     if(index < 0 || index >= list->size) {              
         fprintf(stderr, "ERROR: Invalid index Array List!");            
         exit(EXIT_FAILURE);                                        
-    }                                                   
+    }
+    
+    if(AL_FN(is_empty(list))) {
+        fprintf(stderr, "ERROR: List is empty, could not set element!");
+        exit(EXIT_FAILURE);
+    }
+    
     return (list->array)[index];                        
 }                                                       
                                                         
