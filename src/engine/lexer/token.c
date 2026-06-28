@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "token.h"
+#include <stdlib.h>
 
 token_s* initialize_token(token_e type, char* lexeme, void* literal, int line) {
     token_s* token = malloc(sizeof(token_s));
