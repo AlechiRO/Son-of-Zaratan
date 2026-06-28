@@ -8,10 +8,16 @@ find_path(CUNIT_INCLUDE_DIRS NAMES CUnit/CUnit.h)
 
 if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
 
+    # This deletes the generated .gcda and .gcno files.
+    # created by gcov in the build dir recursively
+    # add_custom_target(scrub
+    # COMMAND find ${CMAKE_BINARY_DIR} -name "*.gcda" -delete
+    # WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    # )
+
     # Stack test executable
     add_executable (STACK_TEST_DRIVER 
         ${STACK_TEST_SOURCE}
-        $<TARGET_OBJECTS:stack_logic>
     )
     target_link_libraries(STACK_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(STACK_TEST_DRIVER PRIVATE 
@@ -56,6 +62,15 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CMAKE_SOURCE_DIR}/inc/modules
         ${CMAKE_SOURCE_DIR}/inc/generics
     )
+
+    
+    # Clean the build as well as generated .gcda and .gcno files. 
+    # for every test executable
+    # add_dependencies(ARRAY_LIST_TEST_DRIVER scrub)
+    # add_dependencies(LEXER_UTIL_TEST_DRIVER scrub)
+    # add_dependencies(DLL_TEST_DRIVER scrub)
+    # add_dependencies(STACK_TEST_DRIVER scrub)
+
 
     # Adding Tests
     add_test(NAME test_stack COMMAND STACK_TEST_DRIVER)
