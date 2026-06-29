@@ -149,6 +149,16 @@ typedef struct Literal {
     } value;
 } literal_s;
 
+/* Literal Functions */
+
+literal_s* initialize_literal(literal_type_e type);
+void destroy_literal(literal_s** literal);
+
+/* Token Functions */
+
+token_s* initialize_token(token_type_e type, char* lexeme, literal_s* literal, int line);
+void destroy_token(token_s** token);
+
 /* Token struct */
 typedef struct Token {
     token_type_e type;

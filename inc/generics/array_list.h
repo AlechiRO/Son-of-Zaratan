@@ -192,7 +192,7 @@ ARRAY_LIST_ITEM_TYPE AL_FN(remove)(ARRAY_LIST_TAG* list, int index) {
 /*                                                          
 Destructor                                                  
 Free the memory allocated for the array list buffer         
-@param list Pointer to a pointer to a array list struct     
+@param list Pointer to a pointer to an array list struct     
 */                                                          
 void AL_FN(destroy)(ARRAY_LIST_TAG** list) {            
     if(list == NULL || (*list) == NULL)                     
