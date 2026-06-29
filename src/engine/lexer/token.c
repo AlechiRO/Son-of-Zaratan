@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "token.h"
 #include <stdlib.h>
+#include "token.h"
 
 /*
 Constructor
