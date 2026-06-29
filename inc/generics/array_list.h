@@ -1,5 +1,3 @@
-#ifndef ARRAY_LIST_H
-#define ARRAY_LIST_H
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -213,5 +211,3 @@ void AL_FN(destroy)(ARRAY_LIST_TAG** list) {
 #undef AL_CONCAT
 #undef AL_CONCAT_EXP
 #undef AL_FN
-
-#endif

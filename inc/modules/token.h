@@ -2,7 +2,7 @@
 #define TOEKN_H
 
 /* Token Enum */
-typedef enum token_type{
+typedef enum token_type {
 
     // Literal Tokens
     TOKEN_NUMBER,               // 123.33 or 43
@@ -69,14 +69,39 @@ typedef enum token_type{
     // Terminator Tokens
     TOKEN_EOF,                  // END OF FILE
     TOKEN_ERROR,                // (If sequence of chars can't be turned into a token)
-} token_e;
+} token_type_e;
+
+typedef enum Literal_type {
+    LITERAL_INT,
+    LITERAL_DOUBLE,
+    LITERAL_NULL,
+    LITERAL_BOOLEAN,
+    LITERAL_STRING,
+    LITERAL_INT_ARRAY,
+    LITERAL_DOUBLE_LIST,
+    LITERAL_STRING_LIST,
+    LITERAL_DICTIONARY,
+} literal_type_e;
+
+/*Lexeme struct*/
+typedef struct Literal {
+    literal_type_e type;
+    union Value {
+        int int_value;
+        double double_value;
+        void* null_value;
+        int boolean_value;
+        char* string_value;
+
+    } val;
+} literal_s;
 
 /* Token struct */
-typedef struct token {
-    token_e type;
+typedef struct Token {
+    token_type_e type;
     char* lexeme;
-    void* literal; 
+    literal_s* literal; 
     int line;
-}token_s;
+} token_s;
 
 #endif

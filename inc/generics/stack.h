@@ -1,6 +1,3 @@
-#ifndef STACK_H
-#define STACK_H
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -139,5 +136,3 @@ void STACK_FN(destroy)(STACK_TAG** stack) {
 #undef STACK_CONCAT
 #undef STACK_CONCAT_EXP
 #undef STACK_FN
-
-#endif

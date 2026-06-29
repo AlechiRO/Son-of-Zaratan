@@ -10,8 +10,6 @@
 #include "array_list.h"
 
 
-
-
 int_list* list;
 
 /*

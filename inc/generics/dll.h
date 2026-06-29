@@ -1,5 +1,3 @@
-#ifndef DLL_H
-#define DLL_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -253,5 +251,3 @@ void DLL_FN(destroy)(DLL_TAG** dll) {
 #undef DLL_CONCAT_EXP
 #undef DLL_FN
 #undef NODE_TAG
-
-#endif
