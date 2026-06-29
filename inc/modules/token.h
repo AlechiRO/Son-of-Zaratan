@@ -1,6 +1,18 @@
 #ifndef TOKEN_H
 #define TOEKN_H
 
+#define ARRAY_LIST_ITEM_TYPE int
+#define ARRAY_LIST_TAG int_list
+#include "array_list.h"
+
+#define ARRAY_LIST_ITEM_TYPE double
+#define ARRAY_LIST_TAG double_list
+#include "array_list.h"
+
+#define ARRAY_LIST_ITEM_TYPE char*
+#define ARRAY_LIST_TAG string_list
+#include "array_list.h"
+
 /* Token Enum */
 typedef enum token_type {
 
@@ -72,28 +84,69 @@ typedef enum token_type {
 } token_type_e;
 
 typedef enum Literal_type {
+    // Primitives
     LITERAL_INT,
     LITERAL_DOUBLE,
     LITERAL_NULL,
     LITERAL_BOOLEAN,
     LITERAL_STRING,
+
+    // Array Lists
     LITERAL_INT_ARRAY,
     LITERAL_DOUBLE_LIST,
     LITERAL_STRING_LIST,
-    LITERAL_DICTIONARY,
+
+    // Dictionaries - Int Keys
+    DICT_INT_INT,
+    DICT_INT_DOUBLE,
+    DICT_INT_STRING,
+    
+    // Dictionaries - Double Keys
+    DICT_DOUBLE_INT,
+    DICT_DOUBLE_DOUBLE,
+    DICT_DOUBLE_STRING,
+    
+    // Dictionaries - String Keys
+    DICT_STRING_INT,
+    DICT_STRING_DOUBLE,
+    DICT_STRING_STRING,
+
 } literal_type_e;
 
 /*Lexeme struct*/
 typedef struct Literal {
     literal_type_e type;
     union Value {
+        // Typed Primitives
         int int_value;
         double double_value;
         void* null_value;
         int boolean_value;
         char* string_value;
 
-    } val;
+        // Typed Array Lists
+        int_list* int_list_value;
+        double_list* double_list_value;
+        string_list* string_list_value;
+
+        // Typed Dictionaries - Keys: int
+
+        //int_int_dict*    int_int_dict_value;
+        //int_double_dict* int_double_dict_value;
+        //int_string_dict* int_string_dict_value;
+        
+        // Typed Dictionaries - Keys: double
+
+        //double_int_dict*    double_int_dict_value;
+        //double_double_dict* double_double_dict_value;
+        //double_string_dict* double_string_dict_value;
+        
+        // Typed Dictionaries - Keys: char*
+
+        //string_int_dict*    string_int_dict_value;
+        //string_double_dict* string_double_dict_value;
+        //string_string_dict* string_string_dict_value;
+    } value;
 } literal_s;
 
 /* Token struct */
