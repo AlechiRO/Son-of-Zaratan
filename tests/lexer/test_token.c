@@ -35,12 +35,22 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
     return suite;
 }
 
+void test_initialize_literal(void) {
+    literal = initialize_literal(LITERAL_INT);
+    (literal->value).int_value = 10;
+    CU_ASSERT_PTR_NOT_NULL(literal);
+    CU_ASSERT_EQUAL(literal->type, LITERAL_INT);
+    CU_ASSERT_EQUAL((literal->value).int_value, 10);
+}
 
 int main(void) {
 
     // initialize registry
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry"); 
+
+    CU_pSuite initialize_suite = create_suite("initialize literal suite", NULL, NULL);
+    CU_add_test(initialize_suite, "initialize", test_initialize_literal);
 
     // run the tests
     CU_basic_run_tests();
