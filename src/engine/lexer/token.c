@@ -61,10 +61,11 @@ void destroy_token(token_s** token) {
         fprintf(stderr, "ERROR: Invalid token pointer!\n");
         exit(EXIT_FAILURE);
     }
-    if((*token)->literal != NULL) {
-        destroy_literal(&(*token)->literal);
-        (*token)->literal = NULL;
-    }
+    literal_s** literal = &((*token)->literal);
+
+    if(*literal != NULL && literal != NULL) 
+        destroy_literal(literal);
+    
     free((*token));
     *token = NULL;
 }

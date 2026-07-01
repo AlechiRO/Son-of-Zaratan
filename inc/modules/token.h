@@ -92,7 +92,7 @@ typedef enum Literal_type {
     LITERAL_STRING,
 
     // Array Lists
-    LITERAL_INT_ARRAY,
+    LITERAL_INT_LIST,
     LITERAL_DOUBLE_LIST,
     LITERAL_STRING_LIST,
 
@@ -125,27 +125,27 @@ typedef struct Literal {
         char* string_value;
 
         // Typed Array Lists
-        int_list* int_list_value;
-        double_list* double_list_value;
-        string_list* string_list_value;
+        int_list* int_list_reference;
+        double_list* double_list_reference;
+        string_list* string_list_reference;
 
         // Typed Dictionaries - Keys: int
 
-        //int_int_dict*    int_int_dict_value;
-        //int_double_dict* int_double_dict_value;
-        //int_string_dict* int_string_dict_value;
+        //int_int_dict*    int_int_dict_reference;
+        //int_double_dict* int_double_dict_reference;
+        //int_string_dict* int_string_dict_reference;
         
         // Typed Dictionaries - Keys: double
 
-        //double_int_dict*    double_int_dict_value;
-        //double_double_dict* double_double_dict_value;
-        //double_string_dict* double_string_dict_value;
+        //double_int_dict*    double_int_dict_reference;
+        //double_double_dict* double_double_dict_reference;
+        //double_string_dict* double_string_dict_reference;
         
         // Typed Dictionaries - Keys: char*
 
-        //string_int_dict*    string_int_dict_value;
-        //string_double_dict* string_double_dict_value;
-        //string_string_dict* string_string_dict_value;
+        //string_int_dict*    string_int_dict_reference;
+        //string_double_dict* string_double_dict_reference;
+        //string_string_dict* string_string_dict_reference;
     } value;
 } literal_s;
 
