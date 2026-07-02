@@ -1,5 +1,5 @@
 #ifndef TOKEN_H
-#define TOEKN_H
+#define TOKEN_H
 
 #define ARRAY_LIST_ITEM_TYPE int
 #define ARRAY_LIST_TAG int_list

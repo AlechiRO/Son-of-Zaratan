@@ -4,26 +4,12 @@
 #include <string.h>
 #include "lexer.h"
 #include "token.h"
+#include "lexer_globals.h"
 
-// Setup for Token Array List
-#define ARRAY_LIST_ITEM_TYPE token_s
-#define ARRAY_LIST_TAG token_list
-#include "array_list.h"
-
-/* Global Variables 
-source - String containing the script
-tokens - Token Array List
-start -
-current -
-line -
+/*
+Main Lexer Loop
+@param line The line of code currently being scanned
 */
-
-char* source;
-token_list* tokens;
-int start;
-int current;
-int line;
-
 void lex(line_s* line) {
-
+    tokens = token_list_initialize();
 }
