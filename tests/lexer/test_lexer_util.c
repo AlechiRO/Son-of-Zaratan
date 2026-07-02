@@ -13,17 +13,24 @@
 line_s* line;
 
 /*
-Helper function to free the memory for the stack
+Helper function to free the memory for the dependencies
 */
 static void clean_up(void) {
     destroy_line(&line);
+    token_list_destroy(&tokens);
+    source = NULL;
+    start = 0;
+    current = 0;
+    line_number = 0;
+    source_length = 0;
 }
 
 /*
-Helper function to initialize the stack
+Helper function to initialize the dependencies
 */
 static void set_up(void) {
     line = initialize_line();
+    tokens = token_list_initialize();
 }
 
 /*
