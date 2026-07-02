@@ -108,6 +108,17 @@ void test_getline_wrap(void) {
     restore_stdin(old_stdin);
 }
 
+void test_append_string_to_line(void) {
+    append_to_line(line, "A small man can cast a very large shadow!");
+    CU_ASSERT_TRUE(strcmp(line->buffer, "A small man can cast a very large shadow!") == 0);
+}
+
+void test_append_line_to_source(void) {
+    append_to_line(line, "They were betrayed by Otto");
+    append_to_source(line);
+    CU_ASSERT_TRUE(strcmp(source, "They were betrayed by Otto") == 0);
+}
+
 
 
 int main(void) {
@@ -124,10 +135,16 @@ int main(void) {
     CU_pSuite destroy_suite = create_suite("destroy suite", set_up, NULL);
     CU_add_test(destroy_suite, "destroy", test_destroy);
 
-    /* Getline wrap suite*/
+    /* Getline wrap suite */
     CU_pSuite getline_wrap_suite = create_suite("getline wrap suite", set_up, clean_up);
     CU_add_test(getline_wrap_suite, "getline wrap test", test_getline_wrap);
 
+    /* Append_to_line suite */
+    CU_pSuite append_to_line_suite = create_suite("append_to_line suite", set_up, clean_up);
+    CU_add_test(append_to_line_suite, "append string to line", test_append_string_to_line);
+    /* Append_to_source suite */
+    CU_pSuite append_to_source_suite = create_suite("append_to_source suite", set_up, clean_up);
+    CU_add_test(append_to_source_suite, "append line to source", test_append_line_to_source);
 
     // run the tests
     CU_basic_run_tests();

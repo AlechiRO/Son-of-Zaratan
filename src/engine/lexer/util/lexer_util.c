@@ -13,7 +13,7 @@ line_s* initialize_line(void) {
     line_s* line = malloc(sizeof(struct line));
     if(line == NULL)
         return NULL;
-    line->buffer = NULL; 
+    line->buffer = NULL;
     line->length = 0; 
     line->input = stdin;    // Default input for line
     return line;
@@ -53,10 +53,23 @@ void destroy_line(line_s** line) {
 
 /*
 Append a line of code to the source code
-@param line Struct containing the line of code
+@param line Pointer to line struct containing the line of code
 */
 void append_to_source(line_s* line) {
     char* content = line->buffer;
+    source = realloc(source, source_length + strlen(content));
     strcat(source, content);
-    source_length = strlen(content);
+    source_length += strlen(content);
+}
+
+/*
+Append code to existing line of code
+@param line Pointer to line struct 
+@param content Code to append
+*/
+void append_to_line(line_s* line, char* content) {
+    int content_length = strlen(content);
+    line->buffer = realloc(line->buffer, sizeof(line->buffer) + content_length);
+    strcat(line->buffer, content);
+    line->length += content_length;
 }
