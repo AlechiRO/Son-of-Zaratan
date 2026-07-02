@@ -50,3 +50,13 @@ void destroy_line(line_s** line) {
     (*line) = NULL;
     printf("Line struct has been destroyed!\n");
 }
+
+/*
+Append a line of code to the source code
+@param line Struct containing the line of code
+*/
+void append_to_source(line_s* line) {
+    char* content = line->buffer;
+    strcat(source, content);
+    source_length = strlen(content);
+}

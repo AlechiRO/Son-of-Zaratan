@@ -34,6 +34,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     add_executable(LEXER_UTIL_TEST_DRIVER
         ${LEXER_UTIL_TEST_SOURCE}
         $<TARGET_OBJECTS:lexer_util_logic>
+        $<TARGET_OBJECTS:lexer_logic>
     )
 
     target_link_libraries(LEXER_UTIL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
@@ -41,6 +42,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CUNIT_INCLUDE_DIRS} 
         ${CMAKE_SOURCE_DIR}/inc/modules
         ${CMAKE_SOURCE_DIR}/inc/generics
+        ${CMAKE_SOURCE_DIR}/inc/globals
     )
 
     # Array List test executable

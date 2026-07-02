@@ -3,9 +3,10 @@
 #include <CUnit/CUnit.h>
 #include <stdlib.h>
 #include <err.h>
-#include "lexer_util.h"
 #include <unistd.h>
 #include <string.h>
+#include "lexer_util.h"
+#include "lexer_globals.h"
 
 
 // Global stack struct pointer

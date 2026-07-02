@@ -11,12 +11,13 @@ source - String containing the script
 tokens - Token Array List
 start - points to the start index of the lexeme
 current - points to the character currently being considered
-line - tracks the line current is on 
+line_number - tracks the line current is on 
+source_length - the length of the source code
 */
 
 char* source = NULL;
 token_list* tokens;
 int start = 0;
 int current = 0;
-int line = 0;
+int line_number = 0;
 int source_length = 0;
