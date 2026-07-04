@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <string.h>
 #include "lexer_util.h"
-#include "lexer_globals.h"
 #include "lexer.h"
 
 

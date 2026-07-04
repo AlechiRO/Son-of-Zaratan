@@ -1,9 +1,12 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include "lexer_globals.h"
 #include "lexer_util.h"
 #include "token.h"
+// Setup for Token Array List
+#define ARRAY_LIST_ITEM_TYPE token_s*
+#define ARRAY_LIST_TAG token_list
+#include "array_list.h"
 
 // Lexer config struct definition
 typedef struct Lexer_context {

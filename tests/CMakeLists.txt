@@ -44,7 +44,6 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CUNIT_INCLUDE_DIRS} 
         ${CMAKE_SOURCE_DIR}/inc/modules
         ${CMAKE_SOURCE_DIR}/inc/generics
-        ${CMAKE_SOURCE_DIR}/inc/globals
     )
 
     # Array List test executable

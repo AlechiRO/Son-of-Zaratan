@@ -4,7 +4,6 @@
 #include <string.h>
 #include "lexer.h"
 #include "token.h"
-#include "lexer_globals.h"
 #include "error.h"
 #include "string_util.h"
 
@@ -66,7 +65,7 @@ Add token to the token list
 */
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal) {
     char* lexeme = substring(lctx->source, lctx->start, lctx->current);
-    token_list_add(tokens, initialize_token(type, lexeme, literal, lctx->line_number)); 
+    token_list_add(lctx->tokens, initialize_token(type, lexeme, literal, lctx->line_number)); 
 }
 
 /*
@@ -86,14 +85,14 @@ token_list* lex(line_s* line) {
     append_to_source(lctx, line);
 
     while(!is_at_end(lctx)) {
-        start = current;
+        lctx->start = lctx->current;
         scan_token(lctx);
     }
 
     // Add this token to mark the end of teh source code
     add_token(lctx, TOKEN_EOF, NULL);
     
-    return tokens;
+    return lctx->tokens;
 }
 
 /*
@@ -113,7 +112,7 @@ void scan_token(lexer_context_s* lctx) {
     case ';' : add_token(lctx, TOKEN_SEMICOLON, NULL); break;
     case ',' : add_token(lctx, TOKEN_COMMA, NULL); break;
         
-    default: error(line_number, "Unexpected character"); break;
+    default: error(lctx->line_number, "Unexpected character"); break;
     }
 }
 
