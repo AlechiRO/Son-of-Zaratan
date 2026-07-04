@@ -1,4 +1,4 @@
-add_subdirectory(util)
+add_subdirectory(generics)
 add_subdirectory(lexer)
 
 
