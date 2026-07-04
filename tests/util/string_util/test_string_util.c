@@ -35,15 +35,37 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
     return suite;
 }
 
+void test_substring_null(void) {
+    string = substring(NULL, 0, 10);
+    CU_ASSERT_PTR_NULL(string);
+}
 
+void test_substring_invalid_indexes_on_point(void) {
+    string = substring("Helena knows he is scared", 7, 7);
+    CU_ASSERT_PTR_NULL(string);
+}
 
+void test_substring_invalid_indexes(void) {
+    string = substring("Syrax will not be injured", 7, 2);
+    CU_ASSERT_PTR_NULL(string);
+}
+
+void test_substring(void) {
+    string = substring("Daemon sacrificed himself", 7, 17);
+    CU_ASSERT_TRUE(strcmp(string, "sacrificed") == 0);
+    printf("%s/n", string);
+}
 int main(void) {
 
     // initialize registry
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry"); 
 
-    
+    CU_pSuite substring_suite = create_suite("substring suite", NULL, clean_up);
+    CU_add_test(substring_suite, "substring null", test_substring_null);
+    CU_add_test(substring_suite, "substring invalid indexes on point", test_substring_invalid_indexes_on_point);
+    CU_add_test(substring_suite, "substring invalid indexes", test_substring_invalid_indexes);
+    CU_add_test(substring_suite, "substring valid index", test_substring);
 
     // run the tests
     CU_basic_run_tests();

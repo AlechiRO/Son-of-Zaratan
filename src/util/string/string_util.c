@@ -12,7 +12,8 @@ Extract a substring from a source string
 */
 char* substring(char* string, int begin, int end) {
     int substring_size = end - begin;
-
+    if(string == NULL) return NULL;
+        
     if(substring_size <= 0) {
         fprintf(stderr, "ERROR: Invalid intexes for substring extraction");
         return NULL;
@@ -25,5 +26,5 @@ char* substring(char* string, int begin, int end) {
         exit(EXIT_FAILURE);
     }
 
-    strncpy(substr, string, substring_size);
+    strncpy(substr, string + begin, substring_size);
 }
