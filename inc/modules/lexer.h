@@ -15,7 +15,8 @@ typedef struct Lexer_context {
     int source_length;      // The length of the source code
 } lexer_context_s;
 
-lexer_context_s* initialize_lexer_config(void);
+lexer_context_s* initialize_lexer_context(void);
+void destroy_lexer_context(lexer_context_s** lctx);
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal);
 char advance(lexer_context_s* lctx);
 token_list* lex(line_s* line);

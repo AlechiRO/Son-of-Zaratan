@@ -7,22 +7,19 @@
 #include <string.h>
 #include "lexer_util.h"
 #include "lexer_globals.h"
+#include "lexer.h"
 
 
 // Global stack struct pointer
 line_s* line;
+lexer_context_s* lctx;
 
 /*
 Helper function to free the memory for the dependencies
 */
 static void clean_up(void) {
     destroy_line(&line);
-    token_list_destroy(&tokens);
-    source = NULL;
-    start = 0;
-    current = 0;
-    line_number = 0;
-    source_length = 0;
+    destroy_lexer_context(&lctx);
 }
 
 /*
@@ -30,7 +27,7 @@ Helper function to initialize the dependencies
 */
 static void set_up(void) {
     line = initialize_line();
-    tokens = token_list_initialize();
+    lctx = initialize_lexer_context();
 }
 
 /*
@@ -115,8 +112,8 @@ void test_append_string_to_line(void) {
 
 void test_append_line_to_source(void) {
     append_to_line(line, "They were betrayed by Otto");
-    append_to_source(line);
-    CU_ASSERT_TRUE(strcmp(source, "They were betrayed by Otto") == 0);
+    append_to_source(lctx, line);
+    CU_ASSERT_TRUE(strcmp(lctx->source, "They were betrayed by Otto") == 0);
 }
 
 

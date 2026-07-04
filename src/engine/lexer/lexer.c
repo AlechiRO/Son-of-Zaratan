@@ -6,9 +6,15 @@
 #include "token.h"
 #include "lexer_globals.h"
 #include "error.h"
+#include "string_util.h"
 
-
-lexer_context_s* initialize_lexer_config(void) {
+/*
+Constructor
+Initializes the lexer context struct and 
+assigns each field to base value
+@return Pointer to a lexer context struct
+*/
+lexer_context_s* initialize_lexer_context(void) {
     lexer_context_s* lctx = malloc(sizeof(lexer_context_s));
     if(lctx == NULL) {
         fprintf(stderr, "FATAL: Could not allocate memory for the lexer context!\n");
@@ -24,6 +30,27 @@ lexer_context_s* initialize_lexer_config(void) {
     lctx->line_number = 1;
     lctx->source_length = 0;
 }
+
+/*
+Destructor
+Free the memory allocated for the lexer context
+@params lctx Pointer to a pointer to a lexer context struct
+*/
+void destroy_lexer_context(lexer_context_s** lctx) {
+    if((*lctx) == NULL || lctx == NULL) {
+        fprintf(stderr, "INFO: Could not destroy NULL lexer context");
+        return;
+    }
+
+    token_list_destroy(&((*lctx)->tokens));
+
+    if((*lctx)->source != NULL) 
+        free((*lctx)->source);
+    
+    free(*lctx);
+    *lctx = NULL;
+}
+
 /*
 Check if end of source is reached
 @return 1 if true or 0 if false
@@ -55,8 +82,8 @@ Main Lexer Loop
 @param line The line of code currently being scanned
 */
 token_list* lex(line_s* line) {
-    lexer_context_s* lctx = initialize_lexer_config();
-    append_to_source(line);
+    lexer_context_s* lctx = initialize_lexer_context();
+    append_to_source(lctx, line);
 
     while(!is_at_end(lctx)) {
         start = current;

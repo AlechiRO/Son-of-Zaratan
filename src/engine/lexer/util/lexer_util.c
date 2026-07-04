@@ -4,6 +4,7 @@
 #include <string.h>
 #include "lexer_util.h"
 #include "lexer_globals.h"
+#include "lexer.h"
 
 /*
 Initialize a line struct
@@ -55,17 +56,17 @@ void destroy_line(line_s** line) {
 Append a line of code to the source code
 @param line Pointer to line struct containing the line of code
 */
-void append_to_source(line_s* line) {
+void append_to_source(lexer_context_s* lctx, line_s* line) {
     char* content = line->buffer;
-    source = realloc(source, source_length + strlen(content));
+    lctx->source = realloc(lctx->source, lctx->source_length + strlen(content));
 
-    if(source == NULL) {
+    if(lctx->source == NULL) {
         fprintf(stderr, "FATAL: could not reallocate memory for source code");
         exit(EXIT_FAILURE);
     }
 
-    strcat(source, content);
-    source_length += strlen(content);
+    strcat(lctx->source, content);
+    lctx->source_length += strlen(content);
 }
 
 /*
@@ -84,29 +85,4 @@ void append_to_line(line_s* line, char* content) {
 
     strcat(line->buffer, content);
     line->length += content_length;
-}
-
-/*
-Extract a substring from a source string
-@param string Source string
-@param begin Start index for substring (included)
-@param end End index for substring (excluded)
-@return Pointer to a new string
-*/
-char* substring(char* string, int begin, int end) {
-    int substring_size = end - begin;
-
-    if(substring_size <= 0) {
-        fprintf(stderr, "ERROR: Invalid intexes for substring extraction");
-        return NULL;
-    }
-
-    char* substr = malloc(substring_size);
-
-    if(substr == NULL) {
-        fprintf(stderr, "FATAL: could not allocate memory for substring extraction");
-        exit(EXIT_FAILURE);
-    }
-
-    strncpy(substr, string, substring_size);
 }

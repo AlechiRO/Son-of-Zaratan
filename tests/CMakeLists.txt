@@ -36,6 +36,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${LEXER_UTIL_TEST_SOURCE}
         $<TARGET_OBJECTS:lexer_util_logic>
         $<TARGET_OBJECTS:lexer_logic>
+        $<TARGET_OBJECTS:string_util_logic>
     )
 
     target_link_libraries(LEXER_UTIL_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
