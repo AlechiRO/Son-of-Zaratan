@@ -1,2 +1,2 @@
 add_subdirectory(data_structures)
-add_subdirectory(functions)
+add_subdirectory(string)

@@ -1,0 +1,1 @@
+add_library(string_util_logic OBJECT string_util.c)

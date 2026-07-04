@@ -108,5 +108,5 @@ char* substring(char* string, int begin, int end) {
         exit(EXIT_FAILURE);
     }
 
-    strncpy(substr, source, substring_size);
+    strncpy(substr, string, substring_size);
 }
