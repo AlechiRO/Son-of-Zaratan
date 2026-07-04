@@ -9,3 +9,8 @@ target_include_directories(printer_logic PRIVATE
     ${CMAKE_SOURCE_DIR}/inc/modules
     ${CMAKE_SOURCE_DIR}/inc/generics
 )
+
+target_include_directories(token_logic PRIVATE 
+    ${CMAKE_SOURCE_DIR}/inc/modules
+    ${CMAKE_SOURCE_DIR}/inc/generics
+)
