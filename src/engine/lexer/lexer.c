@@ -28,8 +28,8 @@ lexer_context_s* initialize_lexer_config(void) {
 Check if end of source is reached
 @return 1 if true or 0 if false
 */
-int is_at_end(void) {
-    return current >= source_length;
+int is_at_end(lexer_context_s* lctx) {
+    return lctx->current >= lctx->source_length;
 }
 
 /*
@@ -37,17 +37,17 @@ Add token to the token list
 @param type Type of token
 @param literal Pointer to literal struct
 */
-void add_token(token_type_e type, literal_s* literal) {
-    char* lexeme = substring(source, start, current);
-    token_list_add(tokens, initialize_token(type, lexeme, literal, line_number)); 
+void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal) {
+    char* lexeme = substring(lctx->source, lctx->start, lctx->current);
+    token_list_add(tokens, initialize_token(type, lexeme, literal, lctx->line_number)); 
 }
 
 /*
 Retrieve the character at the current position and move to the next character
 @return The character at the current position
 */
-char advance(void) {
-    return source[current++];
+char advance(lexer_context_s* lctx) {
+    return lctx->source[lctx->current++];
 }
 
 /*
@@ -55,15 +55,16 @@ Main Lexer Loop
 @param line The line of code currently being scanned
 */
 token_list* lex(line_s* line) {
+    lexer_context_s* lctx = initialize_lexer_config();
     append_to_source(line);
 
-    while(!is_at_end()) {
+    while(!is_at_end(lctx)) {
         start = current;
-        scan_token();
+        scan_token(lctx);
     }
 
     // Add this token to mark the end of teh source code
-    add_token(TOKEN_EOF, NULL);
+    add_token(lctx, TOKEN_EOF, NULL);
     
     return tokens;
 }
@@ -71,19 +72,19 @@ token_list* lex(line_s* line) {
 /*
 Scan the current token
 */
-void scan_token(void) {
-    char c = advance();
+void scan_token(lexer_context_s* lctx) {
+    char c = advance(lctx);
     switch(c) {
-    case '(' : add_token(TOKEN_ROUND_BRACE_LEFT, NULL); break;
-    case ')' : add_token(TOKEN_ROUND_BRACE_RIGHT, NULL); break;
-    case '[' : add_token(TOKEN_SQUARE_BRACE_LEFT, NULL); break;
-    case ']' : add_token(TOKEN_SQUARE_BRACE_RIGHT, NULL); break;
-    case '{' : add_token(TOKEN_CURLY_BRACE_LEFT, NULL); break;
-    case '}' : add_token(TOKEN_CURLY_BRACE_RIGHT, NULL); break;
-    case '.' : add_token(TOKEN_DOT, NULL); break;
-    case ':' : add_token(TOKEN_COLON, NULL); break;
-    case ';' : add_token(TOKEN_SEMICOLON, NULL); break;
-    case ',' : add_token(TOKEN_COMMA, NULL); break;
+    case '(' : add_token(lctx, TOKEN_ROUND_BRACE_LEFT, NULL); break;
+    case ')' : add_token(lctx, TOKEN_ROUND_BRACE_RIGHT, NULL); break;
+    case '[' : add_token(lctx, TOKEN_SQUARE_BRACE_LEFT, NULL); break;
+    case ']' : add_token(lctx, TOKEN_SQUARE_BRACE_RIGHT, NULL); break;
+    case '{' : add_token(lctx, TOKEN_CURLY_BRACE_LEFT, NULL); break;
+    case '}' : add_token(lctx, TOKEN_CURLY_BRACE_RIGHT, NULL); break;
+    case '.' : add_token(lctx, TOKEN_DOT, NULL); break;
+    case ':' : add_token(lctx, TOKEN_COLON, NULL); break;
+    case ';' : add_token(lctx, TOKEN_SEMICOLON, NULL); break;
+    case ',' : add_token(lctx, TOKEN_COMMA, NULL); break;
         
     default: error(line_number, "Unexpected character"); break;
     }
