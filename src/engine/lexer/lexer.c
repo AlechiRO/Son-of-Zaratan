@@ -7,6 +7,23 @@
 #include "lexer_globals.h"
 #include "error.h"
 
+
+lexer_context_s* initialize_lexer_config(void) {
+    lexer_context_s* lctx = malloc(sizeof(lexer_context_s));
+    if(lctx == NULL) {
+        fprintf(stderr, "FATAL: Could not allocate memory for the lexer context!\n");
+        exit(EXIT_FAILURE);
+    }
+    // Initialize a new token list
+    token_list* tokens = token_list_initialize();
+    
+    lctx->source = NULL;
+    lctx->tokens = tokens;
+    lctx->start = 0;
+    lctx->current = 0;
+    lctx->line_number = 1;
+    lctx->source_length = 0;
+}
 /*
 Check if end of source is reached
 @return 1 if true or 0 if false
@@ -38,7 +55,6 @@ Main Lexer Loop
 @param line The line of code currently being scanned
 */
 token_list* lex(line_s* line) {
-    token_list* tokens = token_list_initialize();
     append_to_source(line);
 
     while(!is_at_end()) {
