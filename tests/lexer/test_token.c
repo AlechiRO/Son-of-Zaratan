@@ -3,7 +3,6 @@
 #include <string.h>
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
-#include <stdlib.h>
 #include <err.h>
 #include <string.h>
 #include "token.h"
