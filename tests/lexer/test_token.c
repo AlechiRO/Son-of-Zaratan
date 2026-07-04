@@ -91,7 +91,6 @@ void test_destroy_token_null_literal(void) {
 
     token->type = TOKEN_IDENTIFIER;
     token->lexeme = lexeme;
-    token->literal = literal;
     token->line = 10;
     destroy_token(&token);
     CU_ASSERT_PTR_NULL(token);

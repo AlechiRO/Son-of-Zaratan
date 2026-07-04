@@ -58,6 +58,12 @@ Append a line of code to the source code
 void append_to_source(line_s* line) {
     char* content = line->buffer;
     source = realloc(source, source_length + strlen(content));
+
+    if(source == NULL) {
+        fprintf(stderr, "FATAL: could not reallocate memory for source code");
+        exit(EXIT_FAILURE);
+    }
+
     strcat(source, content);
     source_length += strlen(content);
 }
@@ -70,6 +76,37 @@ Append code to existing line of code
 void append_to_line(line_s* line, char* content) {
     int content_length = strlen(content);
     line->buffer = realloc(line->buffer, sizeof(line->buffer) + content_length);
+
+    if(line->buffer == NULL) {
+        fprintf(stderr, "FATAL: could not reallocate memory for line buffer");
+        exit(EXIT_FAILURE);
+    }
+
     strcat(line->buffer, content);
     line->length += content_length;
+}
+
+/*
+Extract a substring from a source string
+@param string Source string
+@param begin Start index for substring (included)
+@param end End index for substring (excluded)
+@return Pointer to a new string
+*/
+char* substring(char* string, int begin, int end) {
+    int substring_size = end - begin;
+
+    if(substring_size <= 0) {
+        fprintf(stderr, "ERROR: Invalid intexes for substring extraction");
+        return NULL;
+    }
+
+    char* substr = malloc(substring_size);
+
+    if(substr == NULL) {
+        fprintf(stderr, "FATAL: could not allocate memory for substring extraction");
+        exit(EXIT_FAILURE);
+    }
+
+    strncpy(substr, source, substring_size);
 }

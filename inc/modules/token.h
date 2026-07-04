@@ -38,6 +38,7 @@ typedef enum token_type {
     TOKEN_WILDCARD,             // ?
     TOKEN_LESS_THAN,            // <
     TOKEN_GREATER_THAN,         // >
+    TOKEN_COMMENT,              // #
 
     // Double Character Tokens
     TOKEN_ARROW,                // ->

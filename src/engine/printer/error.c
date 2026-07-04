@@ -27,7 +27,7 @@ void error(int line, char* message) {
 Checks whether there is an error and resets the error status
 @return 1 if there is an error or 0 if the script has no errors
 */
-int check_error() {
+int check_error(void) {
     int error = had_error;
     had_error = 0;
     return error;

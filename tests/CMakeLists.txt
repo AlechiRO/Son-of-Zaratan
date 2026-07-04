@@ -62,7 +62,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
 
     add_executable(TOKEN_TEST_DRIVER
         ${TOKEN_TEST_SOURCE}
-        $<TARGET_OBJECTS:lexer_logic>
+        $<TARGET_OBJECTS:token_logic>
     )
     
     target_link_libraries(TOKEN_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})

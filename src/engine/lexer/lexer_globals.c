@@ -19,5 +19,5 @@ char* source = NULL;
 token_list* tokens;
 int start = 0;
 int current = 0;
-int line_number = 0;
+int line_number = 1;
 int source_length = 0;

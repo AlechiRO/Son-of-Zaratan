@@ -1,7 +1,10 @@
+#ifndef LEXER_GLOBALS_H
+#define LEXER_GLOBALS_H
+
 #include "token.h"
 
 // Setup for Token Array List
-#define ARRAY_LIST_ITEM_TYPE token_s
+#define ARRAY_LIST_ITEM_TYPE token_s*
 #define ARRAY_LIST_TAG token_list
 #include "array_list.h"
 
@@ -19,3 +22,5 @@ extern int start;
 extern int current;
 extern int line_number;
 extern int source_length;
+
+#endif
