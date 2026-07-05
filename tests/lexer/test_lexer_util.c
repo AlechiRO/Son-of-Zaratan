@@ -9,7 +9,7 @@
 #include "lexer.h"
 
 
-// Global stack struct pointer
+// Global line and lexer context struct pointers
 line_s* line;
 lexer_context_s* lctx;
 

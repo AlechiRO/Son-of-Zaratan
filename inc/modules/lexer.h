@@ -20,6 +20,7 @@ typedef struct Lexer_context {
 
 lexer_context_s* initialize_lexer_context(void);
 void destroy_lexer_context(lexer_context_s** lctx);
+int is_at_end(lexer_context_s* lctx);
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal);
 char advance(lexer_context_s* lctx);
 token_list* lex(line_s* line);

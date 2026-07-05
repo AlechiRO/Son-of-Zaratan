@@ -6,6 +6,7 @@
 #include "token.h"
 #include "error.h"
 #include "string_util.h"
+#include "string_util.h"
 
 /*
 Constructor
