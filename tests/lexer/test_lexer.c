@@ -25,10 +25,8 @@ static void clean_up(void) {
 Helper function to initialize the dependencies
 */
 static void set_up(void) {
-    
+    lctx = initialize_lexer_context();
 }
-
-
 
 /* 
 Helper function to create a suite
@@ -53,6 +51,25 @@ void test_initialize_lexer_context(void) {
     CU_ASSERT_EQUAL(lctx->source_length, 0);
 }
 
+void test_destroy_lexer_context(void) {
+    lctx->source = malloc(sizeof("Iron Islands"));
+    strcpy(lctx->source, "Iron Islands");
+    destroy_lexer_context(&lctx);
+    CU_ASSERT_PTR_NULL(lctx);
+}
+
+void test_is_at_end(void) {
+    lctx->current = 10;
+    lctx->source_length = 11;
+    CU_ASSERT_FALSE(is_at_end(lctx));
+}
+
+void test_is_not_at_end(void) {
+    lctx->current = 5;
+    lctx->source_length = 5;
+    CU_ASSERT_TRUE(is_at_end(lctx));
+}
+
 
 int main(void) {
 
@@ -63,7 +80,16 @@ int main(void) {
     /* Lexer context initialize suite */
     CU_pSuite lexer_context_initialize_suite = create_suite("lexer context initialize suite", NULL, clean_up);
     CU_add_test(lexer_context_initialize_suite, "initialize lexer context", test_initialize_lexer_context);
+    
+    /* Lexer context destroy suite */
+    CU_pSuite lexer_context_destroy_suite = create_suite("lexer context destroy suite", set_up, NULL);
+    CU_add_test(lexer_context_destroy_suite, "destroy lexer context", test_destroy_lexer_context);
 
+    /* Is at end suite */
+    CU_pSuite is_at_end_suite = create_suite("is at end suite", set_up, clean_up);
+    CU_add_test(is_at_end_suite, "is at end", test_is_at_end);
+    CU_add_test(is_at_end_suite, "is not at end", test_is_not_at_end);
+    
     // run the tests
     CU_basic_run_tests();
 
