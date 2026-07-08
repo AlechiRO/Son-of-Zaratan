@@ -49,9 +49,6 @@ typedef enum token_type {
     TOKEN_DECREMENT,            // --
     TOKEN_AND,                  // &&
     TOKEN_OR,                   // ||
-    TOKEN_ARGUMENT_NUMBER,      // $#
-    TOKEN_ARGUMENT_ARRAY,       // $@
-    TOKEN_FILE_DESCRIPTOR,      // &0 or &1 or &2
 
     // Braces Tokens
     TOKEN_ROUND_BRACE_LEFT,     // (
@@ -61,12 +58,11 @@ typedef enum token_type {
     TOKEN_CURLY_BRACE_LEFT,     // {
     TOKEN_CURLY_BRACE_RIGHT,    // }
 
-    // Dollar Tokens
-    TOKEN_ARG_POSITION,         // $1 or $2 or $3 ...
-    TOKEN_ARG_COUNT,            // $#
-    TOKEN_ARG_ARRAY,            // $@
-    TOKEN_INTERPOLATION_START,  // ${
-    TOKEN_VARIABLE_REFERENCE,   // $myVar
+    // Special Tokens
+    TOKEN_DOLLAR,               // $
+    TOKEN_HASHTAG,              // # either start of a comment or argument count as $#
+    TOKEN_AT_SIGN,              // @ argument array as $@
+    TOKEN_AMPERSAND,            // & file descriptors as &0 or &1 or &2
 
     // Key Word Tokens
     TOKEN_IF,                   // if
