@@ -18,8 +18,7 @@ typedef enum token_type {
 
     // Literal Tokens
     TOKEN_NUMBER,               // 123.33 or 43
-    TOKEN_STRING,               // "Jon Snow"
-    TOKEN_SPECIAL_STRING,       // 'Baratheon' 
+    TOKEN_STRING,               // "Baratheon"  can be surrounded by "" or '' 
     TOKEN_IDENTIFIER,           // Literal that will be checked against the command and environment var HashMaps
     TOKEN_VAR,                  // var
     
@@ -38,7 +37,6 @@ typedef enum token_type {
     TOKEN_WILDCARD,             // ?
     TOKEN_LESS_THAN,            // <
     TOKEN_GREATER_THAN,         // >
-    TOKEN_COMMENT,              // #
 
     // Double Character Tokens
     TOKEN_ARROW,                // ->
@@ -60,9 +58,10 @@ typedef enum token_type {
 
     // Special Tokens
     TOKEN_DOLLAR,               // $
-    TOKEN_HASHTAG,              // # either start of a comment or argument count as $#
-    TOKEN_AT_SIGN,              // @ argument array as $@
-    TOKEN_AMPERSAND,            // & file descriptors as &0 or &1 or &2
+    TOKEN_ARGUMENT_NUMBER,      // $#
+    TOKEN_ARGUMENT_ARRAY,       // $@
+    TOKEN_FILE_DESCRIPTOR,      // &0 or &1 or &2
+    TOKEN_COMMENT,              // ~ before writing a comment
 
     // Key Word Tokens
     TOKEN_IF,                   // if

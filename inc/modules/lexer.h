@@ -8,6 +8,15 @@
 #define ARRAY_LIST_TAG token_list
 #include "array_list.h"
 
+//Lexer state enum
+typedef enum Lexer_state {
+    STATE_DEFAULT,            // Programming expressions (math, vars, control flow)
+    STATE_COMMAND,            // Shell commands and bare-word arguments
+    STATE_STRING_DOUBLE,      // Inside "...", allows globbing/expansion
+    STATE_STRING_SINGLE,      // Inside '...', raw text, no expansion
+    STATE_HEREDOC_BODY        // Processing lines until reaching the EOF marker
+} lexer_state_e;
+
 // Lexer config struct definition
 typedef struct Lexer_context {
     char* source;           // String containing the script
