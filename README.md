@@ -1,5 +1,5 @@
 # Son-of-Zaratan
-- SOZ a POSIX-like Unix shell interpreter from scratch in C using principles found in “Crafting Interpreters” by Robert Nystorm.
+- SOZ is a POSIX-like Unix shell interpreter from scratch in C using principles found in “Crafting Interpreters” by Robert Nystorm.
 # Features and Language Semantics
 - You can find the full list of features and language specifications by following this link: https://app.notion.com/p/The-soz-language-31f3dd8ecf208085b01ae307fc2726b7?source=copy_link
 ### Disclamer !
