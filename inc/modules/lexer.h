@@ -12,8 +12,8 @@
 typedef enum Lexer_state {
     STATE_DEFAULT,            // Programming expressions (math, vars, control flow)
     STATE_COMMAND,            // Shell commands and bare-word arguments
-    STATE_STRING_DOUBLE,      // Inside "...", allows globbing/expansion
-    STATE_STRING_SINGLE,      // Inside '...', raw text, no expansion
+    STATE_STRING_GLOB,          // Inside "...", allows globbing/expansion
+    STATE_STRING_SIMPLE,      // Inside '...', raw text, no expansion
     STATE_HEREDOC_BODY        // Processing lines until reaching the EOF marker
 } lexer_state_e;
 
@@ -21,6 +21,7 @@ typedef enum Lexer_state {
 typedef struct Lexer_context {
     char* source;           // String containing the script
     token_list* tokens;     // Token Array List
+    lexer_state_e state;    // Current state of the lexer
     int start;              // Start index of the current lexeme
     int current;            // Index of the currently scanned character in the lexeme
     int line_number;        // Tracks the line current is on 

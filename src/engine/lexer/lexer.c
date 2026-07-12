@@ -23,6 +23,7 @@ lexer_context_s* initialize_lexer_context(void) {
     // Initialize a new token list
     token_list* tokens = token_list_initialize();
     
+    lctx->state = STATE_DEFAULT;
     lctx->source = NULL;
     lctx->tokens = tokens;
     lctx->start = 0;
