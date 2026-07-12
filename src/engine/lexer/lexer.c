@@ -79,6 +79,31 @@ char advance(lexer_context_s* lctx) {
 }
 
 /*
+Check if the next character matches the expected character
+@param lctx Pointer to lexer context struct
+@param expected Character that is expected after the last scanned character
+@return 1 if the character matches the expected value, else 0
+*/
+int match(lexer_context_s* lctx, char expected) {
+    if(is_at_end(lctx)) 
+        return 0; 
+    if((lctx->source)[lctx->current] != expected) 
+        return 0;
+    lctx->current++;
+    return 1;
+}
+
+
+int match_two_tokens(lexer_context_s* lctx, char expected_1, token_type_e type_1, char expected_2, token_type_e type_2, token_type_e type_3) {
+    if(match(lctx, expected_1)) 
+        add_token(lctx, type_1, NULL);
+    else if(match(lctx, expected_2))
+        add_token(lctx, type_2, NULL);
+    else 
+        add_token(lctx, type_3, NULL);
+}
+
+/*
 Main Lexer Loop
 @param line The line of code currently being scanned
 */
@@ -91,7 +116,7 @@ token_list* lex(line_s* line) {
         scan_token(lctx);
     }
 
-    // Add this token to mark the end of teh source code
+    // Add this token to mark the end of the source code
     add_token(lctx, TOKEN_EOF, NULL);
     
     return lctx->tokens;
@@ -103,6 +128,7 @@ Scan the current token
 void scan_token(lexer_context_s* lctx) {
     char c = advance(lctx);
     switch(c) {
+    // Single character tokens
     case '(' : add_token(lctx, TOKEN_ROUND_BRACE_LEFT, NULL); break;
     case ')' : add_token(lctx, TOKEN_ROUND_BRACE_RIGHT, NULL); break;
     case '[' : add_token(lctx, TOKEN_SQUARE_BRACE_LEFT, NULL); break;
@@ -113,6 +139,43 @@ void scan_token(lexer_context_s* lctx) {
     case ':' : add_token(lctx, TOKEN_COLON, NULL); break;
     case ';' : add_token(lctx, TOKEN_SEMICOLON, NULL); break;
     case ',' : add_token(lctx, TOKEN_COMMA, NULL); break;
+    //Double character tokens
+    case '!' : add_token(lctx, match(lctx, '=') ? TOKEN_BANG_EQUAL : TOKEN_BANG, NULL); break;
+    case '=' : add_token(lctx, match(lctx,'=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL, NULL); break;
+    case '+' : add_token(lctx, match(lctx,'+') ? TOKEN_INCREMENT : TOKEN_PLUS, NULL); break;
+    case '|' : add_token(lctx, match(lctx,'|') ? TOKEN_OR : TOKEN_PIPE, NULL); break;
+    case '*' : add_token(lctx, match(lctx,'*') ? TOKEN_POW : TOKEN_STAR, NULL); break;
+    //Duble character, multiple options tokens
+    case '<' : 
+        // if(match(lctx, '=')) 
+        //     add_token(lctx, TOKEN_LESS_EQUAL, NULL);
+        // else if(match(lctx, '<'))
+        //     add_token(lctx, TOKEN_HEREDOC_REDIRECT, NULL);
+        // else 
+        //     add_token(lctx, TOKEN_LESS, NULL);
+
+        //match_two_tokens();
+        break;
+    case '>' : 
+        // if(match(lctx, '=')) 
+        //     add_token(lctx, TOKEN_GREATER_EQUAL, NULL);
+        // else if(match(lctx, '>'))
+        //     add_token(lctx, TOKEN_APPEND_REDIRECT, NULL);
+        // else 
+        //     add_token(lctx, TOKEN_GREATER, NULL);
+
+        //match_two_tokens();
+        break;
+    case '-' : 
+        // if(match(lctx, '-'))
+        //     add_token(lctx, TOKEN_DECREMENT, NULL);
+        // else if(match(lctx, '>'))
+        //     add_token(lctx, TOKEN_ARROW, NULL);
+        // else 
+        //     add_token(lctx, TOKEN_MINUS, NULL); 
+
+        //match_two_tokens();
+        break;
         
     default: error(lctx->line_number, "Unexpected character"); break;
     }

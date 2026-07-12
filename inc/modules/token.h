@@ -33,10 +33,10 @@ typedef enum token_type {
     TOKEN_SEMICOLON,            // ;
     TOKEN_COLON,                // :
     TOKEN_COMMA,                // ,
-    TOKEN_NEGATE,               // !
+    TOKEN_BANG,                 // !
     TOKEN_WILDCARD,             // ?
-    TOKEN_LESS_THAN,            // <
-    TOKEN_GREATER_THAN,         // >
+    TOKEN_LESS,            // <
+    TOKEN_GREATER,         // >
 
     // Double Character Tokens
     TOKEN_ARROW,                // ->
@@ -47,6 +47,10 @@ typedef enum token_type {
     TOKEN_DECREMENT,            // --
     TOKEN_AND,                  // &&
     TOKEN_OR,                   // ||
+    TOKEN_BANG_EQUAL,           // !=
+    TOKEN_EQUAL_EQUAL,          // ==
+    TOKEN_LESS_EQUAL,           // <=
+    TOKEN_GREATER_EQUAL,        // >=
 
     // Braces Tokens
     TOKEN_ROUND_BRACE_LEFT,     // (
