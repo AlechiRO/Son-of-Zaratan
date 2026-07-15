@@ -147,34 +147,13 @@ void scan_token(lexer_context_s* lctx) {
     case '*' : add_token(lctx, match(lctx,'*') ? TOKEN_POW : TOKEN_STAR, NULL); break;
     //Duble character, multiple options tokens
     case '<' : 
-        // if(match(lctx, '=')) 
-        //     add_token(lctx, TOKEN_LESS_EQUAL, NULL);
-        // else if(match(lctx, '<'))
-        //     add_token(lctx, TOKEN_HEREDOC_REDIRECT, NULL);
-        // else 
-        //     add_token(lctx, TOKEN_LESS, NULL);
-
-        //match_two_tokens();
+        match_two_tokens(lctx, '=', TOKEN_LESS_EQUAL, '<', TOKEN_HEREDOC_REDIRECT, TOKEN_LESS);
         break;
     case '>' : 
-        // if(match(lctx, '=')) 
-        //     add_token(lctx, TOKEN_GREATER_EQUAL, NULL);
-        // else if(match(lctx, '>'))
-        //     add_token(lctx, TOKEN_APPEND_REDIRECT, NULL);
-        // else 
-        //     add_token(lctx, TOKEN_GREATER, NULL);
-
-        //match_two_tokens();
+        match_two_tokens(lctx, '=', TOKEN_GREATER_EQUAL, '>', TOKEN_APPEND_REDIRECT, TOKEN_GREATER);
         break;
     case '-' : 
-        // if(match(lctx, '-'))
-        //     add_token(lctx, TOKEN_DECREMENT, NULL);
-        // else if(match(lctx, '>'))
-        //     add_token(lctx, TOKEN_ARROW, NULL);
-        // else 
-        //     add_token(lctx, TOKEN_MINUS, NULL); 
-
-        //match_two_tokens();
+        match_two_tokens(lctx, '-', TOKEN_DECREMENT, '>', TOKEN_ARROW, TOKEN_MINUS);
         break;
         
     default: error(lctx->line_number, "Unexpected character"); break;
