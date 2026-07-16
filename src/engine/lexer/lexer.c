@@ -93,14 +93,34 @@ int match(lexer_context_s* lctx, char expected) {
     return 1;
 }
 
-
-int match_two_tokens(lexer_context_s* lctx, char expected_1, token_type_e type_1, char expected_2, token_type_e type_2, token_type_e type_3) {
+/*
+Verify the next chacacter and match the token with either type 1, 2 or 3
+used for 2 character tokens with same starting character
+@param lctx Pointer to lexer context struct
+@param expected_1 First expected character
+@param type_1 Type corresponding to the first expected character
+@param expected_2 Second expected character
+@param type_2 Type corresponding to the second expected character
+@param type_3 Type corresponding to the previously scanned character followed by some other character
+*/
+void match_two_tokens(lexer_context_s* lctx, char expected_1, token_type_e type_1, char expected_2, token_type_e type_2, token_type_e type_3) {
     if(match(lctx, expected_1)) 
         add_token(lctx, type_1, NULL);
     else if(match(lctx, expected_2))
         add_token(lctx, type_2, NULL);
     else 
         add_token(lctx, type_3, NULL);
+}
+
+/*
+Get the character at the current index
+@param lctx Pointer to lexer context struct
+@return The character at current index or '\0'(NULL) if end of source is reached
+*/
+char peek(lexer_context_s* lctx) {
+    if(is_at_end(lctx)) 
+        return '\0';
+    return (lctx->source)[lctx->current];
 }
 
 /*
@@ -139,13 +159,14 @@ void scan_token(lexer_context_s* lctx) {
     case ':' : add_token(lctx, TOKEN_COLON, NULL); break;
     case ';' : add_token(lctx, TOKEN_SEMICOLON, NULL); break;
     case ',' : add_token(lctx, TOKEN_COMMA, NULL); break;
-    //Double character tokens
+    case '/' : add_token(lctx, TOKEN_SLASH, NULL); break;
+    // Double character tokens
     case '!' : add_token(lctx, match(lctx, '=') ? TOKEN_BANG_EQUAL : TOKEN_BANG, NULL); break;
     case '=' : add_token(lctx, match(lctx,'=') ? TOKEN_EQUAL_EQUAL : TOKEN_EQUAL, NULL); break;
     case '+' : add_token(lctx, match(lctx,'+') ? TOKEN_INCREMENT : TOKEN_PLUS, NULL); break;
     case '|' : add_token(lctx, match(lctx,'|') ? TOKEN_OR : TOKEN_PIPE, NULL); break;
     case '*' : add_token(lctx, match(lctx,'*') ? TOKEN_POW : TOKEN_STAR, NULL); break;
-    //Duble character, multiple options tokens
+    // Duble character, multiple options tokens
     case '<' : 
         match_two_tokens(lctx, '=', TOKEN_LESS_EQUAL, '<', TOKEN_HEREDOC_REDIRECT, TOKEN_LESS);
         break;
@@ -154,6 +175,11 @@ void scan_token(lexer_context_s* lctx) {
         break;
     case '-' : 
         match_two_tokens(lctx, '-', TOKEN_DECREMENT, '>', TOKEN_ARROW, TOKEN_MINUS);
+        break;
+    // Ignoring comments
+    case '~':
+        while(peek(lctx) != '\n' && !is_at_end(lctx)) 
+            advance(lctx);
         break;
         
     default: error(lctx->line_number, "Unexpected character"); break;

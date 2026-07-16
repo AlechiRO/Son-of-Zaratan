@@ -23,42 +23,42 @@ typedef enum token_type {
     TOKEN_VAR,                  // var
     
     // Single Charecter Tokens
-    TOKEN_PLUS,                 // +
-    TOKEN_MINUS,                // -
-    TOKEN_SLASH,                // /
-    TOKEN_STAR,                 // *
-    TOKEN_EQUAL,                // =
-    TOKEN_DOT,                  // .
-    TOKEN_PIPE,                 // | 
-    TOKEN_SEMICOLON,            // ;
-    TOKEN_COLON,                // :
-    TOKEN_COMMA,                // ,
-    TOKEN_BANG,                 // !
-    TOKEN_WILDCARD,             // ?
-    TOKEN_LESS,            // <
-    TOKEN_GREATER,         // >
+    TOKEN_PLUS,                 // +    OK
+    TOKEN_MINUS,                // -    OK
+    TOKEN_SLASH,                // /    OK
+    TOKEN_STAR,                 // *    OK
+    TOKEN_EQUAL,                // =    OK
+    TOKEN_DOT,                  // .    OK
+    TOKEN_PIPE,                 // |    OK
+    TOKEN_SEMICOLON,            // ;    OK
+    TOKEN_COLON,                // :    OK
+    TOKEN_COMMA,                // ,    OK
+    TOKEN_BANG,                 // !    OK
+    TOKEN_WILDCARD,             // ?    OK
+    TOKEN_LESS,                 // <    OK
+    TOKEN_GREATER,              // >    OK
 
     // Double Character Tokens
-    TOKEN_ARROW,                // ->
-    TOKEN_APPEND_REDIRECT,      // >>
-    TOKEN_HEREDOC_REDIRECT,     // <<
-    TOKEN_POW,                  // **
-    TOKEN_INCREMENT,            // ++
-    TOKEN_DECREMENT,            // --
-    TOKEN_AND,                  // &&
-    TOKEN_OR,                   // ||
-    TOKEN_BANG_EQUAL,           // !=
-    TOKEN_EQUAL_EQUAL,          // ==
-    TOKEN_LESS_EQUAL,           // <=
-    TOKEN_GREATER_EQUAL,        // >=
+    TOKEN_ARROW,                // ->   OK
+    TOKEN_APPEND_REDIRECT,      // >>   OK
+    TOKEN_HEREDOC_REDIRECT,     // <<   
+    TOKEN_POW,                  // **   OK
+    TOKEN_INCREMENT,            // ++   OK
+    TOKEN_DECREMENT,            // --   OK
+    TOKEN_AND,                  // &&   OK
+    TOKEN_OR,                   // ||   OK
+    TOKEN_BANG_EQUAL,           // !=   OK
+    TOKEN_EQUAL_EQUAL,          // ==   OK
+    TOKEN_LESS_EQUAL,           // <=   OK
+    TOKEN_GREATER_EQUAL,        // >=   OK
 
     // Braces Tokens
-    TOKEN_ROUND_BRACE_LEFT,     // (
-    TOKEN_ROUND_BRACE_RIGHT,    // )
-    TOKEN_SQUARE_BRACE_LEFT,    // [
-    TOKEN_SQUARE_BRACE_RIGHT,   // ]
-    TOKEN_CURLY_BRACE_LEFT,     // {
-    TOKEN_CURLY_BRACE_RIGHT,    // }
+    TOKEN_ROUND_BRACE_LEFT,     // (   OK
+    TOKEN_ROUND_BRACE_RIGHT,    // )   OK
+    TOKEN_SQUARE_BRACE_LEFT,    // [   OK
+    TOKEN_SQUARE_BRACE_RIGHT,   // ]   OK
+    TOKEN_CURLY_BRACE_LEFT,     // {   OK
+    TOKEN_CURLY_BRACE_RIGHT,    // }   OK
 
     // Special Tokens
     TOKEN_DOLLAR,               // $
@@ -79,7 +79,7 @@ typedef enum token_type {
     TOKEN_RETURN,               // return
 
     // Terminator Tokens
-    TOKEN_EOF,                  // END OF FILE
+    TOKEN_EOF,                  // END OF FILE  OK
     TOKEN_ERROR,                // (If sequence of chars can't be turned into a token)
 } token_type_e;
 
