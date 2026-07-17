@@ -18,7 +18,8 @@ typedef enum token_type {
 
     // Literal Tokens
     TOKEN_NUMBER,               // 123.33 or 43
-    TOKEN_STRING,               // "Baratheon"  can be surrounded by "" or '' 
+    TOKEN_STRING_GLOB,          // "*.mp4"  Tells the parser to enable globbing
+    TOKEN_STRING_DEFAULT,       // ''
     TOKEN_IDENTIFIER,           // Literal that will be checked against the command and environment var HashMaps
     TOKEN_VAR,                  // var
     
@@ -66,6 +67,7 @@ typedef enum token_type {
     TOKEN_ARGUMENT_ARRAY,       // $@
     TOKEN_FILE_DESCRIPTOR,      // &0 or &1 or &2
     TOKEN_COMMENT,              // ~ before writing a comment
+    TOKEN_TERMINATOR,           // '\n'
 
     // Key Word Tokens
     TOKEN_IF,                   // if
@@ -156,6 +158,7 @@ typedef struct Token {
     char* lexeme;
     literal_s* literal; 
     int line;
+    int leading_whitespace;
 } token_s;
 
 /* Literal Functions */

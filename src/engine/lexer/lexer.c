@@ -181,6 +181,15 @@ void scan_token(lexer_context_s* lctx) {
         while(peek(lctx) != '\n' && !is_at_end(lctx)) 
             advance(lctx);
         break;
+    // Ignore whitespace
+    case '\r':
+    case '\t':
+        break;
+    // Handle terminator
+    case '\n':
+        add_token(lctx, TOKEN_TERMINATOR, NULL);
+        lctx->line_number++;
+        break;
         
     default: error(lctx->line_number, "Unexpected character"); break;
     }
