@@ -151,6 +151,30 @@ void mark_token_whitespace(lexer_context_s* lctx, int whitespace) {
     token_s* last_token = token_list_get(lctx->tokens, token_list_get_size(lctx->tokens) - 1);
     last_token->leading_whitespace = whitespace;
 }
+/*
+Scan a string token and add it to the list of tokens
+@param lctx Pointer to lexer context struct
+*/
+void string(lexer_context_s* lctx) {
+    while(peek(lctx) && !is_at_end(lctx)) {
+        if(peek(lctx) == '\n') 
+            lctx->line_number++;
+        advance(lctx);
+    }
+
+    if(is_at_end(lctx)) {
+        error(lctx->line_number, "Unterminated String");
+        return;
+    }
+    // Consume the closing "
+    advance(lctx);
+    
+    // Add the token to the list
+    char* value = substring(lctx->source, lctx->start + 1, lctx->current-1);
+    literal_s* literal = initialize_literal(LITERAL_STRING);
+    (literal->value).string_value = value;
+    add_token(lctx, TOKEN_STRING_GLOB, literal);
+}
 
 /*
 Main Lexer Loop
@@ -224,6 +248,10 @@ void scan_token(lexer_context_s* lctx) {
     case '\n':
         add_token(lctx, TOKEN_TERMINATOR, NULL);
         lctx->line_number++;
+        break;
+    // Handle strings
+    case '"': 
+        string(lctx);
         break;
         
     default: error(lctx->line_number, "Unexpected character"); break;

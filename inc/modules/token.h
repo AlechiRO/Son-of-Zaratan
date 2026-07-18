@@ -66,7 +66,7 @@ typedef enum token_type {
     TOKEN_ARGUMENT_NUMBER,      // $#
     TOKEN_ARGUMENT_ARRAY,       // $@
     TOKEN_FILE_DESCRIPTOR,      // &0 or &1 or &2
-    TOKEN_COMMENT,              // ~ before writing a comment
+    TOKEN_COMMENT,              // ~ before writing a comment OK
     TOKEN_TERMINATOR,           // '\n'
 
     // Key Word Tokens
