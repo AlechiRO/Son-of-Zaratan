@@ -49,6 +49,7 @@ token_s* initialize_token(token_type_e type, char* lexeme, literal_s* literal, i
     token->lexeme = lexeme;
     token->literal = literal;
     token->line = line;
+    token->leading_whitespace = 0;
     return token;
 }
 /*

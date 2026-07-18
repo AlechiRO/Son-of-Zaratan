@@ -62,6 +62,7 @@ int is_at_end(lexer_context_s* lctx) {
 
 /*
 Add token to the token list
+@param lctx Pointer to lexer context struct
 @param type Type of token
 @param literal Pointer to literal struct
 */
@@ -96,6 +97,7 @@ int match(lexer_context_s* lctx, char expected) {
 /*
 Verify the next chacacter and match the token with either type 1, 2 or 3
 used for 2 character tokens with same starting character
+Adds the token after matching the correct type
 @param lctx Pointer to lexer context struct
 @param expected_1 First expected character
 @param type_1 Type corresponding to the first expected character
@@ -124,26 +126,63 @@ char peek(lexer_context_s* lctx) {
 }
 
 /*
+For each token check for leading whitespace
+@param lctx Pointer to lexer context struct
+@return 1 if token has leading whitespace and 0 otherwise
+*/
+int check_leading_whitespace(lexer_context_s* lctx) {
+    int found = 0;
+    while(!is_at_end(lctx)) {
+        char c = peek(lctx);
+        if(c == ' ' || c == '\t' || c == '\r') {
+            advance(lctx);
+            found = 1;
+        } else break;
+    }
+    return found;
+}
+
+/*
+Mark the leading whitespace flag for last added token
+@param lctx Pointer to lexer context struct
+@param whitespace Boolean denoting leading whitespace
+*/
+void mark_token_whitespace(lexer_context_s* lctx, int whitespace) {
+    token_s* last_token = token_list_get(lctx->tokens, token_list_get_size(lctx->tokens) - 1);
+    last_token->leading_whitespace = whitespace;
+}
+
+/*
 Main Lexer Loop
 @param line The line of code currently being scanned
 */
 token_list* lex(line_s* line) {
     lexer_context_s* lctx = initialize_lexer_context();
     append_to_source(lctx, line);
+    int whitespace = 0;
 
     while(!is_at_end(lctx)) {
         lctx->start = lctx->current;
-        scan_token(lctx);
+        // Handle and checck for whitespace
+        whitespace = check_leading_whitespace(lctx);
+        // Scan the current token
+        if(!is_at_end(lctx)) {
+            scan_token(lctx);
+            // Compute leading whitespace flag for scanned token
+            mark_token_whitespace(lctx, whitespace);
+        }
     }
 
     // Add this token to mark the end of the source code
     add_token(lctx, TOKEN_EOF, NULL);
-    
+    // Compute leading whitespace flag for EOF token
+    mark_token_whitespace(lctx, whitespace);
     return lctx->tokens;
 }
 
 /*
 Scan the current token
+@param lctx Pointer to lexer context struct
 */
 void scan_token(lexer_context_s* lctx) {
     char c = advance(lctx);
@@ -180,10 +219,6 @@ void scan_token(lexer_context_s* lctx) {
     case '~':
         while(peek(lctx) != '\n' && !is_at_end(lctx)) 
             advance(lctx);
-        break;
-    // Ignore whitespace
-    case '\r':
-    case '\t':
         break;
     // Handle terminator
     case '\n':
