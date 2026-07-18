@@ -146,17 +146,23 @@ int check_leading_whitespace(lexer_context_s* lctx) {
 Mark the leading whitespace flag for last added token
 @param lctx Pointer to lexer context struct
 @param whitespace Boolean denoting leading whitespace
+@param token_count_before The number of tokens before calling this function
 */
-void mark_token_whitespace(lexer_context_s* lctx, int whitespace) {
+void mark_token_whitespace(lexer_context_s* lctx, int whitespace, int token_count_before) {
+    if(token_count_before != token_list_get_size(lctx->tokens) - 1) 
+        return;
     token_s* last_token = token_list_get(lctx->tokens, token_list_get_size(lctx->tokens) - 1);
     last_token->leading_whitespace = whitespace;
+    
 }
 /*
 Scan a string token and add it to the list of tokens
 @param lctx Pointer to lexer context struct
+@param glob Boolean denoting whether the string allows globbing
 */
-void string(lexer_context_s* lctx) {
-    while(peek(lctx) && !is_at_end(lctx)) {
+void string(lexer_context_s* lctx, int glob) {
+    char string_terminator = glob ? '"' : '\'';
+    while(peek(lctx) != string_terminator && !is_at_end(lctx)) {
         if(peek(lctx) == '\n') 
             lctx->line_number++;
         advance(lctx);
@@ -173,7 +179,11 @@ void string(lexer_context_s* lctx) {
     char* value = substring(lctx->source, lctx->start + 1, lctx->current-1);
     literal_s* literal = initialize_literal(LITERAL_STRING);
     (literal->value).string_value = value;
-    add_token(lctx, TOKEN_STRING_GLOB, literal);
+
+    if(glob)
+        add_token(lctx, TOKEN_STRING_GLOB, literal);
+    else 
+        add_token(lctx, TOKEN_STRING_DEFAULT, literal);
 }
 
 /*
@@ -184,23 +194,26 @@ token_list* lex(line_s* line) {
     lexer_context_s* lctx = initialize_lexer_context();
     append_to_source(lctx, line);
     int whitespace = 0;
-
+    int token_count = 0;
     while(!is_at_end(lctx)) {
         lctx->start = lctx->current;
         // Handle and checck for whitespace
         whitespace = check_leading_whitespace(lctx);
+        // Compute token count before adding a token
+        token_count = token_list_get_size(lctx->tokens);
         // Scan the current token
         if(!is_at_end(lctx)) {
             scan_token(lctx);
             // Compute leading whitespace flag for scanned token
-            mark_token_whitespace(lctx, whitespace);
+            mark_token_whitespace(lctx, whitespace, token_count);
         }
     }
-
+    // Compute token count before adding EOF token
+    token_count = token_list_get_size(lctx->tokens);
     // Add this token to mark the end of the source code
     add_token(lctx, TOKEN_EOF, NULL);
     // Compute leading whitespace flag for EOF token
-    mark_token_whitespace(lctx, whitespace);
+    mark_token_whitespace(lctx, whitespace, token_count);
     return lctx->tokens;
 }
 
@@ -251,7 +264,10 @@ void scan_token(lexer_context_s* lctx) {
         break;
     // Handle strings
     case '"': 
-        string(lctx);
+        string(lctx, 1);
+        break;
+    case '\'':
+        string(lctx, 0);
         break;
         
     default: error(lctx->line_number, "Unexpected character"); break;
