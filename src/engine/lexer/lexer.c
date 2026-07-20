@@ -219,6 +219,18 @@ void string(lexer_context_s* lctx, int glob) {
         add_token(lctx, TOKEN_STRING_DEFAULT, literal);
 }
 
+
+/*
+Add an identifier token to the list
+@param lctx Pointer to lexer context struct
+*/
+void identifier(lexer_context_s* lctx) {
+    while(is_alphanumeric(peek(lctx)))
+        advance(lctx);
+
+    add_token(lctx, TOKEN_IDENTIFIER, NULL);
+}
+
 /*
 Main Lexer Loop
 @param line The line of code currently being scanned
@@ -306,6 +318,8 @@ void scan_token(lexer_context_s* lctx) {
     default: 
         if(is_digit(c))
             number(lctx);
+        else if(is_alpha(c))
+            identifier(lctx);
         else
             error(lctx->line_number, "Unexpected character"); break;
     }

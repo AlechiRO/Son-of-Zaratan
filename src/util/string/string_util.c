@@ -39,6 +39,26 @@ int is_digit(char c) {
 }
 
 /*
+Check if character is a leter from the English alphabet or '_'
+@param c The character in question
+@return 1 if the character is alpha and 0 otherwise
+*/
+int is_alpha(char c) {
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+            c == '_';
+}
+
+/*
+Check if character is a letter from the English alphabet or '_' or a digit
+@param c The character in question
+@return 1 if the character is alphanumeric and 0 otherwise
+*/
+int is_alphanumeric(char c) {
+    return is_alpha(c) || is_digit(c); 
+}
+
+/*
 Convert a string into a double
 @param Source string
 @param result Pointer to the result

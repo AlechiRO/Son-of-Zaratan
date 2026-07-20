@@ -3,5 +3,7 @@
 
 char* substring(char* string, int begin, int end);
 int is_digit(char c);
+int is_alpha(char c);
+int is_alphanumeric(char c);
 int parse_double(char* source, double* result);
 #endif
