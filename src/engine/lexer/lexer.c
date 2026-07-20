@@ -155,6 +155,39 @@ void mark_token_whitespace(lexer_context_s* lctx, int whitespace, int token_coun
     last_token->leading_whitespace = whitespace;
     
 }
+
+/*
+Peek at the next character in the source code
+@param lctx Pointer to lexer context struct
+@return the next character in the source code or '\0' if there is no such character
+*/
+char peek_next(lexer_context_s* lctx) {
+    if(lctx->current + 1 >= lctx->source_length)
+        return '\0';
+    return (lctx->source)[lctx->current + 1];
+}
+
+void number(lexer_context_s* lctx) {
+    while(is_digit(peek(lctx)))
+        advance(lctx);
+    
+    if(peek(lctx) == '.' && is_digit(peek_next(lctx))) {
+        // Consume the "."
+        advance(lctx);
+        while(is_digit(peek(lctx)))
+            advance(lctx);
+
+        // Add the token to the list
+        double result;
+        int success = parse_double(substring(lctx->source, lctx->start, lctx->current), &result);
+        if(success) {
+            literal_s* literal = initialize_literal(LITERAL_DOUBLE);
+            (literal->value).double_value = result;
+            add_token(lctx, TOKEN_NUMBER, literal);
+        }
+    }
+}
+
 /*
 Scan a string token and add it to the list of tokens
 @param lctx Pointer to lexer context struct
@@ -270,7 +303,11 @@ void scan_token(lexer_context_s* lctx) {
         string(lctx, 0);
         break;
         
-    default: error(lctx->line_number, "Unexpected character"); break;
+    default: 
+        if(is_digit(c))
+            number(lctx);
+        else
+            error(lctx->line_number, "Unexpected character"); break;
     }
 }
 
