@@ -21,7 +21,6 @@ typedef enum token_type {
     TOKEN_STRING_GLOB,          // "*.mp4"  Tells the parser to enable globbing
     TOKEN_STRING_DEFAULT,       // ''
     TOKEN_IDENTIFIER,           // Literal that will be checked against the command and environment var HashMaps
-    TOKEN_VAR,                  // var
     
     // Single Charecter Tokens
     TOKEN_PLUS,                 // +    OK
