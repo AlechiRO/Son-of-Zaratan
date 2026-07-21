@@ -117,53 +117,22 @@ char peek_next(lexer_context_s* lctx) {
 }
 
 /*
-Verify the next chacacter and match the token with either type 1, 2 or 3
-used for 2 character tokens with same starting character
-Adds the token after matching the correct type
+Match the next character, identify the token and add it to the list
 @param lctx Pointer to lexer context struct
-@param expected_1 First expected character
-@param type_1 Type corresponding to the first expected character
-@param expected_2 Second expected character
-@param type_2 Type corresponding to the second expected character
-@param type_3 Type corresponding to the previously scanned character followed by some other character
+@param expected Array of expected characters
+@param types Array of corresponding types for the exected characters
+@param size Size of both arrays (Must have the same size)
+@param default_type Default token type if none of the expected characters match
 */
-void match_two_tokens(lexer_context_s* lctx, char expected_1, token_type_e type_1, char expected_2, token_type_e type_2, token_type_e type_3) {
-    if(match(lctx, expected_1)) 
-        add_token(lctx, type_1, NULL);
-    else if(match(lctx, expected_2))
-        add_token(lctx, type_2, NULL);
-    else 
-        add_token(lctx, type_3, NULL);
-}
-
-/*
-Match the next letter for the '-' char and add token to the list
-@param lctx Pointer to lexer context struct
-*/
-void match_hyphen(lexer_context_s* lctx) {
-    char c = peek_next(lctx);
-    switch(c) {
-        case '-' :
-            add_token(lctx, TOKEN_DECREMENT, NULL);
-            break;
-        case '>' :
-            add_token(lctx, TOKEN_ARROW, NULL);
-            break;
-        case 'a' :
-            add_token(lctx, TOKEN_FILE_EXIST, NULL);
-            break;
-        case 'd' :
-            add_token(lctx, TOKEN_FILE_IS_DIR, NULL);
-            break;
-        case 's' :
-            add_token(lctx, TOKEN_FILE_IS_NOT_EMPTY, NULL);
-            break;
-        default :
-            add_token(lctx, TOKEN_MINUS, NULL);
+void match_multiple_tokens(lexer_context_s* lctx, char expected[], token_type_e types[], size_t size, token_type_e default_type) {
+    for(size_t i = 0; i < size; i++) {
+        if(match(lctx, expected[i])) {
+            add_token(lctx, types[i], NULL);
+            return;
+        }
     }
+    add_token(lctx, default_type, NULL);
 }
-
-
 
 /*
 For each token check for leading whitespace
@@ -318,16 +287,17 @@ void scan_token(lexer_context_s* lctx) {
     case '*' : add_token(lctx, match(lctx,'*') ? TOKEN_POW : TOKEN_STAR, NULL); break;
     // Duble character, multiple options tokens
     case '<' : 
-        match_two_tokens(lctx, '=', TOKEN_LESS_EQUAL, '<', TOKEN_HEREDOC_REDIRECT, TOKEN_LESS);
+        match_multiple_tokens(lctx, (char[]){'=', '<', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_HEREDOC_REDIRECT, TOKEN_DUP_IN}, 3, TOKEN_LESS);
         break;
     case '>' : 
-        match_two_tokens(lctx, '=', TOKEN_GREATER_EQUAL, '>', TOKEN_APPEND_REDIRECT, TOKEN_GREATER);
+        match_multiple_tokens(lctx, (char[]){'=', '>', '&'}, (token_type_e[]){TOKEN_GREATER_EQUAL, TOKEN_APPEND_REDIRECT, TOKEN_DUP_OUT}, 3, TOKEN_GREATER);
         break;
     case '-' : 
-        match_hyphen(lctx);
+        match_multiple_tokens(lctx, (char[]){'-', '>', 'a', 'd', 's'},
+        (token_type_e[]){TOKEN_DECREMENT, TOKEN_ARROW, TOKEN_FILE_EXIST, TOKEN_FILE_IS_DIR, TOKEN_FILE_IS_NOT_EMPTY}, 5, TOKEN_MINUS);
         break;
     case '$' :
-        match_two_tokens(lctx, '#', TOKEN_ARGUMENT_NUMBER, '@', TOKEN_ARGUMENT_ARRAY, TOKEN_DOLLAR);
+        match_multiple_tokens(lctx, (char[]){'#', '@'}, (token_type_e[]){TOKEN_ARGUMENT_NUMBER, TOKEN_ARGUMENT_ARRAY}, 2, TOKEN_DOLLAR);
         break;
     // Ignoring comments
     case '~':
