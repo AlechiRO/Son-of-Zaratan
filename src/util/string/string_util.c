@@ -15,14 +15,14 @@ char* substring(char* source, int begin, int end) {
     if(source == NULL) return NULL;
     
     if(substring_size <= 0 || strlen(source) < end) {
-        fprintf(stderr, "ERROR: Invalid intexes for substring extraction");
+        fprintf(stderr, "ERROR: Invalid intexes for substring extraction\n");
         return NULL;
     }
 
     char* substr = malloc(substring_size);
 
     if(substr == NULL) {
-        fprintf(stderr, "FATAL: could not allocate memory for substring extraction");
+        fprintf(stderr, "FATAL: could not allocate memory for substring extraction\n");
         exit(EXIT_FAILURE);
     }
 
