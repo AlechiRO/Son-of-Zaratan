@@ -165,6 +165,10 @@ void mark_token_whitespace(lexer_context_s* lctx, int whitespace, int token_coun
     
 }
 
+/*
+Scan a number token and add it to the list of tokens
+@param lctx Pointer to lexer context struct
+*/
 void number(lexer_context_s* lctx) {
     while(is_digit(peek(lctx)))
         advance(lctx);
