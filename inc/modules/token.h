@@ -14,7 +14,7 @@
 #include "array_list.h"
 
 /* Token Enum */
-typedef enum token_type {
+typedef enum Token_type {
 
     // Literal Tokens
     TOKEN_NUMBER,               // 123.33 or 43     OK
