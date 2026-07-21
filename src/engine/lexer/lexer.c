@@ -297,6 +297,9 @@ void scan_token(lexer_context_s* lctx) {
     case '-' : 
         match_two_tokens(lctx, '-', TOKEN_DECREMENT, '>', TOKEN_ARROW, TOKEN_MINUS);
         break;
+    case '$' :
+        match_two_tokens(lctx, '#', TOKEN_ARGUMENT_NUMBER, '@', TOKEN_ARGUMENT_ARRAY, TOKEN_DOLLAR);
+        break;
     // Ignoring comments
     case '~':
         while(peek(lctx) != '\n' && !is_at_end(lctx)) 

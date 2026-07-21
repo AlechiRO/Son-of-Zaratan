@@ -61,13 +61,18 @@ typedef enum token_type {
     TOKEN_CURLY_BRACE_RIGHT,    // }   OK
 
     // Special Tokens
-    TOKEN_DOLLAR,               // $
-    TOKEN_ARGUMENT_NUMBER,      // $#
-    TOKEN_ARGUMENT_ARRAY,       // $@
-    TOKEN_FILE_DESCRIPTOR,      // &0 or &1 or &2
-    TOKEN_FILE_TEST,            // -a -d -s
+    TOKEN_DOLLAR,               // $    OK
+    TOKEN_ARGUMENT_NUMBER,      // $#   OK
+    TOKEN_ARGUMENT_ARRAY,       // $@   OK
+    TOKEN_DUP_OUT,              // >&
+    TOKEN_DUP_IN,               // <&
     TOKEN_COMMENT,              // ~ before writing a comment OK
     TOKEN_TERMINATOR,           // '\n'
+
+    // File Test Operators
+    TOKEN_FILE_EXISTS,          // -a
+    TOKEN_FILE_IS_DIR,          // -d
+    TOKEN_FILE_IS_NOT_EMPTY,    // -s
 
     // Key Word Tokens
     TOKEN_IF,                   // if
