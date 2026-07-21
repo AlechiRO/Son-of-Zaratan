@@ -35,12 +35,12 @@ typedef enum token_type {
     TOKEN_COMMA,                // ,    OK
     TOKEN_BANG,                 // !    OK
     TOKEN_WILDCARD,             // ?    OK
-    TOKEN_LESS,                 // <    OK
-    TOKEN_GREATER,              // >    OK
+    TOKEN_LESS,                 // <    
+    TOKEN_GREATER,              // >    
 
     // Double Character Tokens
     TOKEN_ARROW,                // ->   OK
-    TOKEN_APPEND_REDIRECT,      // >>   OK
+    TOKEN_APPEND_REDIRECT,      // >>   
     TOKEN_HEREDOC_REDIRECT,     // <<   
     TOKEN_POW,                  // **   OK
     TOKEN_INCREMENT,            // ++   OK
@@ -49,8 +49,8 @@ typedef enum token_type {
     TOKEN_OR,                   // ||   OK
     TOKEN_BANG_EQUAL,           // !=   OK
     TOKEN_EQUAL_EQUAL,          // ==   OK
-    TOKEN_LESS_EQUAL,           // <=   OK
-    TOKEN_GREATER_EQUAL,        // >=   OK
+    TOKEN_LESS_EQUAL,           // <=   
+    TOKEN_GREATER_EQUAL,        // >=   
 
     // Braces Tokens
     TOKEN_ROUND_BRACE_LEFT,     // (   OK
@@ -67,12 +67,12 @@ typedef enum token_type {
     TOKEN_DUP_OUT,              // >&
     TOKEN_DUP_IN,               // <&
     TOKEN_COMMENT,              // ~ before writing a comment OK
-    TOKEN_TERMINATOR,           // '\n'
+    TOKEN_TERMINATOR,           // '\n' OK
 
     // File Test Operators
-    TOKEN_FILE_EXISTS,          // -a
-    TOKEN_FILE_IS_DIR,          // -d
-    TOKEN_FILE_IS_NOT_EMPTY,    // -s
+    TOKEN_FILE_EXIST,           // -a    OK
+    TOKEN_FILE_IS_DIR,          // -d   OK
+    TOKEN_FILE_IS_NOT_EMPTY,    // -s   OK
 
     // Key Word Tokens
     TOKEN_IF,                   // if

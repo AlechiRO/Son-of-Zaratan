@@ -95,6 +95,28 @@ int match(lexer_context_s* lctx, char expected) {
 }
 
 /*
+Get the character at the current index
+@param lctx Pointer to lexer context struct
+@return The character at current index or '\0'(NULL) if end of source is reached
+*/
+char peek(lexer_context_s* lctx) {
+    if(is_at_end(lctx)) 
+        return '\0';
+    return (lctx->source)[lctx->current];
+}
+
+/*
+Peek at the next character in the source code
+@param lctx Pointer to lexer context struct
+@return the next character in the source code or '\0' if there is no such character
+*/
+char peek_next(lexer_context_s* lctx) {
+    if(lctx->current + 1 >= lctx->source_length)
+        return '\0';
+    return (lctx->source)[lctx->current + 1];
+}
+
+/*
 Verify the next chacacter and match the token with either type 1, 2 or 3
 used for 2 character tokens with same starting character
 Adds the token after matching the correct type
@@ -115,15 +137,33 @@ void match_two_tokens(lexer_context_s* lctx, char expected_1, token_type_e type_
 }
 
 /*
-Get the character at the current index
+Match the next letter for the '-' char and add token to the list
 @param lctx Pointer to lexer context struct
-@return The character at current index or '\0'(NULL) if end of source is reached
 */
-char peek(lexer_context_s* lctx) {
-    if(is_at_end(lctx)) 
-        return '\0';
-    return (lctx->source)[lctx->current];
+void match_hyphen(lexer_context_s* lctx) {
+    char c = peek_next(lctx);
+    switch(c) {
+        case '-' :
+            add_token(lctx, TOKEN_DECREMENT, NULL);
+            break;
+        case '>' :
+            add_token(lctx, TOKEN_ARROW, NULL);
+            break;
+        case 'a' :
+            add_token(lctx, TOKEN_FILE_EXIST, NULL);
+            break;
+        case 'd' :
+            add_token(lctx, TOKEN_FILE_IS_DIR, NULL);
+            break;
+        case 's' :
+            add_token(lctx, TOKEN_FILE_IS_NOT_EMPTY, NULL);
+            break;
+        default :
+            add_token(lctx, TOKEN_MINUS, NULL);
+    }
 }
+
+
 
 /*
 For each token check for leading whitespace
@@ -154,17 +194,6 @@ void mark_token_whitespace(lexer_context_s* lctx, int whitespace, int token_coun
     token_s* last_token = token_list_get(lctx->tokens, token_list_get_size(lctx->tokens) - 1);
     last_token->leading_whitespace = whitespace;
     
-}
-
-/*
-Peek at the next character in the source code
-@param lctx Pointer to lexer context struct
-@return the next character in the source code or '\0' if there is no such character
-*/
-char peek_next(lexer_context_s* lctx) {
-    if(lctx->current + 1 >= lctx->source_length)
-        return '\0';
-    return (lctx->source)[lctx->current + 1];
 }
 
 void number(lexer_context_s* lctx) {
@@ -295,7 +324,7 @@ void scan_token(lexer_context_s* lctx) {
         match_two_tokens(lctx, '=', TOKEN_GREATER_EQUAL, '>', TOKEN_APPEND_REDIRECT, TOKEN_GREATER);
         break;
     case '-' : 
-        match_two_tokens(lctx, '-', TOKEN_DECREMENT, '>', TOKEN_ARROW, TOKEN_MINUS);
+        match_hyphen(lctx);
         break;
     case '$' :
         match_two_tokens(lctx, '#', TOKEN_ARGUMENT_NUMBER, '@', TOKEN_ARGUMENT_ARRAY, TOKEN_DOLLAR);
