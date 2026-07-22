@@ -30,6 +30,17 @@ static void set_up(void) {
 }
 
 /*
+Helper function to set up the source string
+@param val String containing source value
+*/
+static void set_source(char* val) {
+    size_t length = strlen(val);
+    lctx->source = malloc(length);
+    strcpy(lctx->source, val);
+    lctx->source_length = length;
+}
+
+/*
 Helper function to emulate writing to stdin
 @param input Text to write to stdin
 @return Number of the old stdin fd
@@ -201,47 +212,39 @@ void test_advance(void) {
 }
 
 void test_match_end_of_source(void) {
-    lctx->source = malloc(sizeof("Dark sister"));
-    strcpy(lctx->source, "Dark sister");
-
+    set_source("Dark sister");
     lctx->start = 5;
     lctx->current = 12;
-    lctx->source_length = strlen("Dark sister");
 
     CU_ASSERT_FALSE(match(lctx, '\0'));
 }
 
 void test_match_last_char(void) {
-    lctx->source = malloc(sizeof("Dark sister"));
-    strcpy(lctx->source, "Dark sister");
-
+    set_source("Dark sister");
     lctx->start = 5;
     lctx->current = 11;
-    lctx->source_length = strlen("Dark sister");
 
     CU_ASSERT_FALSE(match(lctx, '\0'));
 }
 
 void test_match_valid(void) {
-    lctx->source = malloc(sizeof("Dark sister"));
-    strcpy(lctx->source, "Dark sister");
-
+    set_source("Dark sister");
     lctx->start = 0;
     lctx->current = 5;
-    lctx->source_length = strlen("Dark sister");
 
     CU_ASSERT_TRUE(match(lctx, 's'));
 }
 
 void test_match_invalid(void) {
-    lctx->source = malloc(sizeof("Dark sister"));
-    strcpy(lctx->source, "Dark sister");
-
+    set_source("Dark sister");
     lctx->start = 0;
     lctx->current = 0;
-    lctx->source_length = strlen("Dark sister");
 
     CU_ASSERT_FALSE(match(lctx, 'd'));
+}
+
+void test_peek_end_of_source(void) {
+    
 }
 
 int main(void) {
@@ -298,6 +301,10 @@ int main(void) {
     CU_add_test(match_suite, "match last character", test_match_last_char);
     CU_add_test(match_suite, "match valid", test_match_valid);
     CU_add_test(match_suite, "match invalid", test_match_invalid);
+
+    /* Peek suite */
+    CU_pSuite peek_suite = create_suite("peek suite", set_up, clean_up);
+
     // run the tests
     CU_basic_run_tests();
 
