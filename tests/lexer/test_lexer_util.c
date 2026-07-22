@@ -200,6 +200,49 @@ void test_advance(void) {
 
 }
 
+void test_match_end_of_source(void) {
+    lctx->source = malloc(sizeof("Dark sister"));
+    strcpy(lctx->source, "Dark sister");
+
+    lctx->start = 5;
+    lctx->current = 12;
+    lctx->source_length = strlen("Dark sister");
+
+    CU_ASSERT_FALSE(match(lctx, '\0'));
+}
+
+void test_match_last_char(void) {
+    lctx->source = malloc(sizeof("Dark sister"));
+    strcpy(lctx->source, "Dark sister");
+
+    lctx->start = 5;
+    lctx->current = 11;
+    lctx->source_length = strlen("Dark sister");
+
+    CU_ASSERT_FALSE(match(lctx, '\0'));
+}
+
+void test_match_valid(void) {
+    lctx->source = malloc(sizeof("Dark sister"));
+    strcpy(lctx->source, "Dark sister");
+
+    lctx->start = 0;
+    lctx->current = 5;
+    lctx->source_length = strlen("Dark sister");
+
+    CU_ASSERT_TRUE(match(lctx, 's'));
+}
+
+void test_match_invalid(void) {
+    lctx->source = malloc(sizeof("Dark sister"));
+    strcpy(lctx->source, "Dark sister");
+
+    lctx->start = 0;
+    lctx->current = 0;
+    lctx->source_length = strlen("Dark sister");
+
+    CU_ASSERT_FALSE(match(lctx, 'd'));
+}
 
 int main(void) {
 
@@ -242,13 +285,19 @@ int main(void) {
 
     /* Add_token suite */
     CU_pSuite add_token_suite = create_suite("add_token suite", set_up, clean_up);
-    CU_add_test(add_token_suite, "add one token test", test_add_one_token);
-    CU_add_test(add_token_suite, "add one two tokens test", test_add_two_tokens);
+    CU_add_test(add_token_suite, "add one token", test_add_one_token);
+    CU_add_test(add_token_suite, "add one two tokens", test_add_two_tokens);
 
     /* Advance suite */
     CU_pSuite advance_suite = create_suite("advance suite", set_up, clean_up);
-    CU_add_test(advance_suite, "advance test", test_advance);
+    CU_add_test(advance_suite, "advance", test_advance);
 
+    /* Match suite */
+    CU_pSuite match_suite = create_suite("match suite", set_up, clean_up);
+    CU_add_test(match_suite, "match end of source", test_match_end_of_source);
+    CU_add_test(match_suite, "match last character", test_match_last_char);
+    CU_add_test(match_suite, "match valid", test_match_valid);
+    CU_add_test(match_suite, "match invalid", test_match_invalid);
     // run the tests
     CU_basic_run_tests();
 
