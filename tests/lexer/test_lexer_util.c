@@ -150,8 +150,8 @@ void test_add_one_token(void) {
     lctx->start = 7;
     lctx->current = 19;
 
-    literal_s* literal = initialize_literal(LITERAL_INT);
-    (literal->value).int_value = 3; 
+    literal_s* literal = initialize_literal(LITERAL_STRING);
+    (literal->value).string_value = "died in vain"; 
     add_token(lctx, TOKEN_IDENTIFIER, literal);
     token_s* token = token_list_get(lctx->tokens, 0);
     CU_ASSERT_EQUAL(token->literal, literal);
@@ -160,6 +160,32 @@ void test_add_one_token(void) {
     CU_ASSERT_EQUAL(token->type, TOKEN_IDENTIFIER);
 
     destroy_literal(&literal);
+}
+
+void test_add_two_tokens(void) {
+    lctx->source = malloc(sizeof("The pie is poisoned"));
+    strcpy(lctx->source, "The pie is poisoned");
+    lctx->start = 4;
+    lctx->current = 7;
+
+    literal_s* literal = initialize_literal(LITERAL_STRING);
+    (literal->value).string_value = "pie";
+    add_token(lctx, TOKEN_STRING_GLOB, literal);
+    lctx->start = 8;
+    lctx->current = 10; 
+    add_token(lctx, TOKEN_IDENTIFIER, NULL);
+    
+    token_s* token_0 = token_list_get(lctx->tokens, 0);
+    token_s* token_1 = token_list_get(lctx->tokens, 1);
+
+    CU_ASSERT_EQUAL(token_0->literal, literal);
+    CU_ASSERT_PTR_NULL(token_1->literal);
+    CU_ASSERT_TRUE(strcmp(token_0->lexeme, "pie") == 0);
+    CU_ASSERT_TRUE(strcmp(token_1->lexeme, "is") == 0);
+    CU_ASSERT_EQUAL(token_0->line, 1);
+    CU_ASSERT_EQUAL(token_1->line, 1);
+    CU_ASSERT_EQUAL(token_0->type, TOKEN_STRING_GLOB);
+    CU_ASSERT_EQUAL(token_1->type, TOKEN_IDENTIFIER);
 }
 
 void test_advance(void) {
@@ -217,11 +243,12 @@ int main(void) {
     /* Add_token suite */
     CU_pSuite add_token_suite = create_suite("add_token suite", set_up, clean_up);
     CU_add_test(add_token_suite, "add one token test", test_add_one_token);
+    CU_add_test(add_token_suite, "add one two tokens test", test_add_two_tokens);
 
     /* Advance suite */
     CU_pSuite advance_suite = create_suite("advance suite", set_up, clean_up);
     CU_add_test(advance_suite, "advance test", test_advance);
-    
+
     // run the tests
     CU_basic_run_tests();
 
