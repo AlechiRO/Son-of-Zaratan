@@ -115,6 +115,64 @@ void test_append_line_to_source(void) {
     CU_ASSERT_TRUE(strcmp(lctx->source, "They were betrayed by Otto") == 0);
 }
 
+void test_initialize_lexer_context(void) {
+    lctx = initialize_lexer_context();
+    CU_ASSERT_PTR_NULL(lctx->source);
+    CU_ASSERT_PTR_NOT_NULL(lctx->tokens);
+    CU_ASSERT_EQUAL(lctx->start, 0);
+    CU_ASSERT_EQUAL(lctx->current, 0);
+    CU_ASSERT_EQUAL(lctx->line_number, 1);
+    CU_ASSERT_EQUAL(lctx->source_length, 0);
+}
+
+void test_destroy_lexer_context(void) {
+    lctx->source = malloc(sizeof("Iron Islands"));
+    strcpy(lctx->source, "Iron Islands");
+    destroy_lexer_context(&lctx);
+    CU_ASSERT_PTR_NULL(lctx);
+}
+
+void test_is_at_end(void) {
+    lctx->current = 10;
+    lctx->source_length = 11;
+    CU_ASSERT_FALSE(is_at_end(lctx));
+}
+
+void test_is_not_at_end(void) {
+    lctx->current = 5;
+    lctx->source_length = 5;
+    CU_ASSERT_TRUE(is_at_end(lctx));
+}
+
+void test_add_one_token(void) {
+    lctx->source = malloc(sizeof("Drogon died in vain"));
+    strcpy(lctx->source, "Drogon died in vain");
+    lctx->start = 7;
+    lctx->current = 19;
+
+    literal_s* literal = initialize_literal(LITERAL_INT);
+    (literal->value).int_value = 3; 
+    add_token(lctx, TOKEN_IDENTIFIER, literal);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->literal, literal);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "died in vain") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_IDENTIFIER);
+
+    destroy_literal(&literal);
+}
+
+void test_advance(void) {
+    lctx->source = malloc(sizeof("Jace made a mistake"));
+    strcpy(lctx->source, "Jace made a mistake");
+
+    lctx->current = 5;
+
+    char chr = advance(lctx);
+    CU_ASSERT_EQUAL(lctx->current, 6);
+    CU_ASSERT_EQUAL(chr, 'm');
+
+}
 
 
 int main(void) {
@@ -138,10 +196,32 @@ int main(void) {
     /* Append_to_line suite */
     CU_pSuite append_to_line_suite = create_suite("append_to_line suite", set_up, clean_up);
     CU_add_test(append_to_line_suite, "append string to line", test_append_string_to_line);
+
     /* Append_to_source suite */
     CU_pSuite append_to_source_suite = create_suite("append_to_source suite", set_up, clean_up);
     CU_add_test(append_to_source_suite, "append line to source", test_append_line_to_source);
 
+    /* Lexer_context_initialize suite */
+    CU_pSuite lexer_context_initialize_suite = create_suite("lexer_context_initialize suite", NULL, clean_up);
+    CU_add_test(lexer_context_initialize_suite, "initialize lexer context", test_initialize_lexer_context);
+    
+    /* Lexer_context_destroy suite */
+    CU_pSuite lexer_context_destroy_suite = create_suite("lexer_context_destroy suite", set_up, NULL);
+    CU_add_test(lexer_context_destroy_suite, "destroy lexer context", test_destroy_lexer_context);
+
+    /* Is_at_end suite */
+    CU_pSuite is_at_end_suite = create_suite("is_at_end suite", set_up, clean_up);
+    CU_add_test(is_at_end_suite, "is at end", test_is_at_end);
+    CU_add_test(is_at_end_suite, "is not at end", test_is_not_at_end);
+
+    /* Add_token suite */
+    CU_pSuite add_token_suite = create_suite("add_token suite", set_up, clean_up);
+    CU_add_test(add_token_suite, "add one token test", test_add_one_token);
+
+    /* Advance suite */
+    CU_pSuite advance_suite = create_suite("advance suite", set_up, clean_up);
+    CU_add_test(advance_suite, "advance test", test_advance);
+    
     // run the tests
     CU_basic_run_tests();
 
