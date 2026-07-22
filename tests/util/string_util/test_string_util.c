@@ -108,6 +108,28 @@ void test_parse_double_valid(void) {
     double result;
     int success = parse_double("1.001", &result);
     CU_ASSERT_TRUE(success);
+    CU_ASSERT_EQUAL(result, 1.001);
+}
+
+void test_parse_double_small_precision(void) {
+    double result;
+    int success = parse_double("12345678.9", &result);
+    CU_ASSERT_TRUE(success);
+    CU_ASSERT_EQUAL(result, 12345678.9);
+}
+
+void test_parse_double_invalid_two_dots(void) {
+    double result = 0;
+    int success = parse_double("23.44.5", &result);
+    CU_ASSERT_FALSE(success);
+    CU_ASSERT_EQUAL(result, 23.44);
+}
+
+void test_parse_double_invalid_character(void) {
+    double result = 0;
+    int success = parse_double("23&44.5", &result);
+    CU_ASSERT_FALSE(success);
+    CU_ASSERT_EQUAL(result, 0);
 }
 
 int main(void) {
@@ -140,6 +162,9 @@ int main(void) {
     /* parse_double suite */
     CU_pSuite parse_double_suite = create_suite("parse_double suite", NULL, NULL);
     CU_add_test(parse_double_suite, "parse_double valid", test_parse_double_valid);
+    CU_add_test(parse_double_suite, "parse_double valid small precision", test_parse_double_small_precision);
+    CU_add_test(parse_double_suite, "parse_double invalid two dots", test_parse_double_invalid_two_dots);
+    CU_add_test(parse_double_suite, "parse_double invalid character", test_parse_double_invalid_character);
 
     // run the tests
     CU_basic_run_tests();
