@@ -137,8 +137,7 @@ void test_initialize_lexer_context(void) {
 }
 
 void test_destroy_lexer_context(void) {
-    lctx->source = malloc(sizeof("Iron Islands"));
-    strcpy(lctx->source, "Iron Islands");
+    set_source("Iron Islands");
     destroy_lexer_context(&lctx);
     CU_ASSERT_PTR_NULL(lctx);
 }
@@ -156,8 +155,7 @@ void test_is_not_at_end(void) {
 }
 
 void test_add_one_token(void) {
-    lctx->source = malloc(sizeof("Drogon died in vain"));
-    strcpy(lctx->source, "Drogon died in vain");
+    set_source("Drogon died in vain");
     lctx->start = 7;
     lctx->current = 19;
 
@@ -174,8 +172,7 @@ void test_add_one_token(void) {
 }
 
 void test_add_two_tokens(void) {
-    lctx->source = malloc(sizeof("The pie is poisoned"));
-    strcpy(lctx->source, "The pie is poisoned");
+    set_source("The pie is poisoned");
     lctx->start = 4;
     lctx->current = 7;
 
