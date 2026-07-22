@@ -76,18 +76,24 @@ int parse_double(char* source, double* result) {
     double floating = 0;
     size_t length = strlen(source);
 
-    while(index < length && is_digit(index)) {
+    while(index < length) {
         char c = source[index];
-        if(c == '.')
+        // Check if the current char is '.' or not a digit
+        if(c == '.') {
+            index++;
             break;
-        integer = integer * 10 + (int)c;
+        }
+        else if(c != '.' && !is_digit(c))
+            return 0;
+
+        integer = integer * 10 + (int)(c - '0');
         index++;
     }
     int precision = 1;
-    while(index < length && is_digit(index)) {
+    while(index < length && is_digit(source[index])) {
         char c = source[index];
-        floating = floating + precision * (int)c;
         precision *= 10;
+        floating = floating + (double)(c - '0') / precision;
         index++;
     }
     *result = (integer + floating) * sign;

@@ -139,7 +139,7 @@ int main(void) {
 
     /* parse_double suite */
     CU_pSuite parse_double_suite = create_suite("parse_double suite", NULL, NULL);
-    //CU_add_test(parse_double_suite, "parse_double valid", test_parse_double_valid);
+    CU_add_test(parse_double_suite, "parse_double valid", test_parse_double_valid);
 
     // run the tests
     CU_basic_run_tests();
