@@ -241,7 +241,27 @@ void test_match_invalid(void) {
 }
 
 void test_peek_end_of_source(void) {
-    
+    set_source("The High Septon");
+    lctx->current = 15;
+    CU_ASSERT_EQUAL(peek(lctx), '\0');
+}
+
+void test_peek_before_end(void) {
+    set_source("The High Septon");
+    lctx->current = 14;
+    CU_ASSERT_EQUAL(peek(lctx), 'n');
+}
+
+void test_peek_next_end_of_source(void) {
+    set_source("The High Septon");
+    lctx->current = 14;
+    CU_ASSERT_EQUAL(peek_next(lctx), '\0');
+}
+
+void test_peek_next_before_end(void) {
+    set_source("The High Septon");
+    lctx->current = 13;
+    CU_ASSERT_EQUAL(peek_next(lctx), 'n');
 }
 
 int main(void) {
@@ -301,6 +321,16 @@ int main(void) {
 
     /* Peek suite */
     CU_pSuite peek_suite = create_suite("peek suite", set_up, clean_up);
+    CU_add_test(peek_suite, "peek end of source", test_peek_end_of_source);
+    CU_add_test(peek_suite, "peek before end", test_peek_before_end);
+
+    /* Peek_next suite */
+    CU_pSuite peek_next_suite = create_suite("peek_next suite", set_up, clean_up);
+    CU_add_test(peek_next_suite, "peek next end of source", test_peek_next_end_of_source);
+    CU_add_test(peek_next_suite, "peek next before end", test_peek_next_before_end);
+
+    /* Match_multiple_tokens suite */
+    CU_pSuite match_multiple_tokens_suite = create_suite("match_multiple_tokens suite", set_up, clean_up);
 
     // run the tests
     CU_basic_run_tests();
