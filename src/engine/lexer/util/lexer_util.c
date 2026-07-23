@@ -212,6 +212,7 @@ void match_multiple_tokens(lexer_context_s* lctx, char expected[], token_type_e 
         }
     }
     add_token(lctx, default_type, NULL);
+    lctx->current++;
 }
 
 /*

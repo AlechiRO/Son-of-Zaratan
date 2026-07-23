@@ -264,6 +264,31 @@ void test_peek_next_before_end(void) {
     CU_ASSERT_EQUAL(peek_next(lctx), 'n');
 }
 
+void test_match_multiple_tokens_less_equal(void) {
+    set_source("wolfs <= 2");
+    lctx->start = 6;
+    lctx->current = 7;
+    match_multiple_tokens(lctx, (char[]){'=', '<', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_HEREDOC_REDIRECT, TOKEN_DUP_IN}, 3, TOKEN_LESS);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->type, TOKEN_LESS_EQUAL);
+    CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 1);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "<=") == 0);
+    CU_ASSERT_EQUAL(lctx->current, 8);
+}
+
+void test_match_multiple_tokens_default(void) {
+    set_source("$*");
+    lctx->start = 0;
+    lctx->current = 1;
+    match_multiple_tokens(lctx, (char[]){'#', '@'}, (token_type_e[]){TOKEN_ARGUMENT_NUMBER, TOKEN_ARGUMENT_ARRAY}, 2, TOKEN_DOLLAR);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->type, TOKEN_DOLLAR);
+    CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 1);
+    printf("%s----\n", token->lexeme);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "$") == 0);
+    CU_ASSERT_EQUAL(lctx->current, 2);
+}
+
 int main(void) {
 
     // initialize registry
@@ -331,6 +356,8 @@ int main(void) {
 
     /* Match_multiple_tokens suite */
     CU_pSuite match_multiple_tokens_suite = create_suite("match_multiple_tokens suite", set_up, clean_up);
+    CU_add_test(match_multiple_tokens_suite, "match multiple tokens less equal", test_match_multiple_tokens_less_equal);
+    CU_add_test(match_multiple_tokens_suite, "match multiple tokens default", test_match_multiple_tokens_default);
 
     // run the tests
     CU_basic_run_tests();
