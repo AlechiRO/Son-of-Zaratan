@@ -288,6 +288,56 @@ void test_match_multiple_tokens_default(void) {
     CU_ASSERT_EQUAL(lctx->current, 2);
 }
 
+void test_check_leading_whitespace(void) {
+    set_source("My   \r\tThrone!");
+    lctx->start = 2;
+    lctx->current = 2;
+
+    CU_ASSERT_TRUE(check_leading_whitespace(lctx));
+    CU_ASSERT_EQUAL(lctx->start, 7);
+    CU_ASSERT_EQUAL(lctx->current, 7);
+}
+
+void test_check_leading_whitespace_false(void) {
+    set_source("Greens");
+    lctx->start = 0;
+    lctx->current = 0;
+
+    CU_ASSERT_FALSE(check_leading_whitespace(lctx));
+    CU_ASSERT_EQUAL(lctx->start, 0);
+    CU_ASSERT_EQUAL(lctx->current, 0);
+}
+
+void test_mark_token_whitespace(void) {
+    set_source(" +");
+    lctx->start = 1;
+    lctx->current = 2;
+    add_token(lctx, TOKEN_PLUS, NULL);
+    mark_token_whitespace(lctx, 1, 0);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->leading_whitespace, 1);
+}
+
+void test_mark_token_whitespace_false(void) {
+    set_source("++");
+    lctx->start = 1;
+    lctx->current = 2;
+    add_token(lctx, TOKEN_PLUS, NULL);
+    mark_token_whitespace(lctx, 0, 0);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->leading_whitespace, 0);
+}
+
+void test_mark_token_whitespace_no_new_token(void) {
+    set_source("+   ");
+    lctx->start = 1;
+    lctx->current = 2;
+    add_token(lctx, TOKEN_PLUS, NULL);
+    mark_token_whitespace(lctx, 1, 1);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_EQUAL(token->leading_whitespace, 0);
+}
+
 int main(void) {
 
     // initialize registry
@@ -357,6 +407,17 @@ int main(void) {
     CU_pSuite match_multiple_tokens_suite = create_suite("match_multiple_tokens suite", set_up, clean_up);
     CU_add_test(match_multiple_tokens_suite, "match multiple tokens less equal", test_match_multiple_tokens_less_equal);
     CU_add_test(match_multiple_tokens_suite, "match multiple tokens default", test_match_multiple_tokens_default);
+
+    /* Check_leading_whitespace suite */
+    CU_pSuite check_leading_whitespace_suite = create_suite("check_leading_whitespace suite", set_up, clean_up);
+    CU_add_test(check_leading_whitespace_suite, "check leading whitespace", test_check_leading_whitespace);
+    CU_add_test(check_leading_whitespace_suite, "check leading whitespace false", test_check_leading_whitespace_false);
+
+    /* Mark_token_whitespace suite */
+    CU_pSuite mark_token_whitespace_suite = create_suite("mark_token_whitespace suite", set_up, clean_up);
+    CU_add_test(mark_token_whitespace_suite, "mark token whitespace", test_mark_token_whitespace);
+    CU_add_test(mark_token_whitespace_suite, "mark token whitespace false", test_mark_token_whitespace_false);
+    CU_add_test(mark_token_whitespace_suite, "mark token whitespace no new token", test_mark_token_whitespace_no_new_token);
 
     // run the tests
     CU_basic_run_tests();

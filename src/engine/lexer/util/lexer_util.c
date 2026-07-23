@@ -229,6 +229,7 @@ int check_leading_whitespace(lexer_context_s* lctx) {
             found = 1;
         } else break;
     }
+    lctx->start = lctx->current;
     return found;
 }
 
