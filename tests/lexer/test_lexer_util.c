@@ -284,7 +284,6 @@ void test_match_multiple_tokens_default(void) {
     token_s* token = token_list_get(lctx->tokens, 0);
     CU_ASSERT_EQUAL(token->type, TOKEN_DOLLAR);
     CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 1);
-    printf("%s----\n", token->lexeme);
     CU_ASSERT_TRUE(strcmp(token->lexeme, "$") == 0);
     CU_ASSERT_EQUAL(lctx->current, 2);
 }
