@@ -132,6 +132,13 @@ void test_parse_double_invalid_character(void) {
     CU_ASSERT_EQUAL(result, 0);
 }
 
+void test_parse_double_negative(void) {
+    double result = 0;
+    int success = parse_double("-450.20", &result);
+    CU_ASSERT_TRUE(success);
+    CU_ASSERT_EQUAL(result, -450.20);
+}
+
 int main(void) {
 
     // initialize registry
@@ -165,6 +172,7 @@ int main(void) {
     CU_add_test(parse_double_suite, "parse_double valid small precision", test_parse_double_small_precision);
     CU_add_test(parse_double_suite, "parse_double invalid two dots", test_parse_double_invalid_two_dots);
     CU_add_test(parse_double_suite, "parse_double invalid character", test_parse_double_invalid_character);
+    CU_add_test(parse_double_suite, "parse_double negative", test_parse_double_negative);
 
     // run the tests
     CU_basic_run_tests();
