@@ -30,17 +30,17 @@ typedef struct HASHMAP_TAG {
 /*
 Table hashing function to map each key to an index
 It is about the same as FNV1-a
-!! IMPORTANT !! Key pointers to structs must have the object allocated with calloc to avoid hashing slop
+!! IMPORTANT Structs must be allocated with calloc to avoid hashing slop bytes
 @param key Key of a hashmap entry
 @return index of the entry in the table
 */
-uint32_t hash(HASHMAP_KEY_TYPE* key, unsigned int capacity) {
+uint32_t hash(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_size) {
     if(capacity == 0) 
         return 0;
     const uint8_t* bytes = (const u_int8_t*) key;
     uint32_t hash = 0x811C9DC5;
 
-    for(size_t i = 0; i < sizeof(*key); i++) {
+    for(size_t i = 0; i < key_size; i++) {
         hash ^= bytes[i];
         hash *= 0x01000193;
     }
