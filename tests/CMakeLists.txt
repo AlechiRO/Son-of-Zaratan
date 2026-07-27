@@ -59,6 +59,19 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         ${CMAKE_SOURCE_DIR}/inc/generics
     )
 
+    # HashMap test executable
+
+    add_executable(HASHMAP_TEST_DRIVER
+        ${HASHMAP_TEST_SOURCE}
+    )
+
+    target_link_libraries(HASHMAP_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
+    target_include_directories(HASHMAP_TEST_DRIVER PRIVATE 
+        ${CUNIT_INCLUDE_DIRS} 
+        ${CMAKE_SOURCE_DIR}/inc/modules
+        ${CMAKE_SOURCE_DIR}/inc/generics
+    )
+
     # Token and Literal test executable
 
     add_executable(TOKEN_TEST_DRIVER
@@ -109,6 +122,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
     add_test(NAME test_token COMMAND TOKEN_TEST_DRIVER)
     add_test(NAME test_string_util COMMAND STRING_UTIL_TEST_DRIVER)
     add_test(NAME test_lexer COMMAND LEXER_TEST_DRIVER)
+    add_test(NAME test_hashmap COMMAND HASHMAP_TEST_DRIVER)
 
 else()
     message(WARNING "CUnit not found!")
