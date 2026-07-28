@@ -82,15 +82,8 @@ void test_hash_different_keys() {
     CU_ASSERT_NOT_EQUAL(pos_1, pos_2);
 }
 
-void test_initialize_entry() {
-     string_int_hashmap_entry entry = string_int_hashmap_initialize_entry();
-     CU_ASSERT_EQUAL(entry.occupied, 0);
-     CU_ASSERT_EQUAL(entry.tombstone, 0);
-     CU_ASSERT_EQUAL(entry.key_size, 0);
-     CU_ASSERT_EQUAL(entry.value_size, 0);
-}
 
-void test_destroy_entry() {
+void test_kill_entry() {
     string_int_hashmap_entry entry = string_int_hashmap_initialize_entry();
     entry.occupied = 1;
     char* key;
@@ -99,7 +92,7 @@ void test_destroy_entry() {
     entry.key_size = key_size;
     entry.value = 1;
     entry.value_size = sizeof(1);
-    string_int_hashmap_destroy_entry(&entry);
+    string_int_hashmap_kill_entry(&entry);
     CU_ASSERT_EQUAL(entry.key_size, 0);
     CU_ASSERT_EQUAL(entry.value_size, 0);
     CU_ASSERT_EQUAL(entry.occupied, 0);
@@ -130,9 +123,8 @@ int main(void) {
     CU_add_test(hash_suite, "hash equal keys", test_hash_equal_keys);
     CU_add_test(hash_suite, "hash different keys", test_hash_different_keys);
 
-    CU_pSuite initialize_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
-    CU_add_test(initialize_entry_suite, "initialize entry", test_initialize_entry);
-    CU_add_test(initialize_entry_suite, "destroy entry", test_destroy_entry);
+    CU_pSuite kill_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
+    CU_add_test(kill_entry_suite, "kill entry", test_kill_entry);
 
     CU_pSuite equal_value_suite = create_suite("equal_value suite", NULL, NULL);
     CU_add_test(equal_value_suite, "equal values", test_equal_values);

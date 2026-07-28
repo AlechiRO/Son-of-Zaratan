@@ -82,10 +82,10 @@ static inline entry_s HM_FN(initialize_entry)() {
 }
 
 /*
-Entry Destructor
+Free the fields of an entry and raise a tombstone
 @param entry Pointer to a pointer to an entry struct
 */
-static inline void HM_FN(destroy_entry)(entry_s* entry) {
+static inline void HM_FN(kill_entry)(entry_s* entry) {
     if(entry == NULL || !entry->occupied)
         return;
 
@@ -109,6 +109,28 @@ static inline int HM_FN(equal_values)(HASHMAP_VALUE_TYPE value_actual, size_t si
     if(size_actual != size_expected)
         return 0;
     return HASHMAP_EQUAL_VALUE(value_actual, value_expected, size_actual);
+}
+
+/*
+Initialize an array of default entries for the hashmap
+@param capacity Capacity of the hashmap
+@return Array of entries
+*/
+static inline entry_s* HM_FN(initialize_entry_array)(size_t capacity) {
+    return (entry_s*) calloc(capacity, sizeof(entry_s));
+}
+
+
+/*
+Hashmap constructor
+@return Pointer to a hashmap struct
+*/
+static inline HASHMAP_TAG* HM_FN(initialize)() {
+    HASHMAP_TAG* map = malloc(sizeof(HASHMAP_TAG));
+    map->size = 0;
+    map->capacity = 16;
+    map->entries = HM_FN(initialize_entry_array)(map->capacity);
+    return map;
 }
 
 #undef HM_CONCAT
