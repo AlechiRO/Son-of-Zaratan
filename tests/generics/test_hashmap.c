@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdint.h>
 
+
+#define HASHMAP_FREE_KEY(k) free(k)
 #define HASHMAP_KEY_TYPE char*
 #define HASHMAP_VALUE_TYPE int
 #define HASHMAP_TAG int_hashmap
@@ -91,8 +93,11 @@ int main(void) {
     CU_add_test(hash_suite, "hash value", test_hash_value);
     CU_add_test(hash_suite, "hash equal keys", test_hash_equal_keys);
     CU_add_test(hash_suite, "hash different keys", test_hash_different_keys);
+    
+    /* Initialize entry suite */
     // run the tests
     CU_basic_run_tests();
+    CU_pSuite initialize_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
 
     // record the number of failures
     int failures = CU_get_number_of_failures();
