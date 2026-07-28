@@ -133,6 +133,22 @@ static inline HASHMAP_TAG* HM_FN(initialize)() {
     return map;
 }
 
+/*
+Hashmap destructor
+@param map Pointer to a pointer to a hashmap struct
+*/
+static inline void HM_FN(destroy)(HASHMAP_TAG** map) {
+    if(map == NULL || (*map) == NULL)
+        return;
+    if((*map)->entries != NULL) {
+        free((*map)->entries);
+        (*map)->entries = NULL;
+    }
+
+    free(*map);
+    (*map) = NULL;
+}
+
 #undef HM_CONCAT
 #undef HM_CONCAT_EXP
 #undef HM_FN

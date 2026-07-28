@@ -21,13 +21,13 @@ string_int_hashmap* map;
 Helper function to free the memory for the dll
 */
 static void clean_up(void) {
-    
+    string_int_hashmap_destroy(&map);
 }
 /*
 Helper function to initialize the dll
 */
 static void set_up(void) {
-    
+    string_int_hashmap_initialize();
 }
 
 /*
@@ -125,6 +125,17 @@ void test_initialize_entry_array(void) {
     free(entries);
 }
 
+void test_initialize_hashmap(void) {
+    string_int_hashmap* map = string_int_hashmap_initialize();
+    CU_ASSERT_EQUAL(map->size, 0);
+    CU_ASSERT_EQUAL(map->capacity, 16);
+    CU_ASSERT_PTR_NOT_NULL(map->entries);
+}
+
+void test_destroy_hashmap(void) {
+    string_int_hashmap_destroy(&map);
+    CU_ASSERT_PTR_NULL(map);
+}
 
 
 int main(void) {
@@ -148,6 +159,12 @@ int main(void) {
 
     CU_pSuite initialize_entry_array_suite = create_suite("initialize_entry_array suite", NULL, NULL);
     CU_add_test(initialize_entry_array_suite, "initialize entry array", test_initialize_entry_array);
+
+    CU_pSuite initialize_hashmap_suite = create_suite("initialize_hashmap suite", NULL, clean_up);
+    CU_add_test(initialize_hashmap_suite, "initialize hashmap", test_initialize_hashmap);
+
+    CU_pSuite destroy_hashmap_suite = create_suite("destroy_hashmap suite", set_up, NULL);
+    CU_add_test(destroy_hashmap_suite, "destroy hashmap", test_destroy_hashmap);
     
     
     /* Initialize entry suite */
