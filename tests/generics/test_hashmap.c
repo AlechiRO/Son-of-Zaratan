@@ -4,13 +4,15 @@
 #include <stdlib.h>
 #include <err.h>
 #include <string.h>
+#include <stdint.h>
 
-#define DLL_ITEM_TYPE int
-#define DLL_TAG int_dll
-#include "dll.h"
+#define HASHMAP_KEY_TYPE char*
+#define HASHMAP_VALUE_TYPE int
+#define HASHMAP_TAG int_hashmap
+#include "hashmap.h"
 
 // Global dll struct pointer
-int_dll* dll;
+int_hashmap* map;
 
 /*
 Helper function to free the memory for the dll
@@ -25,6 +27,18 @@ static void set_up(void) {
     
 }
 
+/*
+Helper function to set up a string
+@param value The literal value of a string
+@return Pointer to a newly allocated string
+*/
+static size_t set_string(char** result, char* value) {
+    size_t size = strlen(value);
+    *result = malloc(size);
+    strcpy(*result, value);
+    return size;
+}
+
 /* 
 Helper function to create a suite
 @param name Pointer to the name of the suite
@@ -37,6 +51,33 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
     return suite;
 }
 
+void test_hash_value() {
+    char* key;
+    size_t size = set_string(&key, "Ormund");
+    uint32_t position = hash(key, 100, size); 
+    CU_ASSERT_EQUAL(position, 76);
+}
+
+void test_hash_equal_keys() {
+    char* key_1;
+    char* key_2;
+    size_t size_1 = set_string(&key_1, "faceless");  
+    size_t size_2 = set_string(&key_2, "faceless");
+    uint32_t pos_1 = hash(key_1, 100, size_1);
+    uint32_t pos_2 = hash(key_2, 100, size_2);
+    CU_ASSERT_EQUAL(pos_1, pos_2);
+}
+
+void test_hash_different_keys() {
+    char* key_1;
+    char* key_2;
+    size_t size_1 = set_string(&key_1, "nomad");  
+    size_t size_2 = set_string(&key_2, "Nomad");
+    uint32_t pos_1 = hash(key_1, 100, size_1);
+    uint32_t pos_2 = hash(key_2, 100, size_2);
+    CU_ASSERT_NOT_EQUAL(pos_1, pos_2);
+}
+
 
 
 int main(void) {
@@ -45,7 +86,11 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
 
-
+    /* Hash suite */
+    CU_pSuite hash_suite = create_suite("hash suite", NULL, NULL);
+    CU_add_test(hash_suite, "hash value", test_hash_value);
+    CU_add_test(hash_suite, "hash equal keys", test_hash_equal_keys);
+    CU_add_test(hash_suite, "hash different keys", test_hash_different_keys);
     // run the tests
     CU_basic_run_tests();
 

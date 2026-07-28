@@ -16,6 +16,8 @@ HASHMAP_KEY_TYPE must be a pointer, (e.g. int*, struct node*, char*) so that the
 typedef struct {
     HASHMAP_KEY_TYPE key;
     HASHMAP_VALUE_TYPE value;
+    size_t key_size;
+    size_t value_size;
     short occupied;
     short tombstone;
 } HM_CONCAT_EXP(HASHMAP_TAG, entry);
@@ -37,7 +39,7 @@ It is about the same as FNV1-a
 uint32_t hash(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_size) {
     if(capacity == 0) 
         return 0;
-    const uint8_t* bytes = (const u_int8_t*) key;
+    const uint8_t* bytes = (const uint8_t*) key;
     uint32_t hash = 0x811C9DC5;
 
     for(size_t i = 0; i < key_size; i++) {
@@ -46,4 +48,17 @@ uint32_t hash(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_size) {
     }
 
     return (uint32_t)(hash % capacity);
+}
+
+/*
+Entry Constructor
+@return Hashmap entry struct
+*/
+static inline HM_CONCAT_EXP(HASHMAP_TAG, entry)  HM_FN(initialize_entry)() {
+    HM_CONCAT_EXP(HASHMAP_TAG, entry)* entry = malloc(sizeof(HM_CONCAT_EXP(HASHMAP_TAG, entry)));
+    entry->key_size = 0;
+    entry->value_size = 0;
+    entry->occupied = 0;
+    entry->tombstone = 0;
+    return *entry;
 }
