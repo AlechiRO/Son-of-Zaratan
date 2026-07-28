@@ -8,6 +8,7 @@ HASHMAP_KEY_TYPE must be a pointer, (e.g. int*, struct node*, char*) so that the
 #error "Missing tag or type definition"
 #endif
 
+// Decide if keys or values should be freed
 #ifndef HASHMAP_FREE_KEY
   #define HASHMAP_FREE_KEY(k) ((void)(k))
 #endif
@@ -15,6 +16,14 @@ HASHMAP_KEY_TYPE must be a pointer, (e.g. int*, struct node*, char*) so that the
 #ifndef HASHMAP_FREE_VALUE
   #define HASHMAP_FREE_VALUE(v) ((void)(v))
 #endif
+
+// Decide how to compare the values | Primitives VS Pointers
+
+#ifndef HASHMAP_EQUAL_VALUE
+  // Default comparison between pointers | Structs must be initialized with calloc
+  #define HASHMAP_EQUAL_VALUE(a, b, sz) (memcmp((a), (b), (sz)) == 0)
+#endif
+
 
 #define HM_CONCAT(TAG, METHOD) TAG##_##METHOD
 #define HM_CONCAT_EXP(TAG, METHOD) HM_CONCAT(TAG, METHOD)
@@ -89,6 +98,19 @@ static inline void HM_FN(destroy_entry)(entry_s* entry) {
     entry->value_size = 0;
 }
 
+/*
+Checks if two values are equal, using byte comparison
+@param value_actual Actual value
+@param size_actual Size of the actual value
+@param value_expected Expected value
+@param size_expected Size of the expected value
+*/
+static inline int HM_FN(equal_values)(HASHMAP_VALUE_TYPE value_actual, size_t size_actual, HASHMAP_VALUE_TYPE value_expected, size_t size_expected) {
+    if(size_actual != size_expected)
+        return 0;
+    return HASHMAP_EQUAL_VALUE(value_actual, value_expected, size_actual);
+}
+
 #undef HM_CONCAT
 #undef HM_CONCAT_EXP
 #undef HM_FN
@@ -98,3 +120,4 @@ static inline void HM_FN(destroy_entry)(entry_s* entry) {
 #undef HASHMAP_VALUE_TYPE
 #undef HASHMAP_FREE_KEY
 #undef HASHMAP_FREE_VALUE
+#undef HASHMAP_EQUAL_VALUE

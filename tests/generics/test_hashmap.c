@@ -11,6 +11,7 @@
 #define HASHMAP_KEY_TYPE char*
 #define HASHMAP_VALUE_TYPE int
 #define HASHMAP_TAG string_int_hashmap
+#define HASHMAP_EQUAL_VALUE(a, b, sz) (a == b)
 #include "hashmap.h"
 
 // Global dll struct pointer
@@ -105,6 +106,16 @@ void test_destroy_entry() {
     CU_ASSERT_EQUAL(entry.tombstone, 1);
 }
 
+void test_equal_values() {
+    int res = string_int_hashmap_equal_values(12, sizeof(int), 12, sizeof(int));
+    CU_ASSERT_TRUE(res);
+}
+
+void test_equal_values_unequal() {
+    int res = string_int_hashmap_equal_values(0, sizeof(int), 1, sizeof(int));
+    CU_ASSERT_FALSE(res);
+}
+
 
 
 int main(void) {
@@ -122,6 +133,10 @@ int main(void) {
     CU_pSuite initialize_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
     CU_add_test(initialize_entry_suite, "initialize entry", test_initialize_entry);
     CU_add_test(initialize_entry_suite, "destroy entry", test_destroy_entry);
+
+    CU_pSuite equal_value_suite = create_suite("equal_value suite", NULL, NULL);
+    CU_add_test(equal_value_suite, "equal values", test_equal_values);
+    CU_add_test(equal_value_suite, "unequal values", test_equal_values_unequal);
     
     
     /* Initialize entry suite */
