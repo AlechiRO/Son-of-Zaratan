@@ -55,14 +55,14 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
     return suite;
 }
 
-void test_hash_value() {
+void test_hash_value(void) {
     char* key;
     size_t size = set_string(&key, "Ormund");
     uint32_t position = hash(key, 100, size); 
     CU_ASSERT_EQUAL(position, 76);
 }
 
-void test_hash_equal_keys() {
+void test_hash_equal_keys(void) {
     char* key_1;
     char* key_2;
     size_t size_1 = set_string(&key_1, "faceless");  
@@ -72,7 +72,7 @@ void test_hash_equal_keys() {
     CU_ASSERT_EQUAL(pos_1, pos_2);
 }
 
-void test_hash_different_keys() {
+void test_hash_different_keys(void) {
     char* key_1;
     char* key_2;
     size_t size_1 = set_string(&key_1, "nomad");  
@@ -83,8 +83,9 @@ void test_hash_different_keys() {
 }
 
 
-void test_kill_entry() {
-    string_int_hashmap_entry entry = string_int_hashmap_initialize_entry();
+void test_kill_entry(void) {
+    string_int_hashmap_entry* entries = string_int_hashmap_initialize_entry_array(1);
+    string_int_hashmap_entry entry = entries[0];
     entry.occupied = 1;
     char* key;
     int key_size = set_string(&key, "nobody");
@@ -99,14 +100,29 @@ void test_kill_entry() {
     CU_ASSERT_EQUAL(entry.tombstone, 1);
 }
 
-void test_equal_values() {
+void test_equal_values(void) {
     int res = string_int_hashmap_equal_values(12, sizeof(int), 12, sizeof(int));
     CU_ASSERT_TRUE(res);
 }
 
-void test_equal_values_unequal() {
+void test_equal_values_unequal(void) {
     int res = string_int_hashmap_equal_values(0, sizeof(int), 1, sizeof(int));
     CU_ASSERT_FALSE(res);
+}
+
+void test_initialize_entry_array(void) {
+    string_int_hashmap_entry* entries = string_int_hashmap_initialize_entry_array(16);
+    CU_ASSERT_PTR_NOT_NULL(entries);
+    for(int i = 0; i < 16; i++) {
+        string_int_hashmap_entry entry = entries[i];
+        CU_ASSERT_EQUAL(entry.key, (char*)0);
+        CU_ASSERT_EQUAL(entry.key_size, 0);
+        CU_ASSERT_EQUAL(entry.value, 0);
+        CU_ASSERT_EQUAL(entry.value_size, 0);
+        CU_ASSERT_EQUAL(entry.occupied, 0);
+        CU_ASSERT_EQUAL(entry.tombstone, 0);
+    }
+    free(entries);
 }
 
 
@@ -129,6 +145,9 @@ int main(void) {
     CU_pSuite equal_value_suite = create_suite("equal_value suite", NULL, NULL);
     CU_add_test(equal_value_suite, "equal values", test_equal_values);
     CU_add_test(equal_value_suite, "unequal values", test_equal_values_unequal);
+
+    CU_pSuite initialize_entry_array_suite = create_suite("initialize_entry_array suite", NULL, NULL);
+    CU_add_test(initialize_entry_array_suite, "initialize entry array", test_initialize_entry_array);
     
     
     /* Initialize entry suite */
