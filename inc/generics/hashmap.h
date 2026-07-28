@@ -85,6 +85,8 @@ static inline void HM_FN(destroy_entry)(entry_s* entry) {
 
     entry->occupied = 0;
     entry->tombstone = 1;
+    entry->key_size = 0;
+    entry->value_size = 0;
 }
 
 #undef HM_CONCAT

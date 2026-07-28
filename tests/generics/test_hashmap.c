@@ -10,11 +10,11 @@
 #define HASHMAP_FREE_KEY(k) free(k)
 #define HASHMAP_KEY_TYPE char*
 #define HASHMAP_VALUE_TYPE int
-#define HASHMAP_TAG int_hashmap
+#define HASHMAP_TAG string_int_hashmap
 #include "hashmap.h"
 
 // Global dll struct pointer
-int_hashmap* map;
+string_int_hashmap* map;
 
 /*
 Helper function to free the memory for the dll
@@ -31,6 +31,7 @@ static void set_up(void) {
 
 /*
 Helper function to set up a string
+@param result The address of the resulting string
 @param value The literal value of a string
 @return Pointer to a newly allocated string
 */
@@ -80,6 +81,30 @@ void test_hash_different_keys() {
     CU_ASSERT_NOT_EQUAL(pos_1, pos_2);
 }
 
+void test_initialize_entry() {
+     string_int_hashmap_entry entry = string_int_hashmap_initialize_entry();
+     CU_ASSERT_EQUAL(entry.occupied, 0);
+     CU_ASSERT_EQUAL(entry.tombstone, 0);
+     CU_ASSERT_EQUAL(entry.key_size, 0);
+     CU_ASSERT_EQUAL(entry.value_size, 0);
+}
+
+void test_destroy_entry() {
+    string_int_hashmap_entry entry = string_int_hashmap_initialize_entry();
+    entry.occupied = 1;
+    char* key;
+    int key_size = set_string(&key, "nobody");
+    entry.key = key;
+    entry.key_size = key_size;
+    entry.value = 1;
+    entry.value_size = sizeof(1);
+    string_int_hashmap_destroy_entry(&entry);
+    CU_ASSERT_EQUAL(entry.key_size, 0);
+    CU_ASSERT_EQUAL(entry.value_size, 0);
+    CU_ASSERT_EQUAL(entry.occupied, 0);
+    CU_ASSERT_EQUAL(entry.tombstone, 1);
+}
+
 
 
 int main(void) {
@@ -93,11 +118,16 @@ int main(void) {
     CU_add_test(hash_suite, "hash value", test_hash_value);
     CU_add_test(hash_suite, "hash equal keys", test_hash_equal_keys);
     CU_add_test(hash_suite, "hash different keys", test_hash_different_keys);
+
+    CU_pSuite initialize_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
+    CU_add_test(initialize_entry_suite, "initialize entry", test_initialize_entry);
+    CU_add_test(initialize_entry_suite, "destroy entry", test_destroy_entry);
+    
     
     /* Initialize entry suite */
     // run the tests
     CU_basic_run_tests();
-    CU_pSuite initialize_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
+    
 
     // record the number of failures
     int failures = CU_get_number_of_failures();
