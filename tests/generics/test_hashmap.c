@@ -11,7 +11,6 @@
 #define HASHMAP_KEY_TYPE char*
 #define HASHMAP_VALUE_TYPE int
 #define HASHMAP_TAG string_int_hashmap
-#define HASHMAP_EQUAL_VALUE(a, b, sz) (a == b)
 #include "hashmap.h"
 
 // Global dll struct pointer
@@ -58,7 +57,7 @@ static CU_pSuite create_suite(const char* name,  void(*set_up)(),  void(*tear)()
 void test_hash_value(void) {
     char* key;
     size_t size = set_string(&key, "Ormund");
-    uint32_t position = hash(key, 100, size); 
+    uint32_t position = string_int_hashmap_hash(key, 100, size); 
     CU_ASSERT_EQUAL(position, 76);
 }
 
@@ -67,8 +66,8 @@ void test_hash_equal_keys(void) {
     char* key_2;
     size_t size_1 = set_string(&key_1, "faceless");  
     size_t size_2 = set_string(&key_2, "faceless");
-    uint32_t pos_1 = hash(key_1, 100, size_1);
-    uint32_t pos_2 = hash(key_2, 100, size_2);
+    uint32_t pos_1 = string_int_hashmap_hash(key_1, 100, size_1);
+    uint32_t pos_2 = string_int_hashmap_hash(key_2, 100, size_2);
     CU_ASSERT_EQUAL(pos_1, pos_2);
 }
 
@@ -77,8 +76,8 @@ void test_hash_different_keys(void) {
     char* key_2;
     size_t size_1 = set_string(&key_1, "nomad");  
     size_t size_2 = set_string(&key_2, "Nomad");
-    uint32_t pos_1 = hash(key_1, 100, size_1);
-    uint32_t pos_2 = hash(key_2, 100, size_2);
+    uint32_t pos_1 = string_int_hashmap_hash(key_1, 100, size_1);
+    uint32_t pos_2 = string_int_hashmap_hash(key_2, 100, size_2);
     CU_ASSERT_NOT_EQUAL(pos_1, pos_2);
 }
 
@@ -100,13 +99,18 @@ void test_kill_entry(void) {
     CU_ASSERT_EQUAL(entry.tombstone, 1);
 }
 
-void test_equal_values(void) {
-    int res = string_int_hashmap_equal_values(12, sizeof(int), 12, sizeof(int));
+void test_equal_keys(void) {
+    int res = string_int_hashmap_equal_keys("steel", 6, "steel", 6);
     CU_ASSERT_TRUE(res);
 }
 
-void test_equal_values_unequal(void) {
-    int res = string_int_hashmap_equal_values(0, sizeof(int), 1, sizeof(int));
+void test_equal_keys_unequal_size(void) {
+    int res = string_int_hashmap_equal_keys("last", 5, "first", 6);
+    CU_ASSERT_FALSE(res);
+}
+
+void test_equal_keys_unequal_same_size(void) {
+    int res = string_int_hashmap_equal_keys("take", 5, "bake", 5);
     CU_ASSERT_FALSE(res);
 }
 
@@ -153,9 +157,10 @@ int main(void) {
     CU_pSuite kill_entry_suite = create_suite("initialize_entry suite", NULL, NULL);
     CU_add_test(kill_entry_suite, "kill entry", test_kill_entry);
 
-    CU_pSuite equal_value_suite = create_suite("equal_value suite", NULL, NULL);
-    CU_add_test(equal_value_suite, "equal values", test_equal_values);
-    CU_add_test(equal_value_suite, "unequal values", test_equal_values_unequal);
+    CU_pSuite equal_key_suite = create_suite("equal_value suite", NULL, NULL);
+    CU_add_test(equal_key_suite, "equal keys", test_equal_keys);
+    CU_add_test(equal_key_suite, "unequal size keys", test_equal_keys_unequal_size);
+    CU_add_test(equal_key_suite, "unequal keys same size", test_equal_keys_unequal_same_size);
 
     CU_pSuite initialize_entry_array_suite = create_suite("initialize_entry_array suite", NULL, NULL);
     CU_add_test(initialize_entry_array_suite, "initialize entry array", test_initialize_entry_array);

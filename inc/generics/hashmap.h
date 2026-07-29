@@ -5,7 +5,7 @@
 HASHMAP_KEY_TYPE must be a pointer, (e.g. int*, struct node*, char*) so that the hash function works accordingly
 */
 #if !defined (HASHMAP_TAG) || !defined(HASHMAP_KEY_TYPE) || !defined(HASHMAP_VALUE_TYPE)
-#error "Missing tag or type definition"
+  #error "Missing tag or type definition"
 #endif
 
 // Decide if keys or values should be freed
@@ -17,12 +17,13 @@ HASHMAP_KEY_TYPE must be a pointer, (e.g. int*, struct node*, char*) so that the
   #define HASHMAP_FREE_VALUE(v) ((void)(v))
 #endif
 
-// Decide how to compare the values | Primitives VS Pointers
-
-#ifndef HASHMAP_EQUAL_VALUE
-  // Default comparison between pointers | Structs must be initialized with calloc
-  #define HASHMAP_EQUAL_VALUE(a, b, sz) (memcmp((a), (b), (sz)) == 0)
+// Decide how to compare the keys | Primitives VS Pointers
+#ifndef HASHMAP_EQUAL_KEY
+  // Default comparison between memory allocated bytes | Structs must be initialized with calloc
+  #define HASHMAP_EQUAL_KEY(a, b, sz) (memcmp((a), (b), (sz)) == 0)
 #endif
+
+
 
 
 #define HM_CONCAT(TAG, METHOD) TAG##_##METHOD
@@ -42,8 +43,8 @@ typedef struct entry_s {
 
 // Definition of hashmap struct
 typedef struct HASHMAP_TAG {
-    unsigned int size;
-    unsigned int capacity;
+    uint32_t size;
+    uint32_t capacity;
     entry_s* entries;
 } HASHMAP_TAG;
 
@@ -54,7 +55,7 @@ It is about the same as FNV1-a
 @param key Key of a hashmap entry
 @return index of the entry in the table
 */
-uint32_t hash(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_size) {
+uint32_t HM_FN(hash)(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_size) {
     if(capacity == 0) 
         return 0;
     const uint8_t* bytes = (const uint8_t*) key;
@@ -99,16 +100,16 @@ static inline void HM_FN(kill_entry)(entry_s* entry) {
 }
 
 /*
-Checks if two values are equal, using byte comparison
-@param value_actual Actual value
-@param size_actual Size of the actual value
-@param value_expected Expected value
-@param size_expected Size of the expected value
+Checks if two keys are equal, using byte comparison
+@param key_actual Actual key
+@param size_actual Size of the actual key
+@param key_expected Expected key
+@param size_expected Size of the expected key
 */
-static inline int HM_FN(equal_values)(HASHMAP_VALUE_TYPE value_actual, size_t size_actual, HASHMAP_VALUE_TYPE value_expected, size_t size_expected) {
+static inline int HM_FN(equal_keys)(HASHMAP_KEY_TYPE key_actual, size_t size_actual, HASHMAP_KEY_TYPE key_expected, size_t size_expected) {
     if(size_actual != size_expected)
         return 0;
-    return HASHMAP_EQUAL_VALUE(value_actual, value_expected, size_actual);
+    return HASHMAP_EQUAL_KEY(key_actual, key_expected, size_actual);
 }
 
 /*
@@ -148,6 +149,98 @@ static inline void HM_FN(destroy)(HASHMAP_TAG** map) {
     free(*map);
     (*map) = NULL;
 }
+
+/*
+Insert an entry in the hashmap or update the value of an entry if it already exists
+@param entries Array of entries
+@param capacity Capacity of hashmap
+@param key Key of the new entry
+@param value Value of the new entry
+@param key_size Size of the key for the new entry
+@param value_size Size of the value of the new entry
+@return 1 if the size of the hashmap was increased and 0 otherwise
+*/
+static inline int HM_FN(insert)(entry_s* entries, uint32_t capacity, HASHMAP_KEY_TYPE key, HASHMAP_VALUE_TYPE value, size_t key_size, size_t value_size) {
+    uint32_t safety = 0;
+    uint32_t index = HM_FN(hash)(key, capacity, key_size);
+    entry_s* first_tombstone = NULL;
+    while(safety < capacity) {
+        safety++;
+        entry_s* entry = &entries[index];
+        if(!entry->occupied) {
+            if(first_tombstone != NULL)
+                break;
+            entry->key = key;
+            entry->key_size = key_size;
+            entry->value = value;
+            entry->value_size = value_size;
+            entry->occupied = 1;
+            entry->tombstone = 0;
+            return 1;
+        }
+        else if(entry->occupied && !entry->tombstone && HM_FN(equal_keys)(key, key_size, entry->key, entry->key_size)) {
+            // Free old key
+            HASHMAP_FREE_VALUE(entry->value);
+
+            entry->value = value;
+            entry->value_size = value_size;
+            return 0;
+        } else if(entry->tombstone && first_tombstone == NULL) 
+            first_tombstone = entry;
+        
+        index = (index + 1) % capacity;
+    }
+    if(first_tombstone != NULL) {
+        first_tombstone->key = key;
+        first_tombstone->key_size = key_size;
+        first_tombstone->value = value;
+        first_tombstone->value_size = value_size;
+        first_tombstone->occupied = 1;
+        first_tombstone->tombstone = 0;
+        return 1;
+    }
+    // This scenario should never happen in which there are no tombstones and the hashmap is fully occupied
+    return 0;
+}
+
+/*
+Increase the hashmap capacity and rehash all entries
+@param map Pointer to a hashmap struct
+*/
+static inline void HM_FN(rehash)(HASHMAP_TAG* map) {
+    uint32_t old_capacity = map->capacity;
+    map->capacity = old_capacity << 1;
+    entry_s* bigger = HM_FN(initialize_entry_array)(map->capacity);
+    entry_s* entries = map->entries;
+    for(int i = 0; i < old_capacity; i++) {
+        entry_s entry = entries[i];
+        if(entry.occupied && !entry.tombstone) {
+            HM_FN(insert)(bigger, map->capacity, entry.key, entry.value, entry.key_size, entry.value_size);
+        }
+    }
+    // Free the memory allocated for the old entries array
+    free(map->entries);
+    map->entries = bigger;
+}
+
+/*
+Put new entry in the hashmap or replace entry value if key already exists in the hashmap
+@param map Pointer to hashmap struct
+@param key Key of the new entry
+@param value Value of the new entry
+@param key_size Size of the key
+@param value_size Size of the value
+*/
+static inline void HM_FN(put)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, HASHMAP_VALUE_TYPE value, size_t key_size, size_t value_size) {
+    // Check if the hashmap would be 75% full with the newly added entry
+    if(map->size + 1 >= map->capacity* 0.75)
+        HM_FN(rehash)(map);
+
+    int added_entry = HM_FN(insert)(map->entries, map->capacity, key, value, key_size, value_size);
+    if(added_entry)
+        map->size++;
+}
+
 
 #undef HM_CONCAT
 #undef HM_CONCAT_EXP
