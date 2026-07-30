@@ -152,11 +152,6 @@ static inline HASHMAP_TAG* HM_FN(initialize)() {
 /*
 Hashmap destructor
 @param map Pointer to a pointer to a hashmap struct
-@param map Pointer to hashmap struct
-@param key Key of the entry
-@param value Value of the entry
-@param key_size Size of the key
-@param value_size Size of the value
 */
 static inline void HM_FN(destroy)(HASHMAP_TAG** map) {
     if(map == NULL || (*map) == NULL)
@@ -171,7 +166,12 @@ static inline void HM_FN(destroy)(HASHMAP_TAG** map) {
 
 /*
 Helper function to quickly copy entries when rehashing
-
+This function assumes all keys are unique
+@param map Pointer to hashmap struct
+@param key Key of the entry
+@param value Value of the entry
+@param key_size Size of the key
+@param value_size Size of the value
 */
 static inline void HM_FN(put_rehash)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, HASHMAP_VALUE_TYPE value, size_t key_size, size_t value_size) {
     uint32_t index = HM_FN(hash)(key, map->capacity, key_size);

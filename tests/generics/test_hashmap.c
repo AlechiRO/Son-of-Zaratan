@@ -190,7 +190,7 @@ int main(void) {
     CU_add_test(destroy_hashmap_suite, "destroy hashmap", test_destroy_hashmap);
     CU_add_test(destroy_hashmap_suite, "destroy NULL hashmap", test_destroy_null_hashmap);
 
-    CU_pSuite insert_suite = create_suite("insert suite", NULL, NULL);
+    CU_pSuite put_rehash = create_suite("put_rehash suite", NULL, NULL);
 
     CU_pSuite rehash_suite = create_suite("rehash suite", NULL, NULL);
 
