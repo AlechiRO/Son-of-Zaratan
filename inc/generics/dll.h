@@ -6,6 +6,11 @@
 #error "Missing type or tag definition"
 #endif
 
+// Free the payload for non-primitive items
+#ifndef DLL_FREE_ITEM
+  #define DLL_FREE_ITEM(item) ((void)(item))
+#endif
+
 #define DLL_CONCAT(TAG, METHOD) TAG##_##METHOD
 #define DLL_CONCAT_EXP(TAG, METHOD) DLL_CONCAT(TAG, METHOD)
 #define DLL_FN(METHOD) DLL_CONCAT_EXP(DLL_TAG, METHOD)
@@ -97,8 +102,7 @@ Destroy a node
 */                                               
 static inline void DLL_FN(destroy_node)( NODE_TAG** node) {      
     if((*node) == NULL || node == NULL)                              
-        return;                                                      
-                                                                     
+        return;                                                                                                                       
     free((*node));                                                   
     (*node) = NULL;                                                  
 }                                                                    
@@ -175,12 +179,14 @@ Remove a node from the list
 @param node Node that is removed     
 */                                   
 static inline DLL_ITEM_TYPE DLL_FN(remove_node)(DLL_TAG* dll,  NODE_TAG* node) {    
-    if(dll->size == 0) {                                             
+    if(dll->size == 0 || node == dll->head || node == dll->tail) {                                             
         fprintf(stderr, "ERROR: DLL is empty, node can't be removed!");              
-        return (DLL_ITEM_TYPE) NULL;                                                 
+        DLL_ITEM_TYPE empty_payload;
+        memset(&empty_payload, 0, sizeof(DLL_ITEM_TYPE));
+        return empty_payload;                                                
     }                                                                
-     NODE_TAG* prev = DLL_FN(get_prev)(node);                        
-     NODE_TAG* next = DLL_FN(get_next)(node);                        
+    NODE_TAG* prev = DLL_FN(get_prev)(node);                        
+    NODE_TAG* next = DLL_FN(get_next)(node);                        
     DLL_ITEM_TYPE payload = DLL_FN(get_payload)(node);                            
     DLL_FN(set_next)(prev, next);                                     
     DLL_FN(set_prev)(next, prev);                                     
@@ -212,8 +218,11 @@ Get the payload of the first node in the DLL
 static inline DLL_ITEM_TYPE DLL_FN(get_first)(DLL_TAG* dll) {                    
     if(dll->size != 0)                                           
         return DLL_FN(get_payload)(DLL_FN(get_next)(dll->head));   
-    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
-    return (DLL_ITEM_TYPE) NULL;
+    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!"); 
+
+    DLL_ITEM_TYPE empty_payload;
+    memset(&empty_payload, 0, sizeof(DLL_ITEM_TYPE));
+    return empty_payload;
 }                                                                
                                                                  
 /*                                                               
@@ -223,8 +232,11 @@ Get the payload of the first node in the DLL
 static inline DLL_ITEM_TYPE DLL_FN(get_last)(DLL_TAG* dll) {                  
     if(dll->size != 0)                                           
         return DLL_FN(get_payload)(DLL_FN(get_prev)(dll->tail));      
-    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");             
-    return (DLL_ITEM_TYPE) NULL;                                                 
+    fprintf(stderr, "ERROR: DLL is empty, can't retrieve payload!");   
+
+    DLL_ITEM_TYPE empty_payload;
+    memset(&empty_payload, 0, sizeof(DLL_ITEM_TYPE));
+    return empty_payload;                                                 
 }                                                                
                                                                  
 /*                                                               
@@ -237,7 +249,9 @@ static inline void DLL_FN(destroy)(DLL_TAG** dll) {
                                                                  
      NODE_TAG* current = (*dll)->head;                          
     while(current != NULL) {                                     
-         NODE_TAG* next = DLL_FN(get_next)(current);             
+        NODE_TAG* next = DLL_FN(get_next)(current);
+        if(current != (*dll)->head && current != (*dll)->tail)
+            DLL_FREE_ITEM(current->payload);             
         DLL_FN(destroy_node)(&current);                           
         current = next;                                          
     }                                                                 
@@ -248,6 +262,7 @@ static inline void DLL_FN(destroy)(DLL_TAG** dll) {
 #undef DLL_TAG
 #undef DLL_ITEM_TYPE
 #undef DLL_CONCAT
+#undef DLL_FREE_ITEM
 #undef DLL_CONCAT_EXP
 #undef DLL_FN
 #undef NODE_TAG
