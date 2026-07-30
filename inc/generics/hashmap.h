@@ -128,6 +128,7 @@ static inline void HM_FN(destroy_entry_array)(entry_s** entries, uint32_t capaci
     }
     // Free the array of entries
     free(*entries);
+    *entries = NULL;
 }
 
 /*
