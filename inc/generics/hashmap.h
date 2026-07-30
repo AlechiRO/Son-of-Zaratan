@@ -70,19 +70,6 @@ uint32_t HM_FN(hash)(HASHMAP_KEY_TYPE key, unsigned int capacity, size_t key_siz
 }
 
 /*
-Entry Constructor
-@return Hashmap entry struct
-*/
-static inline entry_s HM_FN(initialize_entry)() {
-    entry_s entry;
-    entry.key_size = 0;
-    entry.value_size = 0;
-    entry.occupied = 0;
-    entry.tombstone = 0;
-    return entry;
-}
-
-/*
 Free the fields of an entry and raise a tombstone
 @param entry Pointer to a pointer to an entry struct
 */
