@@ -192,6 +192,9 @@ int main(void) {
 
     CU_pSuite insert_suite = create_suite("insert suite", NULL, NULL);
 
+    CU_pSuite rehash_suite = create_suite("rehash suite", NULL, NULL);
+
+    CU_pSuite put_suite = create_suite("put suite", set_up, clean_up);
 
     
     
