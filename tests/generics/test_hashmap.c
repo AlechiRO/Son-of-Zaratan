@@ -153,6 +153,39 @@ void test_destroy_null_hashmap(void) {
     CU_ASSERT_PTR_NULL(map);
 }
 
+void test_put_rehash_one_entry(void) {
+    char* s;
+    size_t size = set_string(&s,"Stark");
+    uint32_t position = string_int_hashmap_hash(s, map->capacity, size);
+    string_int_hashmap_put_rehash(map, s, 23, size, sizeof(int));
+    CU_ASSERT_TRUE(strcmp(map->entries[position].key, s) == 0);
+    CU_ASSERT_EQUAL(map->entries[position].value, 23);
+}
+
+void test_put_rehash_three_entries(void) {
+    char* s1;
+    char* s2;
+    char* s3;
+    size_t size1 = set_string(&s1,"Stark");
+    size_t size2 = set_string(&s2,"Hightower");
+    size_t size3 = set_string(&s3,"Lanister");
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1);
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2);
+    uint32_t position3 = string_int_hashmap_hash(s3, map->capacity, size3);
+    string_int_hashmap_put_rehash(map, s1, 23, size1, sizeof(int));
+    string_int_hashmap_put_rehash(map, s2, 24, size2, sizeof(int));
+    string_int_hashmap_put_rehash(map, s3, 25, size3, sizeof(int));
+
+    CU_ASSERT_TRUE(strcmp(map->entries[position1].key, s1) == 0);
+    CU_ASSERT_EQUAL(map->entries[position1].value, 23);
+
+    CU_ASSERT_TRUE(strcmp(map->entries[position2].key, s2) == 0);
+    CU_ASSERT_EQUAL(map->entries[position2].value, 24);
+
+    CU_ASSERT_TRUE(strcmp(map->entries[position3].key, s3) == 0);
+    CU_ASSERT_EQUAL(map->entries[position3].value, 25);
+}
+
 
 
 int main(void) {
@@ -190,7 +223,11 @@ int main(void) {
     CU_add_test(destroy_hashmap_suite, "destroy hashmap", test_destroy_hashmap);
     CU_add_test(destroy_hashmap_suite, "destroy NULL hashmap", test_destroy_null_hashmap);
 
-    CU_pSuite put_rehash = create_suite("put_rehash suite", NULL, NULL);
+    CU_pSuite put_rehash_suite = create_suite("put_rehash suite", set_up, clean_up);
+    CU_add_test(put_rehash_suite, "put_rehash one entry", test_put_rehash_one_entry);
+    CU_add_test(put_rehash_suite, "put_rehash three emtries", test_put_rehash_three_entries);
+
+    CU_pSuite destroy_entry_array_suite = create_suite("destroy_entry_array suite", NULL, NULL);
 
     CU_pSuite rehash_suite = create_suite("rehash suite", NULL, NULL);
 
