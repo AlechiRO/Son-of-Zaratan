@@ -271,6 +271,41 @@ static inline void HM_FN(put)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, HASHMAP_VA
     return;
 }
 
+/*
+Get the value of the entry with a specific key
+@param map Pointer to a hashmap struct
+@param key Key corresponding to the value we are looking for
+@param key_size Size of the key
+@return Value corresponding to the key
+*/
+static inline HASHMAP_VALUE_TYPE HM_FN(get)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    HASHMAP_VALUE_TYPE empty_value;
+    memset(&empty_value, 0, sizeof(HASHMAP_VALUE_TYPE));
+    if (map == NULL || map->entries == NULL || map->size == 0) {
+        fprintf(stderr, "ERROR: Hashmap is either empty or not yet initialized!\n");
+        return empty_value;
+    }
+    uint32_t safety = 0;
+    uint32_t index = HM_FN(hash)(key, map->capacity, key_size);
+
+    while(safety < map->capacity) {
+        safety++;
+        entry_s* entry = &(map->entries[index]);
+
+        // If an unoccupied entry is found, then the key-value pair is not in the hashmap
+        if(!entry->occupied && !entry->tombstone)
+            break;
+
+        if(entry->occupied && !entry->tombstone && HM_FN(equal_keys)(key, key_size, entry->key, entry->key_size))
+            return entry->value;
+            
+        index = (index + 1) % map->capacity;
+    }
+    
+    fprintf(stderr, "INFO: Could not find entry in the hashmap!\n");
+    return empty_value;
+}
+
 
 #undef HM_CONCAT
 #undef HM_CONCAT_EXP
