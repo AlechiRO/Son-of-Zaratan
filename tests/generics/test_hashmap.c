@@ -224,6 +224,20 @@ void test_destroy_entry_array_full(void) {
     CU_ASSERT_PTR_NULL(entries);
 }
 
+void test_rehash_forced(void) {
+    char* s1;
+    size_t size1 = set_string(&s1,"Stark");
+    string_int_hashmap_put(map, s1, 3, size1, sizeof(int));
+    uint32_t initial_position = string_int_hashmap_hash(s1, map->capacity, size1);
+    string_int_hashmap_rehash(map);
+    string_int_hashmap_entry* entries = map->entries;
+    uint32_t new_position = string_int_hashmap_hash(s1, map->capacity, size1);
+
+    CU_ASSERT_EQUAL(entries[new_position].value , 3);
+    CU_ASSERT_TRUE(strcmp(entries[new_position].key, s1) == 0);
+    CU_ASSERT_EQUAL(map->capacity, 32);
+}
+
 
 
 int main(void) {
@@ -272,7 +286,8 @@ int main(void) {
     CU_add_test(destroy_entry_array_suite, "destroy entry array full", test_destroy_entry_array_full);
 
     /* Rehash suite */
-    CU_pSuite rehash_suite = create_suite("rehash suite", NULL, NULL);
+    CU_pSuite rehash_suite = create_suite("rehash suite", set_up, clean_up);
+    CU_add_test(rehash_suite, "rehash forced", test_rehash_forced);
 
     /* Put suite */
     CU_pSuite put_suite = create_suite("put suite", set_up, clean_up);
