@@ -191,14 +191,13 @@ static inline void AL_FN(destroy)(ARRAY_LIST_TAG** list) {
     if(list == NULL || (*list) == NULL)                     
         return;                                             
     fprintf(stderr, "INFO: The array list %p has been destroyed!\n", (void*)(*list));  
-    
-    
-    ARRAY_LIST_ITEM_TYPE* array = (*list)->array;
-    for(int i = 0; i < (*list)->size; i++) 
-        ARRAY_LIST_FREE_ITEM(array[i]);
-    
 
-    if((*list)->array != NULL) {                                        
+    if((*list)->array != NULL) {  
+        // Free each item from the array
+        ARRAY_LIST_ITEM_TYPE* array = (*list)->array;
+        for(int i = 0; i < (*list)->size; i++) 
+            ARRAY_LIST_FREE_ITEM(array[i]);
+                                                  
         free((*list)->array);                                           
         (*list)->array = NULL;                                          
     }                                                                   

@@ -36,7 +36,7 @@ Helper function to set up a string
 @return Pointer to a newly allocated string
 */
 static size_t set_string(char** result, char* value) {
-    size_t size = strlen(value);
+    size_t size = strlen(value)+1;
     *result = malloc(size);
     strcpy(*result, value);
     return size;
@@ -58,7 +58,8 @@ void test_hash_value(void) {
     char* key;
     size_t size = set_string(&key, "Ormund");
     uint32_t position = string_int_hashmap_hash(key, 100, size); 
-    CU_ASSERT_EQUAL(position, 76);
+    CU_ASSERT_EQUAL(position, 64);
+    free(key);
 }
 
 void test_hash_equal_keys(void) {
@@ -69,6 +70,8 @@ void test_hash_equal_keys(void) {
     uint32_t pos_1 = string_int_hashmap_hash(key_1, 100, size_1);
     uint32_t pos_2 = string_int_hashmap_hash(key_2, 100, size_2);
     CU_ASSERT_EQUAL(pos_1, pos_2);
+    free(key_1);
+    free(key_2);
 }
 
 void test_hash_different_keys(void) {
@@ -79,24 +82,27 @@ void test_hash_different_keys(void) {
     uint32_t pos_1 = string_int_hashmap_hash(key_1, 100, size_1);
     uint32_t pos_2 = string_int_hashmap_hash(key_2, 100, size_2);
     CU_ASSERT_NOT_EQUAL(pos_1, pos_2);
+    free(key_1);
+    free(key_2);
 }
 
 
 void test_kill_entry(void) {
     string_int_hashmap_entry* entries = string_int_hashmap_initialize_entry_array(1);
-    string_int_hashmap_entry entry = entries[0];
-    entry.occupied = 1;
+    string_int_hashmap_entry* entry = &entries[0];
+    entry->occupied = 1;
     char* key;
     int key_size = set_string(&key, "nobody");
-    entry.key = key;
-    entry.key_size = key_size;
-    entry.value = 1;
-    entry.value_size = sizeof(1);
-    string_int_hashmap_kill_entry(&entry);
-    CU_ASSERT_EQUAL(entry.key_size, 0);
-    CU_ASSERT_EQUAL(entry.value_size, 0);
-    CU_ASSERT_EQUAL(entry.occupied, 0);
-    CU_ASSERT_EQUAL(entry.tombstone, 1);
+    entry->key = key;
+    entry->key_size = key_size;
+    entry->value = 1;
+    entry->value_size = sizeof(1);
+    string_int_hashmap_kill_entry(entry);
+    CU_ASSERT_EQUAL(entry->key_size, 0);
+    CU_ASSERT_EQUAL(entry->value_size, 0);
+    CU_ASSERT_EQUAL(entry->occupied, 0);
+    CU_ASSERT_EQUAL(entry->tombstone, 1);
+    free(entries);
 }
 
 void test_equal_keys(void) {
@@ -130,7 +136,7 @@ void test_initialize_entry_array(void) {
 }
 
 void test_initialize_hashmap(void) {
-    string_int_hashmap* map = string_int_hashmap_initialize();
+    map = string_int_hashmap_initialize();
     CU_ASSERT_EQUAL(map->size, 0);
     CU_ASSERT_EQUAL(map->capacity, 16);
     CU_ASSERT_PTR_NOT_NULL(map->entries);

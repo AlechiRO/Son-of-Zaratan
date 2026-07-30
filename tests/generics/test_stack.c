@@ -3,6 +3,9 @@
 #include <CUnit/CUnit.h>
 #include <stdlib.h>
 #include <err.h>
+#include <string.h>
+
+#define STACK_FREE_ITEM(item) free(item)
 
 #define STACK_TAG string_stack
 #define STACK_ITEM_TYPE char*
@@ -26,6 +29,18 @@ static void set_up(void) {
     stack = string_stack_initialize();
 }
 
+/*
+Helper function to set up a string
+@param result The address of the resulting string
+@param value The literal value of a string
+@return Pointer to a newly allocated string
+*/
+static char* set_string(char* value) {
+    char* result = malloc(strlen(value)+1);
+    strcpy(result, value);
+    return result;
+}
+
 /* 
 Helper function to create a suite
 @param name Pointer to the name of the suite
@@ -40,7 +55,7 @@ static CU_pSuite create_suite(const char* name,void(*set_up)(), void(*tear)()) {
 
 void test_initialize(void) {
     stack = string_stack_initialize();
-    CU_ASSERT_EQUAL(stack->size, sizeof(char*)*10);
+    CU_ASSERT_EQUAL(stack->capacity, 10);
     CU_ASSERT_EQUAL(stack->top, -1);
 }
 
@@ -49,14 +64,14 @@ void test_is_empty(void) {
 }
 
 void test_is_empty_push(void) {
-    string_stack_push(stack, "obj");
+    string_stack_push(stack, set_string("obj"));
     CU_ASSERT_FALSE(string_stack_is_empty(stack));
 }
 
 void test_size_3(void) {
-    string_stack_push(stack, "obj");
-    string_stack_push(stack, "obj");
-    string_stack_push(stack, "obj");
+    string_stack_push(stack, set_string("obj"));
+    string_stack_push(stack, set_string("obj"));
+    string_stack_push(stack, set_string("obj"));
     CU_ASSERT_EQUAL(string_stack_size(stack), 3);
 }
 
@@ -65,13 +80,13 @@ void test_peek_empty(void) {
 }
 
 void test_peek_element(void) {
-    char* word = "the hound";
+    char* word = set_string("The hound");
     string_stack_push(stack, word);
     CU_ASSERT_EQUAL(word, string_stack_peek(stack));
 }
 
 void test_push(void) {
-    string_stack_push(stack, "arya");
+    string_stack_push(stack, set_string("arya"));
     CU_ASSERT_FALSE(string_stack_is_empty(stack));
 }
 
@@ -81,15 +96,22 @@ void test_push_NULL(void) {
 }
 
 void test_pop_empty(void) {
-    CU_ASSERT_PTR_NULL(string_stack_pop(stack));
+    CU_ASSERT_EQUAL(string_stack_pop(stack), (char*)0);
 }
 
 void test_pop_two_elements(void) {
-    string_stack_push(stack, "baelish");
-    string_stack_push(stack, "sansa");
-    CU_ASSERT_EQUAL(string_stack_pop(stack), "sansa");
-    CU_ASSERT_EQUAL(string_stack_pop(stack), "baelish");
+    string_stack_push(stack, set_string("baelish"));
+    string_stack_push(stack, set_string("sansa"));
+
+    char* s1 = string_stack_pop(stack);
+    char* s2 = string_stack_pop(stack);
+
+    CU_ASSERT_TRUE(strcmp(s1, "sansa") == 0);
+    CU_ASSERT_TRUE(strcmp(s2, "baelish") == 0);
     CU_ASSERT_TRUE(string_stack_is_empty(stack));
+
+    free(s1);
+    free(s2);
 }
 
 void test_destroy_empty_stack(void) {
