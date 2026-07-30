@@ -74,11 +74,6 @@ void test_add_at_index_zero(void) {
     CU_ASSERT_EQUAL(int_list_get(list, 0), 1);
 }
 
-void test_add_at_index_one_on_position_zero(void) {
-    int_list_add_at_index(list, 1, 1);
-    CU_ASSERT_EQUAL(int_list_get(list, 0), 1);
-}
-
 void test_add_at_index_between(void) {
     int_list_add(list, 1);
     int_list_add(list, 3);
@@ -199,7 +194,6 @@ int main(void) {
     // add_at_index suite
     CU_pSuite add_at_index_suite = create_suite("add at index suite", set_up, clean_up);
     CU_add_test(add_at_index_suite, "add at index 0", test_add_at_index_zero);
-    CU_add_test(add_at_index_suite, "add at index 1 on position 0", test_add_at_index_one_on_position_zero);
     CU_add_test(add_at_index_suite, "add at index 1 between 2 elements", test_add_at_index_between);
 
     // add suite 

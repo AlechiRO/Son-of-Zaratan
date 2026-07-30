@@ -161,23 +161,32 @@ int main(void) {
     CU_add_test(hash_suite, "hash equal keys", test_hash_equal_keys);
     CU_add_test(hash_suite, "hash different keys", test_hash_different_keys);
 
+    /* Kill_entry suite */
     CU_pSuite kill_entry_suite = create_suite("initialize_kill_entry suite", NULL, NULL);
     CU_add_test(kill_entry_suite, "kill entry", test_kill_entry);
 
+    /* Equal_key suite */
     CU_pSuite equal_key_suite = create_suite("equal_value suite", NULL, NULL);
     CU_add_test(equal_key_suite, "equal keys", test_equal_keys);
     CU_add_test(equal_key_suite, "unequal size keys", test_equal_keys_unequal_size);
     CU_add_test(equal_key_suite, "unequal keys same size", test_equal_keys_unequal_same_size);
 
+    /* Initialize_entry_array suite */
     CU_pSuite initialize_entry_array_suite = create_suite("initialize_entry_array suite", NULL, NULL);
     CU_add_test(initialize_entry_array_suite, "initialize entry array", test_initialize_entry_array);
 
+    /* Initialize_hashmap_suite */
     CU_pSuite initialize_hashmap_suite = create_suite("initialize_hashmap suite", NULL, clean_up);
     CU_add_test(initialize_hashmap_suite, "initialize hashmap", test_initialize_hashmap);
 
+    /*  */
     CU_pSuite destroy_hashmap_suite = create_suite("destroy_hashmap suite", set_up, NULL);
     CU_add_test(destroy_hashmap_suite, "destroy hashmap", test_destroy_hashmap);
     CU_add_test(destroy_hashmap_suite, "destroy NULL hashmap", test_destroy_null_hashmap);
+
+    CU_pSuite insert_suite = create_suite("insert suite", NULL, NULL);
+
+
     
     
     /* Initialize entry suite */

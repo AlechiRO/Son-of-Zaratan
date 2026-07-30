@@ -5,6 +5,11 @@
 #error "Missing type or tag definition"
 #endif
 
+// Optional macro to free items. Evaluates to no-op for primitives
+#ifndef ARRAY_LIST_FREE_ITEM
+  #define ARRAY_LIST_FREE_ITEM(item) ((void)(item))
+#endif
+
 #define AL_CONCAT(TAG, METHOD) TAG##_##METHOD
 #define AL_CONCAT_EXP(TAG, METHOD) AL_CONCAT(TAG, METHOD)
 #define AL_FN(METHOD) AL_CONCAT_EXP(ARRAY_LIST_TAG, METHOD)
@@ -93,13 +98,10 @@ Adds an element after a specific index
 @param element Element to store in the array list                   
 */                                                                  
 static inline void AL_FN(add_at_index)(ARRAY_LIST_TAG* list, int index, ARRAY_LIST_ITEM_TYPE element) {  
-    if(index < 0) {                                                 
+    if(index < 0 || index > list->size) {                                                 
         fprintf(stderr, "ERROR: Array List index out of bounds!");                  
         exit(EXIT_FAILURE);                                                     
-    }                                                               
-                                                                    
-    if(index > list->size)                                          
-        index = list->size;                                         
+    }                                                                                                       
                                                                     
     if(AL_FN(is_full)(list))                                        
         AL_FN(increase_capacity)(list);                             
@@ -141,12 +143,8 @@ static inline void AL_FN(set)(ARRAY_LIST_TAG* list, int index, ARRAY_LIST_ITEM_T
         fprintf(stderr, "ERROR: Invalid index Array List!");                            
         exit(EXIT_FAILURE);                                                         
     }
-
-    if(AL_FN(is_empty(list))) {
-        fprintf(stderr, "ERROR: List is empty, could not set element!");
-        exit(EXIT_FAILURE);
-    }
-
+    // Attempt to free the previous item before replacing
+    ARRAY_LIST_FREE_ITEM((list->array)[index]);
     (list->array)[index] = element;                                     
 }                                                                       
                                                                         
@@ -160,11 +158,6 @@ static inline ARRAY_LIST_ITEM_TYPE AL_FN(get)(ARRAY_LIST_TAG* list, int index) {
     if(index < 0 || index >= list->size) {              
         fprintf(stderr, "ERROR: Invalid index Array List!");            
         exit(EXIT_FAILURE);                                        
-    }
-    
-    if(AL_FN(is_empty(list))) {
-        fprintf(stderr, "ERROR: List is empty, could not set element!");
-        exit(EXIT_FAILURE);
     }
     
     return (list->array)[index];                        
@@ -182,8 +175,8 @@ static inline ARRAY_LIST_ITEM_TYPE AL_FN(remove)(ARRAY_LIST_TAG* list, int index
         exit(EXIT_FAILURE);                                            
     }                                                       
     ARRAY_LIST_ITEM_TYPE* arr = list->array;                                
-    ARRAY_LIST_ITEM_TYPE result = (list->array)[index];                     
-    for(int i = index; i < list->size - 1; i++)             
+    ARRAY_LIST_ITEM_TYPE result = arr[index];                     
+    for(int i = index; i < list->size - 1; i++) 
         arr[i] = arr[i+1];                                  
     list->size--;                                           
     return result;                                          
@@ -198,7 +191,13 @@ static inline void AL_FN(destroy)(ARRAY_LIST_TAG** list) {
     if(list == NULL || (*list) == NULL)                     
         return;                                             
     fprintf(stderr, "INFO: The array list %p has been destroyed!\n", (void*)(*list));  
-                                                                        
+    
+    
+    ARRAY_LIST_ITEM_TYPE* array = (*list)->array;
+    for(int i = 0; i < (*list)->size; i++) 
+        ARRAY_LIST_FREE_ITEM(array[i]);
+    
+
     if((*list)->array != NULL) {                                        
         free((*list)->array);                                           
         (*list)->array = NULL;                                          
@@ -208,6 +207,7 @@ static inline void AL_FN(destroy)(ARRAY_LIST_TAG** list) {
 }
 #undef ARRAY_LIST_TAG
 #undef ARRAY_LIST_ITEM_TYPE
+#undef ARRAY_LIST_FREE_ITEM
 #undef AL_CONCAT
 #undef AL_CONCAT_EXP
 #undef AL_FN
