@@ -396,6 +396,76 @@ void test_get_entry_tombstone(void) {
     CU_ASSERT_EQUAL(value, 2);
 }
 
+void test_get_entry_does_not_exist(void) {
+    char* s;
+    size_t size = set_string(&s,"Wall");
+
+    int value = string_int_hashmap_get(map, s, size);
+
+    CU_ASSERT_EQUAL(value, 0);
+}
+
+void test_contains_key_entry(void) {
+    char* s1;
+    size_t size = set_string(&s1, "Wild fire");
+    string_int_hashmap_put(map, s1, 10, size, sizeof(int));
+
+    int64_t success = string_int_hashmap_contains_key(map, s1, size);
+    CU_ASSERT_TRUE(success);
+}
+
+void test_contains_key_one_position_away(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"Sunfire");
+    size_t size2 = set_string(&s2,"Seasmoke");
+    
+    // Hash function produces 15 for both inputs
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1);
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2);
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+    string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
+
+    int64_t success = string_int_hashmap_contains_key(map, s2, size2);
+    CU_ASSERT_TRUE(success);
+}
+
+void test_contains_key_tombstone(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"Cover");
+    size_t size2 = set_string(&s2,"cover");
+    
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1); // equals 0
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2); // equals 0
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+
+    string_int_hashmap_entry* entry_between = &((map->entries)[position1 + 1]);
+    entry_between->tombstone = 1;
+
+    string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
+    
+    int64_t success = string_int_hashmap_contains_key(map, s2, size2);
+    CU_ASSERT_TRUE(success);
+}
+
+void test_does_not_contain_key(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"The river");
+    size_t size2 = set_string(&s2,"Men");
+    
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1); // equals 0
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2); // equals 0
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+    
+    int64_t success = string_int_hashmap_contains_key(map, s2, size2);
+    CU_ASSERT_FALSE(success);
+}
+
 
 
 int main(void) {
@@ -461,6 +531,15 @@ int main(void) {
     CU_add_test(get_suite, "get entry", test_get_entry);
     CU_add_test(get_suite, "get entry one position away", test_get_entry_one_position_away);
     CU_add_test(get_suite, "get entry tombstone", test_get_entry_tombstone);
+    CU_add_test(get_suite, "get entry does not exist", test_get_entry_does_not_exist);
+
+    /* Contains_key suite */
+    CU_pSuite contains_key_suite = create_suite("contains_key suite", set_up, clean_up);
+    CU_add_test(contains_key_suite, "contains key entry", test_contains_key_entry);
+    CU_add_test(contains_key_suite, "contains key one position away", test_contains_key_one_position_away);
+    CU_add_test(contains_key_suite, "contains key tombstone", test_contains_key_tombstone);
+    CU_add_test(contains_key_suite, "does not contain key", test_does_not_contain_key);
+
     
     // run the tests
     CU_basic_run_tests();

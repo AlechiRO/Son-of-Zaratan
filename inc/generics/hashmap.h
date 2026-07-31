@@ -321,6 +321,16 @@ static inline HASHMAP_VALUE_TYPE HM_FN(get)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE k
     return empty_value;
 }
 
+/*
+Checks if the hashmap contains an entry with a specific key
+@param map Pointer to a hashmap struct
+@param key Key corresponding to the value we are looking for
+@param key_size Size of the key
+*/
+static inline int HM_FN(contains_key)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    return HM_FN(get_index)(map, key, key_size) != -1;
+}
+
 
 #undef HM_CONCAT
 #undef HM_CONCAT_EXP
