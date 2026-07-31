@@ -482,6 +482,38 @@ void test_remove_entry(void) {
     CU_ASSERT_EQUAL(map->size, 0);
 }
 
+void test_get_size_empty(void) {
+    uint32_t size = string_int_hashmap_get_size(map);
+    CU_ASSERT_EQUAL(size, 0);
+}
+
+void test_get_size_two_entries(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"The river");
+    size_t size2 = set_string(&s2,"Men");
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+    string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
+
+    uint32_t size = string_int_hashmap_get_size(map);
+    CU_ASSERT_EQUAL(size, 2);
+}
+
+void test_is_empty_true(void) {
+    int success = string_int_hashmap_is_empty(map);
+    CU_ASSERT_TRUE(success);
+}
+
+void test_is_empty_false(void) {
+    char* s1;
+    size_t size1 = set_string(&s1,"The river");
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+    
+    int success = string_int_hashmap_is_empty(map);
+    CU_ASSERT_FALSE(success);
+}
 
 
 int main(void) {
@@ -560,7 +592,15 @@ int main(void) {
     CU_pSuite remove_suite = create_suite("remove suite", set_up, clean_up);
     CU_add_test(remove_suite, "remove one entry", test_remove_entry);
     
+    /* Get_size suite */
+    CU_pSuite get_size_suite = create_suite("get_size suite", set_up, clean_up);
+    CU_add_test(get_size_suite, "get size empty", test_get_size_empty);
+    CU_add_test(get_size_suite, "get size two entries", test_get_size_two_entries);
 
+    /* Is_empty suite */
+    CU_pSuite is_empty_suite = create_suite("is_empty suite", set_up, clean_up);
+    CU_add_test(is_empty_suite, "is empty true", test_is_empty_true);
+    CU_add_test(is_empty_suite, "is empty false", test_is_empty_false);
     
     // run the tests
     CU_basic_run_tests();

@@ -328,6 +328,10 @@ Checks if the hashmap contains an entry with a specific key
 @return 1 if hashmap contains entry and 0 otherwise
 */
 static inline int HM_FN(contains_key)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    if (map == NULL || map->entries == NULL || map->size == 0) {
+        fprintf(stderr, "ERROR: Hashmap is either empty or not yet initialized!\n");
+        return -1;
+    }
     return HM_FN(get_index)(map, key, key_size) != -1;
 }
 
@@ -338,8 +342,15 @@ Remove an entry from a hashmap, replace it with a tombstone and retrieve the val
 @param key_size Size of the key
 */
 static inline HASHMAP_VALUE_TYPE HM_FN(remove)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    
     HASHMAP_VALUE_TYPE empty_value;
     memset(&empty_value, 0, sizeof(HASHMAP_VALUE_TYPE));
+
+    if (map == NULL || map->entries == NULL || map->size == 0) {
+        fprintf(stderr, "ERROR: Hashmap is either empty or not yet initialized!\n");
+        return empty_value;
+    }
+
     int64_t index = HM_FN(get_index)(map, key, key_size);
     
     if(index == -1) {
@@ -354,6 +365,26 @@ static inline HASHMAP_VALUE_TYPE HM_FN(remove)(HASHMAP_TAG* map, HASHMAP_KEY_TYP
     // Decrease the map size
     map->size--;
     return value;
+}
+/*
+Get the size of the hashmap
+@param Pointer to a hashmap struct
+@return Size of the hashmap
+*/
+static inline int32_t HM_FN(get_size)(HASHMAP_TAG* map) {
+    if(map == NULL || map->entries == NULL) {
+        fprintf(stderr, "ERROR: Hashmap has not yet been initialized!\n");
+        return -1;
+    }
+    return map->size;
+}
+
+static inline int HM_FN(is_empty)(HASHMAP_TAG* map) {
+    if(map == NULL || map->entries == NULL) {
+        fprintf(stderr, "ERROR: Hashmap has not yet been initialized!\n");
+        return -1;
+    }
+    return map->size == 0;
 }
 
 
