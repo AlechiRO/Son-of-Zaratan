@@ -72,7 +72,7 @@ static inline uint32_t HM_FN(hash)(HASHMAP_KEY_TYPE key, unsigned int capacity, 
 }
 
 /*
-Free the fields of an entry and raise a tombstone
+Free the key of an entry and raise a tombstone
 @param entry Pointer to a pointer to an entry struct
 */
 static inline void HM_FN(kill_entry)(entry_s* entry) {
@@ -80,7 +80,6 @@ static inline void HM_FN(kill_entry)(entry_s* entry) {
         return;
 
     HASHMAP_FREE_KEY(entry->key);
-    HASHMAP_FREE_VALUE(entry->value);
 
     entry->occupied = 0;
     entry->tombstone = 1;
@@ -326,9 +325,35 @@ Checks if the hashmap contains an entry with a specific key
 @param map Pointer to a hashmap struct
 @param key Key corresponding to the value we are looking for
 @param key_size Size of the key
+@return 1 if hashmap contains entry and 0 otherwise
 */
 static inline int HM_FN(contains_key)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
     return HM_FN(get_index)(map, key, key_size) != -1;
+}
+
+/*
+Remove an entry from a hashmap, replace it with a tombstone and retrieve the value
+@param map Pointer to a hashmap struct
+@param key Key corresponding to the value we are looking for
+@param key_size Size of the key
+*/
+static inline HASHMAP_VALUE_TYPE HM_FN(remove)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    HASHMAP_VALUE_TYPE empty_value;
+    memset(&empty_value, 0, sizeof(HASHMAP_VALUE_TYPE));
+    int64_t index = HM_FN(get_index)(map, key, key_size);
+    
+    if(index == -1) {
+        fprintf(stderr, "INFO: Could not find entry in the hashmap!\n");
+        return empty_value;
+    }
+    entry_s* entry = (&(map->entries)[index]);
+    HASHMAP_VALUE_TYPE value = entry->value;
+
+    // Kill the entry and replace with a tombstone
+    HM_FN(kill_entry)(entry);
+    // Decrease the map size
+    map->size--;
+    return value;
 }
 
 

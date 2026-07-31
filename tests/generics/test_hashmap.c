@@ -466,6 +466,22 @@ void test_does_not_contain_key(void) {
     CU_ASSERT_FALSE(success);
 }
 
+void test_remove_entry(void) {
+    char* s;
+    size_t size = set_string(&s, "Wild fire");
+    string_int_hashmap_put(map, s, 10, size, sizeof(int));
+
+    uint32_t position = string_int_hashmap_hash(s, map->capacity, size);
+
+    string_int_hashmap_entry* entry = &((map->entries)[position]);
+
+    int value = string_int_hashmap_remove(map, s, size);
+    CU_ASSERT_EQUAL(value, 10);
+    CU_ASSERT_TRUE(entry->tombstone);
+    CU_ASSERT_FALSE(entry->occupied);
+    CU_ASSERT_EQUAL(map->size, 0);
+}
+
 
 
 int main(void) {
@@ -539,6 +555,11 @@ int main(void) {
     CU_add_test(contains_key_suite, "contains key one position away", test_contains_key_one_position_away);
     CU_add_test(contains_key_suite, "contains key tombstone", test_contains_key_tombstone);
     CU_add_test(contains_key_suite, "does not contain key", test_does_not_contain_key);
+
+    /* Remove suite */
+    CU_pSuite remove_suite = create_suite("remove suite", set_up, clean_up);
+    CU_add_test(remove_suite, "remove one entry", test_remove_entry);
+    
 
     
     // run the tests
