@@ -123,8 +123,6 @@ void destroy_lexer_context(lexer_context_s** lctx) {
         return;
     }
 
-    token_list_destroy(&((*lctx)->tokens));
-
     if((*lctx)->source != NULL) 
         free((*lctx)->source);
     

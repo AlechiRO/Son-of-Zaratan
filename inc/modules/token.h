@@ -75,15 +75,16 @@ typedef enum Token_type {
     TOKEN_FILE_IS_NOT_EMPTY,    // -s   OK
 
     // Key Word Tokens
-    TOKEN_IF,                   // if
-    TOKEN_ELSE,                 // else
-    TOKEN_WHILE,                // while
-    TOKEN_FOR,                  // for
-    TOKEN_TRUE,                 // true
-    TOKEN_FALSE,                // false
-    TOKEN_NULL,                 // null
-    TOKEN_FUNC,                 // func
-    TOKEN_RETURN,               // return
+    TOKEN_IF,                   // if       OK
+    TOKEN_ELSE,                 // else     OK
+    TOKEN_WHILE,                // while    OK
+    TOKEN_FOR,                  // for      OK
+    TOKEN_TRUE,                 // true     OK
+    TOKEN_FALSE,                // false    OK
+    TOKEN_NULL,                 // null     OK
+    TOKEN_FUNC,                 // func     OK
+    TOKEN_RETURN,               // return   OK
+    TOKEN_VAR,                  // var      OK
 
     // Terminator Tokens
     TOKEN_EOF,                  // END OF FILE  OK

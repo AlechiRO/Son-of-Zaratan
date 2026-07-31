@@ -9,6 +9,7 @@
 #include "lexer_util.h"
 
 
+
 /*
 Scan a number token and add it to the list of tokens
 @param lctx Pointer to lexer context struct
@@ -22,15 +23,17 @@ void number(lexer_context_s* lctx) {
         advance(lctx);
         while(is_digit(peek(lctx)))
             advance(lctx);
-
-        // Add the token to the list
-        double result;
-        int success = parse_double(substring(lctx->source, lctx->start, lctx->current), &result);
-        if(success) {
-            literal_s* literal = initialize_literal(LITERAL_DOUBLE);
-            (literal->value).double_value = result;
-            add_token(lctx, TOKEN_NUMBER, literal);
-        }
+    }
+    // Add the token to the list
+    double result;
+    char* lexeme = substring(lctx->source, lctx->start, lctx->current);
+    int success = parse_double(lexeme, &result);
+    // Free the memory for the allocated substring
+    free(lexeme);
+    if(success) {
+        literal_s* literal = initialize_literal(LITERAL_DOUBLE);
+        (literal->value).double_value = result;
+        add_token(lctx, TOKEN_NUMBER, literal);
     }
 }
 
@@ -70,18 +73,43 @@ void string(lexer_context_s* lctx, int glob) {
 Add an identifier token to the list
 @param lctx Pointer to lexer context struct
 */
-void identifier(lexer_context_s* lctx) {
+void identifier(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
     while(is_alphanumeric(peek(lctx)))
         advance(lctx);
 
-    add_token(lctx, TOKEN_IDENTIFIER, NULL);
+    char* lexeme = substring(lctx->source, lctx->start, lctx->current);
+    size_t size  = lctx->current - lctx->start;
+    token_type_e type = TOKEN_IDENTIFIER;
+    if(string_token_type_hashmap_contains_key(token_map, lexeme, size))
+        type = string_token_type_hashmap_get(token_map, lexeme, size);
+
+    free(lexeme);
+    add_token(lctx, type, NULL);
+}
+
+/*
+Load the lexemes corresponding to the language keywords in a hashmap
+@param token_map Pointer to a lexeme to token type hashmap
+*/
+void load_keywords(string_token_type_hashmap* token_map) {
+    size_t token_type_size = sizeof(token_type_e);
+    string_token_type_hashmap_put(token_map, strdup("if"), TOKEN_IF, strlen("if"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("else"), TOKEN_ELSE, strlen("else"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("while"), TOKEN_WHILE, strlen("while"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("for"), TOKEN_FOR, strlen("for"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("true"), TOKEN_TRUE, strlen("true"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("false"), TOKEN_FALSE, strlen("false"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("null"), TOKEN_NULL, strlen("null"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("func"), TOKEN_FUNC, strlen("func"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("return"), TOKEN_RETURN, strlen("return"), token_type_size);
+    string_token_type_hashmap_put(token_map, strdup("var"), TOKEN_VAR, strlen("var"), token_type_size);
 }
 
 /*
 Main Lexer Loop
 @param line The line of code currently being scanned
 */
-token_list* lex(line_s* line) {
+token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
     lexer_context_s* lctx = initialize_lexer_context();
     append_to_source(lctx, line);
     int whitespace = 0;
@@ -94,7 +122,7 @@ token_list* lex(line_s* line) {
         token_count = token_list_get_size(lctx->tokens);
         // Scan the current token
         if(!is_at_end(lctx)) {
-            scan_token(lctx);
+            scan_token(lctx, token_map);
             // Compute leading whitespace flag for scanned token
             mark_token_whitespace(lctx, whitespace, token_count);
         }
@@ -105,14 +133,17 @@ token_list* lex(line_s* line) {
     add_token(lctx, TOKEN_EOF, NULL);
     // Compute leading whitespace flag for EOF token
     mark_token_whitespace(lctx, whitespace, token_count);
-    return lctx->tokens;
+    // Destoy the lexer context and save the pointer to the token list
+    token_list* tokens = lctx->tokens;
+    destroy_lexer_context(&lctx);
+    return tokens;
 }
 
 /*
 Scan the current token
 @param lctx Pointer to lexer context struct
 */
-void scan_token(lexer_context_s* lctx) {
+void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
     char c = advance(lctx);
     switch(c) {
     // Single character tokens
@@ -169,7 +200,7 @@ void scan_token(lexer_context_s* lctx) {
         if(is_digit(c))
             number(lctx);
         else if(is_alpha(c))
-            identifier(lctx);
+            identifier(lctx, token_map);
         else
             error(lctx->line_number, "Unexpected character"); break;
     }

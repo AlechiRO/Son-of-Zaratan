@@ -8,6 +8,12 @@
 #define ARRAY_LIST_TAG token_list
 #include "array_list.h"
 
+#define HASHMAP_FREE_KEY(k) free(k)
+#define HASHMAP_KEY_TYPE char*
+#define HASHMAP_VALUE_TYPE token_type_e
+#define HASHMAP_TAG string_token_type_hashmap
+#include "hashmap.h"
+
 //Lexer state enum
 typedef enum Lexer_state {
     STATE_DEFAULT,            // Programming expressions (math, vars, control flow)
@@ -33,7 +39,8 @@ void destroy_lexer_context(lexer_context_s** lctx);
 int is_at_end(lexer_context_s* lctx);
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal);
 char advance(lexer_context_s* lctx);
-token_list* lex(line_s* line);
-void scan_token(lexer_context_s* lctx);
+token_list* lex(line_s* line, string_token_type_hashmap* token_map);
+void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map);
+void load_keywords(string_token_type_hashmap* token_map);
 
 #endif
