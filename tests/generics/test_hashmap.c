@@ -243,9 +243,9 @@ void test_put_entry(void) {
     size_t size1 = set_string(&s1,"Stark");
     string_int_hashmap_put(map, s1, 3, size1, sizeof(int));
     uint32_t position = string_int_hashmap_hash(s1, map->capacity, size1);
-    string_int_hashmap_entry entry = (map->entries)[position];
-    CU_ASSERT_TRUE(strcmp(entry.key, s1) == 0);
-    CU_ASSERT_EQUAL(entry.value, 3);
+    string_int_hashmap_entry* entry = &((map->entries)[position]);
+    CU_ASSERT_TRUE(strcmp(entry->key, s1) == 0);
+    CU_ASSERT_EQUAL(entry->value, 3);
 }
 
 void test_put_two_overlapping_entries(void) {
@@ -260,14 +260,14 @@ void test_put_two_overlapping_entries(void) {
     string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
     string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
 
-    string_int_hashmap_entry entry1 = (map->entries)[position1];
-    string_int_hashmap_entry entry2 = (map->entries)[(position2 + 1) % map->capacity];
+    string_int_hashmap_entry* entry1 = &((map->entries)[position1]);
+    string_int_hashmap_entry* entry2 = &((map->entries)[(position2 + 1) % map->capacity]);
 
-    CU_ASSERT_TRUE(strcmp(entry1.key, s1) == 0);
-    CU_ASSERT_EQUAL(entry1.value, 1);
+    CU_ASSERT_TRUE(strcmp(entry1->key, s1) == 0);
+    CU_ASSERT_EQUAL(entry1->value, 1);
 
-    CU_ASSERT_TRUE(strcmp(entry2.key, s2) == 0);
-    CU_ASSERT_EQUAL(entry2.value, 2);
+    CU_ASSERT_TRUE(strcmp(entry2->key, s2) == 0);
+    CU_ASSERT_EQUAL(entry2->value, 2);
 }
 
 void test_put_overlapping_entries_with_tombstones(void){
@@ -350,6 +350,52 @@ void test_put_trigger_rehash(void) {
     CU_ASSERT_EQUAL(map->capacity, 2 * old_capacity);
 }
 
+void test_get_entry(void) {
+    char* s1;
+    size_t size = set_string(&s1, "Wild fire");
+    string_int_hashmap_put(map, s1, 10, size, sizeof(int));
+
+    int value = string_int_hashmap_get(map, s1, size);
+    CU_ASSERT_EQUAL(value, 10);
+}
+
+void test_get_entry_one_position_away(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"Sunfire");
+    size_t size2 = set_string(&s2,"Seasmoke");
+    
+    // Hash function produces 15 for both inputs
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1);
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2);
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+    string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
+
+    int value = string_int_hashmap_get(map, s2, size2);
+    CU_ASSERT_EQUAL(value, 2);
+}
+
+void test_get_entry_tombstone(void) {
+    char* s1;
+    char* s2;
+    size_t size1 = set_string(&s1,"Cover");
+    size_t size2 = set_string(&s2,"cover");
+    
+    uint32_t position1 = string_int_hashmap_hash(s1, map->capacity, size1); // equals 0
+    uint32_t position2 = string_int_hashmap_hash(s2, map->capacity, size2); // equals 0
+
+    string_int_hashmap_put(map, s1, 1, size1, sizeof(int));
+
+    string_int_hashmap_entry* entry_between = &((map->entries)[position1 + 1]);
+    entry_between->tombstone = 1;
+
+    string_int_hashmap_put(map, s2, 2, size2, sizeof(int));
+    
+    int value = string_int_hashmap_get(map, s2, size2);
+    CU_ASSERT_EQUAL(value, 2);
+}
+
 
 
 int main(void) {
@@ -409,6 +455,12 @@ int main(void) {
     CU_add_test(put_suite, "put replace entry", test_put_replace_entry);
     CU_add_test(put_suite, "put wrap", test_put_wrap);
     CU_add_test(put_suite, "put trigger rehash", test_put_trigger_rehash);
+
+    /* Get suite */
+    CU_pSuite get_suite = create_suite("get suite", set_up, clean_up);
+    CU_add_test(get_suite, "get entry", test_get_entry);
+    CU_add_test(get_suite, "get entry one position away", test_get_entry_one_position_away);
+    CU_add_test(get_suite, "get entry tombstone", test_get_entry_tombstone);
     
     // run the tests
     CU_basic_run_tests();

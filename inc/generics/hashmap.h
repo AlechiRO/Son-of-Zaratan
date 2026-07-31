@@ -272,6 +272,34 @@ static inline void HM_FN(put)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, HASHMAP_VA
 }
 
 /*
+Helper function to find the index of an entry with a specific key
+@param map Pointer to a hashmap struct
+@param key Key of the entry we are looking for
+@param size Size of the key
+@return The position of the entry we are looking for or -1 if the entry was not found
+*/
+static inline int64_t HM_FN(get_index)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE key, size_t key_size) {
+    uint32_t safety = 0;
+    uint32_t index = HM_FN(hash)(key, map->capacity, key_size);
+
+    while(safety < map->capacity) {
+        safety++;
+        entry_s* entry = &(map->entries[index]);
+
+        // If an unoccupied entry is found, then the key-value pair is not in the hashmap
+        if(!entry->occupied && !entry->tombstone)
+            break;
+
+        if(entry->occupied && !entry->tombstone && HM_FN(equal_keys)(key, key_size, entry->key, entry->key_size))
+            return index;
+            
+        index = (index + 1) % map->capacity;
+    }
+    // This is only returned if the entry is not found in the hashmap
+    return -1;
+}
+
+/*
 Get the value of the entry with a specific key
 @param map Pointer to a hashmap struct
 @param key Key corresponding to the value we are looking for
@@ -285,22 +313,9 @@ static inline HASHMAP_VALUE_TYPE HM_FN(get)(HASHMAP_TAG* map, HASHMAP_KEY_TYPE k
         fprintf(stderr, "ERROR: Hashmap is either empty or not yet initialized!\n");
         return empty_value;
     }
-    uint32_t safety = 0;
-    uint32_t index = HM_FN(hash)(key, map->capacity, key_size);
-
-    while(safety < map->capacity) {
-        safety++;
-        entry_s* entry = &(map->entries[index]);
-
-        // If an unoccupied entry is found, then the key-value pair is not in the hashmap
-        if(!entry->occupied && !entry->tombstone)
-            break;
-
-        if(entry->occupied && !entry->tombstone && HM_FN(equal_keys)(key, key_size, entry->key, entry->key_size))
-            return entry->value;
-            
-        index = (index + 1) % map->capacity;
-    }
+    int64_t index = HM_FN(get_index)(map, key, key_size);
+    if(index != -1)
+        return ((map->entries)[index]).value;
     
     fprintf(stderr, "INFO: Could not find entry in the hashmap!\n");
     return empty_value;
