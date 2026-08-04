@@ -338,6 +338,31 @@ void test_mark_token_whitespace_no_new_token(void) {
     CU_ASSERT_EQUAL(token->leading_whitespace, 0);
 }
 
+void test_load_keywords(void) {
+    string_token_type_hashmap* token_map = string_token_type_hashmap_initialize();
+    load_keywords(token_map);
+    token_type_e _if = string_token_type_hashmap_get(token_map, strdup("if"), strlen("if"));
+    token_type_e _else = string_token_type_hashmap_get(token_map, strdup("else"), strlen("else"));
+    token_type_e _while = string_token_type_hashmap_get(token_map, strdup("while"), strlen("while"));
+    token_type_e _for = string_token_type_hashmap_get(token_map, strdup("for"), strlen("for"));
+    token_type_e _true = string_token_type_hashmap_get(token_map, strdup("true"), strlen("true"));
+    token_type_e _false = string_token_type_hashmap_get(token_map, strdup("false"), strlen("false"));
+    token_type_e _null = string_token_type_hashmap_get(token_map, strdup("null"), strlen("null"));
+    token_type_e _func = string_token_type_hashmap_get(token_map, strdup("func"), strlen("func"));
+    token_type_e _return = string_token_type_hashmap_get(token_map, strdup("return"), strlen("return"));
+    token_type_e _var = string_token_type_hashmap_get(token_map, strdup("var"), strlen("var"));
+    CU_ASSERT_EQUAL(_if, TOKEN_IF);
+    CU_ASSERT_EQUAL(_else, TOKEN_ELSE);
+    CU_ASSERT_EQUAL(_while, TOKEN_WHILE);
+    CU_ASSERT_EQUAL(_for, TOKEN_FOR);
+    CU_ASSERT_EQUAL(_true, TOKEN_TRUE);
+    CU_ASSERT_EQUAL(_false, TOKEN_FALSE);
+    CU_ASSERT_EQUAL(_null, TOKEN_NULL);
+    CU_ASSERT_EQUAL(_func, TOKEN_FUNC);
+    CU_ASSERT_EQUAL(_return, TOKEN_RETURN);
+    CU_ASSERT_EQUAL(_var, TOKEN_VAR);
+}
+
 int main(void) {
 
     // initialize registry
@@ -418,6 +443,10 @@ int main(void) {
     CU_add_test(mark_token_whitespace_suite, "mark token whitespace", test_mark_token_whitespace);
     CU_add_test(mark_token_whitespace_suite, "mark token whitespace false", test_mark_token_whitespace_false);
     CU_add_test(mark_token_whitespace_suite, "mark token whitespace no new token", test_mark_token_whitespace_no_new_token);
+
+    /* Load_keywords suite */
+    CU_pSuite load_keywords_suite = create_suite("load_keywords suite", NULL, NULL);
+    CU_add_test(load_keywords_suite, "load keywords", test_load_keywords);
 
     // run the tests
     CU_basic_run_tests();
