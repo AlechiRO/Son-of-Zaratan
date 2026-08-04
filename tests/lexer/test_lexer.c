@@ -14,12 +14,15 @@
 // Global stack struct pointer
 line_s* line;
 lexer_context_s* lctx;
+string_token_type_hashmap* token_map;
 
 /*
 Helper function to free the memory for the dependencies
 */
 static void clean_up(void) {
     destroy_lexer_context(&lctx);
+    string_token_type_hashmap_destroy(&token_map);
+    
 }
 
 /*
@@ -27,6 +30,8 @@ Helper function to initialize the dependencies
 */
 static void set_up(void) {
     lctx = initialize_lexer_context();
+    token_map = string_token_type_hashmap_initialize();
+    load_keywords(token_map);
 }
 
 /*
@@ -113,6 +118,21 @@ void test_string_unterminated(void) {
     CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 0);
 }
 
+void test_indentifier_not_keyword(void) {
+    set_source("needle");
+    identifier(lctx, token_map);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "needle") == 0);
+    CU_ASSERT_EQUAL(token->type, TOKEN_IDENTIFIER);
+}
+
+void test_identifier_keyword(void) {
+    set_source("if(1 == 2)");
+    identifier(lctx, token_map);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "if") == 0);
+    CU_ASSERT_EQUAL(token->type, TOKEN_IF);
+}
 
 
 int main(void) {
@@ -135,7 +155,8 @@ int main(void) {
 
     /* Identifier suite */
     CU_pSuite identifier_suite = create_suite("identifier suite", set_up, clean_up);
-
+    CU_add_test(identifier_suite, "identifier not a keyword", test_indentifier_not_keyword);
+    CU_add_test(identifier_suite, "identifier keyword", test_identifier_keyword);
     
     // run the tests
     CU_basic_run_tests();

@@ -19,14 +19,18 @@ char* substring(char* source, int begin, int end) {
         return NULL;
     }
 
-    char* substr = malloc(substring_size);
+    char* substr = malloc(substring_size + 1);
 
     if(substr == NULL) {
         fprintf(stderr, "FATAL: could not allocate memory for substring extraction\n");
         exit(EXIT_FAILURE);
     }
 
-    strncpy(substr, source + begin, substring_size);
+    memcpy(substr, source + begin, substring_size);
+    // Add string terminator
+    substr[substring_size] = '\0';
+
+    return substr;
 }
 
 /*

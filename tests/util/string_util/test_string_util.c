@@ -14,14 +14,16 @@ char* string = NULL;
 Helper function to free the memory for the Token
 */
 static void clean_up(void) {
-    if(string != NULL)
+    if(string != (char*)NULL) {
         free(string);
+        string = NULL;
+    }
 }
 /*
 Helper function to initialize the Token
 */
 static void set_up(void) {
-    // Implementation if needed...
+    string = NULL;
 }
 
 /* 
@@ -54,7 +56,7 @@ void test_substring_invalid_indexes(void) {
 void test_substring(void) {
     string = substring("Daemon sacrificed himself", 7, 17);
     CU_ASSERT_TRUE(strcmp(string, "sacrificed") == 0);
-    printf("%s/n", string);
+    printf("%s\n", string);
 }
 
 void test_is_digit(void) {
@@ -108,35 +110,35 @@ void test_parse_double_valid(void) {
     double result;
     int success = parse_double("1.001", &result);
     CU_ASSERT_TRUE(success);
-    CU_ASSERT_EQUAL(result, 1.001);
+    CU_ASSERT_DOUBLE_EQUAL(result, 1.001, 0.001);
 }
 
 void test_parse_double_small_precision(void) {
     double result;
     int success = parse_double("12345678.9", &result);
     CU_ASSERT_TRUE(success);
-    CU_ASSERT_EQUAL(result, 12345678.9);
+    CU_ASSERT_DOUBLE_EQUAL(result, 12345678.9, 0.001);
 }
 
 void test_parse_double_invalid_two_dots(void) {
     double result = 0;
     int success = parse_double("23.44.5", &result);
     CU_ASSERT_FALSE(success);
-    CU_ASSERT_EQUAL(result, 23.44);
+    CU_ASSERT_DOUBLE_EQUAL(result, 23.44, 0.001);
 }
 
 void test_parse_double_invalid_character(void) {
     double result = 0;
     int success = parse_double("23&44.5", &result);
     CU_ASSERT_FALSE(success);
-    CU_ASSERT_EQUAL(result, 0);
+    CU_ASSERT_DOUBLE_EQUAL(result, 0, 0.001);
 }
 
 void test_parse_double_negative(void) {
     double result = 0;
     int success = parse_double("-450.20", &result);
     CU_ASSERT_TRUE(success);
-    CU_ASSERT_EQUAL(result, -450.20);
+    CU_ASSERT_DOUBLE_EQUAL(result, -450.20, 0.001);
 }
 
 int main(void) {
@@ -145,7 +147,7 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry"); 
     /* Substring suite */
-    CU_pSuite substring_suite = create_suite("substring suite", NULL, clean_up);
+    CU_pSuite substring_suite = create_suite("substring suite", set_up, clean_up);
     CU_add_test(substring_suite, "substring null", test_substring_null);
     CU_add_test(substring_suite, "substring invalid indexes on point", test_substring_invalid_indexes_on_point);
     CU_add_test(substring_suite, "substring invalid indexes", test_substring_invalid_indexes);

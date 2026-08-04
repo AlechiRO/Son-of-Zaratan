@@ -361,6 +361,7 @@ void test_load_keywords(void) {
     CU_ASSERT_EQUAL(_func, TOKEN_FUNC);
     CU_ASSERT_EQUAL(_return, TOKEN_RETURN);
     CU_ASSERT_EQUAL(_var, TOKEN_VAR);
+    string_token_type_hashmap_destroy(&token_map);
 }
 
 int main(void) {

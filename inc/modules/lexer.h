@@ -36,5 +36,6 @@ void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map);
 void load_keywords(string_token_type_hashmap* token_map);
 void number(lexer_context_s* lctx);
 void string(lexer_context_s* lctx, int glob);
+void identifier(lexer_context_s* lctx, string_token_type_hashmap* token_map);
 
 #endif
