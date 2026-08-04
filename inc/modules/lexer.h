@@ -36,11 +36,11 @@ typedef struct Lexer_context {
 
 lexer_context_s* initialize_lexer_context(void);
 void destroy_lexer_context(lexer_context_s** lctx);
-int is_at_end(lexer_context_s* lctx);
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal);
 char advance(lexer_context_s* lctx);
 token_list* lex(line_s* line, string_token_type_hashmap* token_map);
 void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map);
 void load_keywords(string_token_type_hashmap* token_map);
+void number(lexer_context_s* lctx);
 
 #endif

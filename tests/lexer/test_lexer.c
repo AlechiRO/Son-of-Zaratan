@@ -29,6 +29,17 @@ static void set_up(void) {
     lctx = initialize_lexer_context();
 }
 
+/*
+Helper function to set up the source string
+@param val String containing source value
+*/
+static void set_source(char* val) {
+    size_t length = strlen(val);
+    lctx->source = malloc(length);
+    strcpy(lctx->source, val);
+    lctx->source_length = length;
+}
+
 /* 
 Helper function to create a suite
 @param name Pointer to the name of the suite
@@ -41,8 +52,16 @@ static CU_pSuite create_suite(const char* name,void(*set_up)(), void(*tear)()) {
     return suite;
 }
 
-
-
+void test_number_integer(void) {
+    set_source("456");
+    number(lctx);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "456") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_NUMBER);
+    CU_ASSERT_EQUAL(token->literal->type, LITERAL_DOUBLE);
+    CU_ASSERT_EQUAL(token->literal->value.double_value, 456);
+}
 
 
 int main(void) {
@@ -51,7 +70,9 @@ int main(void) {
     if (CU_initialize_registry() != CUE_SUCCESS)
         errx(EXIT_FAILURE, "can't initialize test registry");
 
-    
+    /* Number suite */
+    CU_pSuite number_suite = create_suite("number suite", set_up, clean_up);
+    CU_add_test(number_suite, "number integer", test_number_integer);
 
     // run the tests
     CU_basic_run_tests();
