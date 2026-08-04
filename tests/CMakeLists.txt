@@ -106,6 +106,7 @@ if(CUNIT_LIBRARIES AND CUNIT_INCLUDE_DIRS)
         $<TARGET_OBJECTS:lexer_logic>
         $<TARGET_OBJECTS:lexer_util_logic>
         $<TARGET_OBJECTS:string_util_logic>
+        $<TARGET_OBJECTS:printer_logic>
     )
     target_link_libraries(LEXER_TEST_DRIVER PRIVATE ${CUNIT_LIBRARIES})
     target_include_directories(LEXER_TEST_DRIVER PRIVATE 

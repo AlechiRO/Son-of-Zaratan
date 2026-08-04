@@ -63,6 +63,57 @@ void test_number_integer(void) {
     CU_ASSERT_EQUAL(token->literal->value.double_value, 456);
 }
 
+void test_number_double_left_dot(void) {
+    set_source("4.56");
+    number(lctx);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "4.56") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_NUMBER);
+    CU_ASSERT_EQUAL(token->literal->type, LITERAL_DOUBLE);
+    CU_ASSERT_DOUBLE_EQUAL(token->literal->value.double_value, 4.56, 0.0001);
+}
+
+void test_number_double_right_dot(void) {
+    set_source("45.6");
+    number(lctx);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "45.6") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_NUMBER);
+    CU_ASSERT_EQUAL(token->literal->type, LITERAL_DOUBLE);
+    CU_ASSERT_DOUBLE_EQUAL(token->literal->value.double_value, 45.6, 0.0001);
+}
+
+void test_string_glob(void) {
+    set_source("\"*.txt\"");
+    string(lctx, 1);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "\"*.txt\"") == 0);
+    CU_ASSERT_TRUE(strcmp(token->literal->value.string_value, "*.txt") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_STRING_GLOB);
+    CU_ASSERT_EQUAL(token->literal->type, LITERAL_STRING);
+}
+
+void test_string_default(void) {
+    set_source("\'*.txt\'");
+    string(lctx, 0);
+    token_s* token = token_list_get(lctx->tokens, 0);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, "\'*.txt\'") == 0);
+    CU_ASSERT_TRUE(strcmp(token->literal->value.string_value, "*.txt") == 0);
+    CU_ASSERT_EQUAL(token->line, 1);
+    CU_ASSERT_EQUAL(token->type, TOKEN_STRING_DEFAULT);
+    CU_ASSERT_EQUAL(token->literal->type, LITERAL_STRING);
+}
+
+void test_string_unterminated(void) {
+    set_source("\"*.txt");
+    string(lctx, 1);
+    CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 0);
+}
+
+
 
 int main(void) {
 
@@ -73,6 +124,14 @@ int main(void) {
     /* Number suite */
     CU_pSuite number_suite = create_suite("number suite", set_up, clean_up);
     CU_add_test(number_suite, "number integer", test_number_integer);
+    CU_add_test(number_suite, "number double left dot", test_number_double_left_dot);
+    CU_add_test(number_suite, "number double right dot", test_number_double_right_dot);
+
+    /* String suite */
+    CU_pSuite string_suite = create_suite("string_suite", set_up, clean_up);
+    CU_add_test(string_suite, "string glob", test_string_glob);
+    CU_add_test(string_suite, "string default", test_string_default);
+    CU_add_test(string_suite, "string unterminated", test_string_unterminated);
 
     // run the tests
     CU_basic_run_tests();

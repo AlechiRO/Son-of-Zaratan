@@ -44,6 +44,7 @@ Scan a string token and add it to the list of tokens
 */
 void string(lexer_context_s* lctx, int glob) {
     char string_terminator = glob ? '"' : '\'';
+    advance(lctx);
     while(peek(lctx) != string_terminator && !is_at_end(lctx)) {
         if(peek(lctx) == '\n') 
             lctx->line_number++;
