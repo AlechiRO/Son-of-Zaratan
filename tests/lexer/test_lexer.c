@@ -133,6 +133,10 @@ int main(void) {
     CU_add_test(string_suite, "string default", test_string_default);
     CU_add_test(string_suite, "string unterminated", test_string_unterminated);
 
+    /* Identifier suite */
+    CU_pSuite identifier_suite = create_suite("identifier suite", set_up, clean_up);
+
+    
     // run the tests
     CU_basic_run_tests();
 

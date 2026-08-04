@@ -2,6 +2,7 @@
 #define LEXER_UTIL_h
 
 #include "token.h"
+#include "lexer_generics.h"
 
 typedef struct Lexer_context lexer_context_s;
 
@@ -28,5 +29,6 @@ char peek_next(lexer_context_s* lctx);
 void match_multiple_tokens(lexer_context_s* lctx, char expected[], token_type_e types[], size_t size, token_type_e default_type);
 int check_leading_whitespace(lexer_context_s* lctx);
 void mark_token_whitespace(lexer_context_s* lctx, int whitespace, int token_count_before);
+void load_keywords(string_token_type_hashmap* token_map);
 
 #endif

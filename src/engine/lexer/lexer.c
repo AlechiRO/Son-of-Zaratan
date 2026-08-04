@@ -88,23 +88,6 @@ void identifier(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
     add_token(lctx, type, NULL);
 }
 
-/*
-Load the lexemes corresponding to the language keywords in a hashmap
-@param token_map Pointer to a lexeme to token type hashmap
-*/
-void load_keywords(string_token_type_hashmap* token_map) {
-    size_t token_type_size = sizeof(token_type_e);
-    string_token_type_hashmap_put(token_map, strdup("if"), TOKEN_IF, strlen("if"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("else"), TOKEN_ELSE, strlen("else"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("while"), TOKEN_WHILE, strlen("while"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("for"), TOKEN_FOR, strlen("for"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("true"), TOKEN_TRUE, strlen("true"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("false"), TOKEN_FALSE, strlen("false"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("null"), TOKEN_NULL, strlen("null"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("func"), TOKEN_FUNC, strlen("func"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("return"), TOKEN_RETURN, strlen("return"), token_type_size);
-    string_token_type_hashmap_put(token_map, strdup("var"), TOKEN_VAR, strlen("var"), token_type_size);
-}
 
 /*
 Main Lexer Loop

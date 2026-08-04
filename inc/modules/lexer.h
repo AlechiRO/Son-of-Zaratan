@@ -1,18 +1,11 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include "lexer_generics.h"
 #include "lexer_util.h"
 #include "token.h"
 // Setup for Token Array List
-#define ARRAY_LIST_ITEM_TYPE token_s*
-#define ARRAY_LIST_TAG token_list
-#include "array_list.h"
 
-#define HASHMAP_FREE_KEY(k) free(k)
-#define HASHMAP_KEY_TYPE char*
-#define HASHMAP_VALUE_TYPE token_type_e
-#define HASHMAP_TAG string_token_type_hashmap
-#include "hashmap.h"
 
 //Lexer state enum
 typedef enum Lexer_state {
