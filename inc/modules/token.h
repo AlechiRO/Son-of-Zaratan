@@ -65,9 +65,9 @@ typedef enum Token_type {
     TOKEN_ARGUMENT_NUMBER,      // $#   OK
     TOKEN_ARGUMENT_ARRAY,       // $@   OK
     TOKEN_DUP_OUT,              // >&   OK
-    TOKEN_DUP_IN,               // <&   OK
-    TOKEN_COMMENT,              // ~ before writing a comment OK
+    TOKEN_DUP_IN,               // <&   OK                      
     TOKEN_TERMINATOR,           // '\n' OK
+                                // ~ before writing a comment OK
 
     // File Test Operators
     TOKEN_FILE_EXIST,           // -a   OK

@@ -44,6 +44,18 @@ static void set_source(char* val) {
     strcpy(lctx->source, val);
     lctx->source_length = length;
 }
+/*
+Helper function to check if the right token was added to the token list
+@param lctx Pointer to lexer context struct
+@param index The index of the token in the list
+@param type The type of the token
+@param lexeme The lexeme of the token
+*/
+static void check_token(lexer_context_s* lctx, int index, token_type_e type, char* lexeme) {
+    token_s* token = token_list_get(lctx->tokens, index);
+    CU_ASSERT_EQUAL(token->type, type);
+    CU_ASSERT_TRUE(strcmp(token->lexeme, lexeme) == 0);
+}
 
 /* 
 Helper function to create a suite
@@ -121,19 +133,63 @@ void test_string_unterminated(void) {
 void test_indentifier_not_keyword(void) {
     set_source("needle");
     identifier(lctx, token_map);
-    token_s* token = token_list_get(lctx->tokens, 0);
-    CU_ASSERT_TRUE(strcmp(token->lexeme, "needle") == 0);
-    CU_ASSERT_EQUAL(token->type, TOKEN_IDENTIFIER);
+    check_token(lctx, 0, TOKEN_IDENTIFIER, "needle");
 }
 
 void test_identifier_keyword(void) {
     set_source("if(1 == 2)");
     identifier(lctx, token_map);
-    token_s* token = token_list_get(lctx->tokens, 0);
-    CU_ASSERT_TRUE(strcmp(token->lexeme, "if") == 0);
-    CU_ASSERT_EQUAL(token->type, TOKEN_IF);
+    check_token(lctx, 0, TOKEN_IF, "if");
 }
 
+void test_scan_single_char_token(void) {
+    set_source("(");
+    lctx->source_length = strlen(lctx->source);
+    
+    scan_token(lctx, token_map);
+
+    check_token(lctx, 0, TOKEN_ROUND_BRACE_LEFT, "(");
+}
+
+void test_scan_double_char_token_default(void) {
+    set_source("!");
+    scan_token(lctx, token_map);
+
+    check_token(lctx, 0, TOKEN_BANG, "!");
+}
+
+void test_scan_double_char_token(void) {
+    set_source("!=");
+    scan_token(lctx, token_map);
+
+    check_token(lctx, 0, TOKEN_BANG_EQUAL, "!=");
+}
+
+void test_scan_double_char_multiple_options_default(void) {
+    set_source("<");
+    scan_token(lctx, token_map);
+
+    check_token(lctx, 0, TOKEN_LESS, "<");
+}
+
+void test_scan_double_char_multiple_options(void) {
+    set_source("<&");
+    scan_token(lctx, token_map);
+
+    check_token(lctx, 0, TOKEN_DUP_IN, "<&");
+}
+
+void test_scan_comment(void) {
+    set_source("~This is a comment");
+    scan_token(lctx, token_map);
+    CU_ASSERT_TRUE(token_list_is_empty(lctx->tokens));
+}
+
+void test_scan_terminator(void) {
+    set_source("\n");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_TERMINATOR, "\n");
+}
 
 int main(void) {
 
@@ -158,6 +214,16 @@ int main(void) {
     CU_add_test(identifier_suite, "identifier not a keyword", test_indentifier_not_keyword);
     CU_add_test(identifier_suite, "identifier keyword", test_identifier_keyword);
     
+    /* Scan_token suite */
+    CU_pSuite scan_token_suite = create_suite("scan_token suite", set_up, clean_up);
+    CU_add_test(scan_token_suite, "scan single char token", test_scan_single_char_token);
+    CU_add_test(scan_token_suite, "scan double char token default", test_scan_double_char_token_default);
+    CU_add_test(scan_token_suite, "scan double character token", test_scan_double_char_token);
+    CU_add_test(scan_token_suite, "scan double char multiple options defaul", test_scan_double_char_multiple_options_default);
+    CU_add_test(scan_token_suite, "scan double char tokens multiple options", test_scan_double_char_multiple_options);
+    CU_add_test(scan_token_suite, "scan comment", test_scan_comment);
+    CU_add_test(scan_token_suite, "scan terminator", test_scan_terminator);
+
     // run the tests
     CU_basic_run_tests();
 
