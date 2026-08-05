@@ -88,41 +88,6 @@ void identifier(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
     add_token(lctx, type, NULL);
 }
 
-
-/*
-Main Lexer Loop
-@param line The line of code currently being scanned
-*/
-token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
-    lexer_context_s* lctx = initialize_lexer_context();
-    append_to_source(lctx, line);
-    int whitespace = 0;
-    int token_count = 0;
-    while(!is_at_end(lctx)) {
-        lctx->start = lctx->current;
-        // Handle and checck for whitespace
-        whitespace = check_leading_whitespace(lctx);
-        // Compute token count before adding a token
-        token_count = token_list_get_size(lctx->tokens);
-        // Scan the current token
-        if(!is_at_end(lctx)) {
-            scan_token(lctx, token_map);
-            // Compute leading whitespace flag for scanned token
-            mark_token_whitespace(lctx, whitespace, token_count);
-        }
-    }
-    // Compute token count before adding EOF token
-    token_count = token_list_get_size(lctx->tokens);
-    // Add this token to mark the end of the source code
-    add_token(lctx, TOKEN_EOF, NULL);
-    // Compute leading whitespace flag for EOF token
-    mark_token_whitespace(lctx, whitespace, token_count);
-    // Destoy the lexer context and save the pointer to the token list
-    token_list* tokens = lctx->tokens;
-    destroy_lexer_context(&lctx);
-    return tokens;
-}
-
 /*
 Scan the current token
 @param lctx Pointer to lexer context struct
@@ -189,5 +154,41 @@ void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
             error(lctx->line_number, "Unexpected character"); break;
     }
 }
+
+/*
+Main Lexer Loop
+@param line The line of code currently being scanned
+*/
+token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
+    lexer_context_s* lctx = initialize_lexer_context();
+    append_to_source(lctx, line);
+    int whitespace = 0;
+    int token_count = 0;
+    while(!is_at_end(lctx)) {
+        lctx->start = lctx->current;
+        // Handle and checck for whitespace
+        whitespace = check_leading_whitespace(lctx);
+        // Compute token count before adding a token
+        token_count = token_list_get_size(lctx->tokens);
+        // Scan the current token
+        if(!is_at_end(lctx)) {
+            scan_token(lctx, token_map);
+            // Compute leading whitespace flag for scanned token
+            mark_token_whitespace(lctx, whitespace, token_count);
+        }
+    }
+    // Compute token count before adding EOF token
+    token_count = token_list_get_size(lctx->tokens);
+    // Add this token to mark the end of the source code
+    add_token(lctx, TOKEN_EOF, NULL);
+    // Compute leading whitespace flag for EOF token
+    mark_token_whitespace(lctx, whitespace, token_count);
+    // Destoy the lexer context and save the pointer to the token list
+    token_list* tokens = lctx->tokens;
+    destroy_lexer_context(&lctx);
+    return tokens;
+}
+
+
 
 
