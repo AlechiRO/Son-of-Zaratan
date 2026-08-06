@@ -39,6 +39,7 @@ Helper function to initialize lex function dependencies
 static void set_up_lex(void) {
     line = initialize_line();
     token_map = string_token_type_hashmap_initialize();
+    load_keywords(token_map);
 }
 /*
 Helper function to free the memory for the lex function dependencies
@@ -73,15 +74,30 @@ static void set_source(char* val) {
 }
 /*
 Helper function to check if the right token was added to the token list
-@param lctx Pointer to lexer context struct
+@param tokens List of tokens
 @param index The index of the token in the list
 @param type The type of the token
 @param lexeme The lexeme of the token
 */
-static void check_token(token_list* tokens, int index, token_type_e type, char* lexeme) {
+static void assert_token(token_list* tokens, int index, token_type_e type, char* lexeme) {
     token_s* token = token_list_get(tokens, index);
     CU_ASSERT_EQUAL(token->type, type);
     CU_ASSERT_TRUE(strcmp(token->lexeme, lexeme) == 0);
+}
+
+/*
+Helper function to check if a token has leading whitespace
+@param tokens List of tokens
+@param index Index of the token in the list
+*/
+static void assert_token_whitespace(token_list* tokens, int index, int expected) {
+    
+    if(expected) {
+        CU_ASSERT_TRUE((token_list_get(tokens, index))->leading_whitespace);
+    }
+    else {
+        CU_ASSERT_FALSE((token_list_get(tokens, index))->leading_whitespace);
+    }
 }
 
 /* 
@@ -160,43 +176,43 @@ void test_string_unterminated(void) {
 void test_indentifier_not_keyword(void) {
     set_source("needle");
     identifier(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "needle");
+    assert_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "needle");
 }
 
 void test_identifier_keyword(void) {
     set_source("if(1 == 2)");
     identifier(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_IF, "if");
+    assert_token(lctx->tokens, 0, TOKEN_IF, "if");
 }
 
 void test_scan_single_char_token(void) {
     set_source("(");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_ROUND_BRACE_LEFT, "(");
+    assert_token(lctx->tokens, 0, TOKEN_ROUND_BRACE_LEFT, "(");
 }
 
 void test_scan_double_char_token_default(void) {
     set_source("!");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_BANG, "!");
+    assert_token(lctx->tokens, 0, TOKEN_BANG, "!");
 }
 
 void test_scan_double_char_token(void) {
     set_source("!=");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_BANG_EQUAL, "!=");
+    assert_token(lctx->tokens, 0, TOKEN_BANG_EQUAL, "!=");
 }
 
 void test_scan_double_char_multiple_options_default(void) {
     set_source("<");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_LESS, "<");
+    assert_token(lctx->tokens, 0, TOKEN_LESS, "<");
 }
 
 void test_scan_double_char_multiple_options(void) {
     set_source("<&");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_DUP_IN, "<&");
+    assert_token(lctx->tokens, 0, TOKEN_DUP_IN, "<&");
 }
 
 void test_scan_comment(void) {
@@ -208,37 +224,37 @@ void test_scan_comment(void) {
 void test_scan_terminator(void) {
     set_source("\n");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_TERMINATOR, "\n");
+    assert_token(lctx->tokens, 0, TOKEN_TERMINATOR, "\n");
 }
 
 void test_scan_string_default(void) {
     set_source("\'default\'");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_STRING_DEFAULT, "\'default\'");
+    assert_token(lctx->tokens, 0, TOKEN_STRING_DEFAULT, "\'default\'");
 }
 
 void test_scan_string_glob(void) {
     set_source("\"glob\"");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_STRING_GLOB, "\"glob\"");
+    assert_token(lctx->tokens, 0, TOKEN_STRING_GLOB, "\"glob\"");
 }
 
 void test_scan_number(void) {
     set_source("452.33");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_NUMBER, "452.33");
+    assert_token(lctx->tokens, 0, TOKEN_NUMBER, "452.33");
 }
 
 void test_scan_identifier(void) {
     set_source("identifier");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "identifier");
+    assert_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "identifier");
 }
 
 void test_scan_keyword(void) {
     set_source("return");
     scan_token(lctx, token_map);
-    check_token(lctx->tokens, 0, TOKEN_RETURN, "return");
+    assert_token(lctx->tokens, 0, TOKEN_RETURN, "return");
 }
 
 void test_scan_unexpected_char(void) {
@@ -247,7 +263,33 @@ void test_scan_unexpected_char(void) {
     CU_ASSERT_TRUE(token_list_is_empty(lctx->tokens));
 }
 
+void test_lex_if_statement(void) {
+    line->length = set_string(&(line->buffer), "if(12 >= 3) {\nreturn 2\n}");
+    token_list* tokens = lex(line, token_map);
+    CU_ASSERT_EQUAL(token_list_get_size(tokens), 13);
+    assert_token(tokens, 0, TOKEN_IF, "if");
+    assert_token(tokens, 1, TOKEN_ROUND_BRACE_LEFT, "(");
+    assert_token(tokens, 2, TOKEN_NUMBER, "12");
+    assert_token(tokens, 3, TOKEN_GREATER_EQUAL, ">=");
+    assert_token(tokens, 4, TOKEN_NUMBER, "3");
+    assert_token(tokens, 5, TOKEN_ROUND_BRACE_RIGHT, ")");
+    assert_token(tokens, 6, TOKEN_CURLY_BRACE_LEFT, "{");
+    assert_token(tokens, 7, TOKEN_TERMINATOR, "\n");
+    assert_token(tokens, 8, TOKEN_RETURN, "return");
+    assert_token(tokens, 9, TOKEN_NUMBER, "2");
+    assert_token(tokens, 10, TOKEN_TERMINATOR, "\n");
+    assert_token(tokens, 11, TOKEN_CURLY_BRACE_RIGHT, "}");
+    assert_token(tokens, 12, TOKEN_EOF, "}");
 
+    for(int i = 0; i < 13; i++) {
+        if(i == 3 || i ==  4 || i == 6 || i == 9)
+            assert_token_whitespace(tokens, i, 1);
+        else    
+            assert_token_whitespace(tokens, i, 0);
+    }
+
+    token_list_destroy(&tokens);
+}
 
 int main(void) {
 
@@ -290,7 +332,7 @@ int main(void) {
     
     /* Lex suite */
     CU_pSuite lex_suite = create_suite("lex suite", set_up_lex, clean_up_lex);
-    //CU_add_test(lex_suite, "lex if statement", test_lex_if_statement);
+    CU_add_test(lex_suite, "lex if statement", test_lex_if_statement);
 
     // run the tests
     CU_basic_run_tests();
