@@ -144,38 +144,31 @@ void test_identifier_keyword(void) {
 
 void test_scan_single_char_token(void) {
     set_source("(");
-    lctx->source_length = strlen(lctx->source);
-    
     scan_token(lctx, token_map);
-
     check_token(lctx, 0, TOKEN_ROUND_BRACE_LEFT, "(");
 }
 
 void test_scan_double_char_token_default(void) {
     set_source("!");
     scan_token(lctx, token_map);
-
     check_token(lctx, 0, TOKEN_BANG, "!");
 }
 
 void test_scan_double_char_token(void) {
     set_source("!=");
     scan_token(lctx, token_map);
-
     check_token(lctx, 0, TOKEN_BANG_EQUAL, "!=");
 }
 
 void test_scan_double_char_multiple_options_default(void) {
     set_source("<");
     scan_token(lctx, token_map);
-
     check_token(lctx, 0, TOKEN_LESS, "<");
 }
 
 void test_scan_double_char_multiple_options(void) {
     set_source("<&");
     scan_token(lctx, token_map);
-
     check_token(lctx, 0, TOKEN_DUP_IN, "<&");
 }
 
@@ -189,6 +182,42 @@ void test_scan_terminator(void) {
     set_source("\n");
     scan_token(lctx, token_map);
     check_token(lctx, 0, TOKEN_TERMINATOR, "\n");
+}
+
+void test_scan_string_default(void) {
+    set_source("\'default\'");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_STRING_DEFAULT, "\'default\'");
+}
+
+void test_scan_string_glob(void) {
+    set_source("\"glob\"");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_STRING_GLOB, "\"glob\"");
+}
+
+void test_scan_number(void) {
+    set_source("452.33");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_NUMBER, "452.33");
+}
+
+void test_scan_identifier(void) {
+    set_source("identifier");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_IDENTIFIER, "identifier");
+}
+
+void test_scan_keyword(void) {
+    set_source("return");
+    scan_token(lctx, token_map);
+    check_token(lctx, 0, TOKEN_RETURN, "return");
+}
+
+void test_scan_unexpected_char(void) {
+    set_source("^");
+    scan_token(lctx, token_map);
+    CU_ASSERT_TRUE(token_list_is_empty(lctx->tokens));
 }
 
 int main(void) {
@@ -223,6 +252,13 @@ int main(void) {
     CU_add_test(scan_token_suite, "scan double char tokens multiple options", test_scan_double_char_multiple_options);
     CU_add_test(scan_token_suite, "scan comment", test_scan_comment);
     CU_add_test(scan_token_suite, "scan terminator", test_scan_terminator);
+    CU_add_test(scan_token_suite, "scan string default", test_scan_string_default);
+    CU_add_test(scan_token_suite, "scan string glob", test_scan_string_glob);
+    CU_add_test(scan_token_suite, "scan number", test_scan_number);
+    CU_add_test(scan_token_suite, "scan identifier", test_scan_identifier);
+    CU_add_test(scan_token_suite, "scan keyword", test_scan_keyword);
+    CU_add_test(scan_token_suite, "scan unexpected char", test_scan_unexpected_char);
+    
 
     // run the tests
     CU_basic_run_tests();
