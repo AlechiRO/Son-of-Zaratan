@@ -10,7 +10,7 @@ Report an error
 @param message Error message
 */
 void report(int line, char* where, char* message) {
-    printf("[line %d] Error %s: %s", line, where, message);
+    printf("[line %d] Error %s: %s\n", line, where, message);
     had_error = 1;
 }
 
