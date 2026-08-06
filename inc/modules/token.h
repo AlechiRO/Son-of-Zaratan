@@ -40,8 +40,7 @@ typedef enum Token_type {
 
     // Double Character Tokens
     TOKEN_ARROW,                // ->   OK
-    TOKEN_APPEND_REDIRECT,      // >>   OK
-    TOKEN_HEREDOC_REDIRECT,     // <<   
+    TOKEN_APPEND_REDIRECT,      // >>   OK  
     TOKEN_POW,                  // **   OK
     TOKEN_INCREMENT,            // ++   OK
     TOKEN_DECREMENT,            // --   OK

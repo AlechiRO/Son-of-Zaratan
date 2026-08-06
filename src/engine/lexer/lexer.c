@@ -115,7 +115,7 @@ void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
     case '*' : add_token(lctx, match(lctx,'*') ? TOKEN_POW : TOKEN_STAR, NULL); break;
     // Duble character, multiple options tokens
     case '<' : 
-        match_multiple_tokens(lctx, (char[]){'=', '<', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_HEREDOC_REDIRECT, TOKEN_DUP_IN}, 3, TOKEN_LESS);
+        match_multiple_tokens(lctx, (char[]){'=', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_DUP_IN}, 3, TOKEN_LESS);
         break;
     case '>' : 
         match_multiple_tokens(lctx, (char[]){'=', '>', '&'}, (token_type_e[]){TOKEN_GREATER_EQUAL, TOKEN_APPEND_REDIRECT, TOKEN_DUP_OUT}, 3, TOKEN_GREATER);

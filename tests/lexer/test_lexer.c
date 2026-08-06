@@ -259,6 +259,8 @@ int main(void) {
     CU_add_test(scan_token_suite, "scan keyword", test_scan_keyword);
     CU_add_test(scan_token_suite, "scan unexpected char", test_scan_unexpected_char);
     
+    /* Lex suite */
+    CU_pSuite lex_suite = create_suite("lex suite", set_up, clean_up);
 
     // run the tests
     CU_basic_run_tests();

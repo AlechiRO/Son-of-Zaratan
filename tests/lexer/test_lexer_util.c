@@ -268,7 +268,7 @@ void test_match_multiple_tokens_less_equal(void) {
     set_source("wolfs <= 2");
     lctx->start = 6;
     lctx->current = 7;
-    match_multiple_tokens(lctx, (char[]){'=', '<', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_HEREDOC_REDIRECT, TOKEN_DUP_IN}, 3, TOKEN_LESS);
+    match_multiple_tokens(lctx, (char[]){'=', '&'}, (token_type_e[]){TOKEN_LESS_EQUAL, TOKEN_DUP_IN}, 2, TOKEN_LESS);
     token_s* token = token_list_get(lctx->tokens, 0);
     CU_ASSERT_EQUAL(token->type, TOKEN_LESS_EQUAL);
     CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 1);
