@@ -148,7 +148,12 @@ Add token to the token list
 @param literal Pointer to literal struct
 */
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal) {
-    char* lexeme = substring(lctx->source, lctx->start, lctx->current);
+    char* lexeme = NULL;
+    if(lctx->current > lctx->start) 
+        lexeme = substring(lctx->source, lctx->start, lctx->current);
+    else 
+        lexeme = strdup("");
+    
     token_list_add(lctx->tokens, initialize_token(type, lexeme, literal, lctx->line_number)); 
 }
 
