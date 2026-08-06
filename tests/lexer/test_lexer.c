@@ -22,7 +22,6 @@ Helper function to free the memory for the dependencies
 static void clean_up(void) {
     destroy_lexer_context(&lctx);
     string_token_type_hashmap_destroy(&token_map);
-    
 }
 
 /*
@@ -35,12 +34,40 @@ static void set_up(void) {
 }
 
 /*
+Helper function to initialize lex function dependencies
+*/
+static void set_up_lex(void) {
+    line = initialize_line();
+    token_map = string_token_type_hashmap_initialize();
+}
+/*
+Helper function to free the memory for the lex function dependencies
+*/
+static void clean_up_lex(void) {
+    destroy_line(&line);
+    string_token_type_hashmap_destroy(&token_map);
+}
+
+/*
+Helper function to set up a string
+@param result The address of the resulting string
+@param value The literal value of a string
+@return Pointer to a newly allocated string
+*/
+static size_t set_string(char** result, char* value) {
+    size_t size = strlen(value)+1;
+    *result = malloc(size);
+    strcpy(*result, value);
+    return size;
+}
+
+/*
 Helper function to set up the source string
 @param val String containing source value
 */
 static void set_source(char* val) {
     size_t length = strlen(val);
-    lctx->source = malloc(length);
+    lctx->source = malloc(length + 1);
     strcpy(lctx->source, val);
     lctx->source_length = length;
 }
@@ -51,8 +78,8 @@ Helper function to check if the right token was added to the token list
 @param type The type of the token
 @param lexeme The lexeme of the token
 */
-static void check_token(lexer_context_s* lctx, int index, token_type_e type, char* lexeme) {
-    token_s* token = token_list_get(lctx->tokens, index);
+static void check_token(token_list* tokens, int index, token_type_e type, char* lexeme) {
+    token_s* token = token_list_get(tokens, index);
     CU_ASSERT_EQUAL(token->type, type);
     CU_ASSERT_TRUE(strcmp(token->lexeme, lexeme) == 0);
 }
@@ -133,43 +160,43 @@ void test_string_unterminated(void) {
 void test_indentifier_not_keyword(void) {
     set_source("needle");
     identifier(lctx, token_map);
-    check_token(lctx, 0, TOKEN_IDENTIFIER, "needle");
+    check_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "needle");
 }
 
 void test_identifier_keyword(void) {
     set_source("if(1 == 2)");
     identifier(lctx, token_map);
-    check_token(lctx, 0, TOKEN_IF, "if");
+    check_token(lctx->tokens, 0, TOKEN_IF, "if");
 }
 
 void test_scan_single_char_token(void) {
     set_source("(");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_ROUND_BRACE_LEFT, "(");
+    check_token(lctx->tokens, 0, TOKEN_ROUND_BRACE_LEFT, "(");
 }
 
 void test_scan_double_char_token_default(void) {
     set_source("!");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_BANG, "!");
+    check_token(lctx->tokens, 0, TOKEN_BANG, "!");
 }
 
 void test_scan_double_char_token(void) {
     set_source("!=");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_BANG_EQUAL, "!=");
+    check_token(lctx->tokens, 0, TOKEN_BANG_EQUAL, "!=");
 }
 
 void test_scan_double_char_multiple_options_default(void) {
     set_source("<");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_LESS, "<");
+    check_token(lctx->tokens, 0, TOKEN_LESS, "<");
 }
 
 void test_scan_double_char_multiple_options(void) {
     set_source("<&");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_DUP_IN, "<&");
+    check_token(lctx->tokens, 0, TOKEN_DUP_IN, "<&");
 }
 
 void test_scan_comment(void) {
@@ -181,37 +208,37 @@ void test_scan_comment(void) {
 void test_scan_terminator(void) {
     set_source("\n");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_TERMINATOR, "\n");
+    check_token(lctx->tokens, 0, TOKEN_TERMINATOR, "\n");
 }
 
 void test_scan_string_default(void) {
     set_source("\'default\'");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_STRING_DEFAULT, "\'default\'");
+    check_token(lctx->tokens, 0, TOKEN_STRING_DEFAULT, "\'default\'");
 }
 
 void test_scan_string_glob(void) {
     set_source("\"glob\"");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_STRING_GLOB, "\"glob\"");
+    check_token(lctx->tokens, 0, TOKEN_STRING_GLOB, "\"glob\"");
 }
 
 void test_scan_number(void) {
     set_source("452.33");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_NUMBER, "452.33");
+    check_token(lctx->tokens, 0, TOKEN_NUMBER, "452.33");
 }
 
 void test_scan_identifier(void) {
     set_source("identifier");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_IDENTIFIER, "identifier");
+    check_token(lctx->tokens, 0, TOKEN_IDENTIFIER, "identifier");
 }
 
 void test_scan_keyword(void) {
     set_source("return");
     scan_token(lctx, token_map);
-    check_token(lctx, 0, TOKEN_RETURN, "return");
+    check_token(lctx->tokens, 0, TOKEN_RETURN, "return");
 }
 
 void test_scan_unexpected_char(void) {
@@ -219,6 +246,8 @@ void test_scan_unexpected_char(void) {
     scan_token(lctx, token_map);
     CU_ASSERT_TRUE(token_list_is_empty(lctx->tokens));
 }
+
+
 
 int main(void) {
 
@@ -260,7 +289,8 @@ int main(void) {
     CU_add_test(scan_token_suite, "scan unexpected char", test_scan_unexpected_char);
     
     /* Lex suite */
-    CU_pSuite lex_suite = create_suite("lex suite", set_up, clean_up);
+    CU_pSuite lex_suite = create_suite("lex suite", set_up_lex, clean_up_lex);
+    //CU_add_test(lex_suite, "lex if statement", test_lex_if_statement);
 
     // run the tests
     CU_basic_run_tests();

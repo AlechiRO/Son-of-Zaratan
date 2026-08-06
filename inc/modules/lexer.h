@@ -4,7 +4,6 @@
 #include "lexer_generics.h"
 #include "lexer_util.h"
 #include "token.h"
-// Setup for Token Array List
 
 
 // Lexer config struct definition

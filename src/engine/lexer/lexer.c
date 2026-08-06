@@ -185,6 +185,7 @@ token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
     mark_token_whitespace(lctx, whitespace, token_count);
     // Destoy the lexer context and save the pointer to the token list
     token_list* tokens = lctx->tokens;
+    lctx->tokens = NULL;
     destroy_lexer_context(&lctx);
     return tokens;
 }
