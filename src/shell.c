@@ -20,7 +20,7 @@ int main(void) {
             break;
 
         token_list* tokens = lex(line, token_map);
-        //token_list_destroy(&tokens);
+        token_list_destroy(&tokens);
         if(check_error())  
             break;
     }

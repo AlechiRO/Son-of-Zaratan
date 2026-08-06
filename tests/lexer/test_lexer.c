@@ -92,12 +92,8 @@ Helper function to check if a token has leading whitespace
 */
 static void assert_token_whitespace(token_list* tokens, int index, int expected) {
     
-    if(expected) {
-        CU_ASSERT_TRUE((token_list_get(tokens, index))->leading_whitespace);
-    }
-    else {
-        CU_ASSERT_FALSE((token_list_get(tokens, index))->leading_whitespace);
-    }
+    token_s* token = token_list_get(tokens, index);
+    CU_ASSERT_EQUAL(token->leading_whitespace, expected);
 }
 
 /* 
