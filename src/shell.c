@@ -19,7 +19,8 @@ int main(void) {
         if(getline_wrap(line, stdin) == -1)
             break;
 
-        lex(line, token_map);    
+        token_list* tokens = lex(line, token_map);
+        //token_list_destroy(&tokens);
         if(check_error())  
             break;
     }

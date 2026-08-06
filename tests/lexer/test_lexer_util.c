@@ -167,8 +167,6 @@ void test_add_one_token(void) {
     CU_ASSERT_TRUE(strcmp(token->lexeme, "died in vain") == 0);
     CU_ASSERT_EQUAL(token->line, 1);
     CU_ASSERT_EQUAL(token->type, TOKEN_IDENTIFIER);
-
-    destroy_literal(&literal);
 }
 
 void test_add_two_tokens(void) {
