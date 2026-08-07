@@ -261,7 +261,7 @@ void test_scan_unexpected_char(void) {
 
 void test_lex_if_statement(void) {
     line->length = set_string(&(line->buffer), "if(12 >= 3) {\nreturn 2\n}");
-    token_list* tokens = lex(line, token_map);
+    token_list* tokens = (lex(line, token_map))->tokens;
     CU_ASSERT_EQUAL(token_list_get_size(tokens), 13);
     assert_token(tokens, 0, TOKEN_IF, "if");
     assert_token(tokens, 1, TOKEN_ROUND_BRACE_LEFT, "(");

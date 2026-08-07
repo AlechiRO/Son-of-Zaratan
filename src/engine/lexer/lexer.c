@@ -159,7 +159,7 @@ void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
 Main Lexer Loop
 @param line The line of code currently being scanned
 */
-token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
+lexer_context_s* lex(line_s* line, string_token_type_hashmap* token_map) {
     lexer_context_s* lctx = initialize_lexer_context();
     append_to_source(lctx, line);
     int whitespace = 0;
@@ -183,11 +183,8 @@ token_list* lex(line_s* line, string_token_type_hashmap* token_map) {
     add_token(lctx, TOKEN_EOF, NULL);
     // Compute leading whitespace flag for EOF token
     mark_token_whitespace(lctx, whitespace, token_count);
-    // Destoy the lexer context and save the pointer to the token list
-    token_list* tokens = lctx->tokens;
-    lctx->tokens = NULL;
-    destroy_lexer_context(&lctx);
-    return tokens;
+    // Return lexer context to REPL
+    return lctx;
 }
 
 
