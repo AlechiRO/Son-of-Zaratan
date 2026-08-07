@@ -52,7 +52,7 @@ void string(lexer_context_s* lctx, int glob) {
     }
 
     if(is_at_end(lctx)) {
-        error(lctx->line_number, "Unterminated String");
+        error(lctx, "Unterminated String");
         return;
     }
     // Consume the closing "
@@ -151,7 +151,7 @@ void scan_token(lexer_context_s* lctx, string_token_type_hashmap* token_map) {
         else if(is_alpha(c))
             identifier(lctx, token_map);
         else
-            error(lctx->line_number, "Unexpected character"); break;
+            error(lctx, "Unexpected character"); break;
     }
 }
 

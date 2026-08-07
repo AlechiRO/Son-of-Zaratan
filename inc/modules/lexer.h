@@ -14,6 +14,7 @@ typedef struct Lexer_context {
     int current;            // Index of the currently scanned character in the lexeme
     int line_number;        // Tracks the line current is on 
     int source_length;      // The length of the source code
+    int had_error;
 } lexer_context_s;
 
 lexer_context_s* initialize_lexer_context(void);

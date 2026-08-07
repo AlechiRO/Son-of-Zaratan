@@ -112,6 +112,7 @@ lexer_context_s* initialize_lexer_context(void) {
     lctx->current = 0;
     lctx->line_number = 1;
     lctx->source_length = 0;
+    lctx->had_error = 0;
 }
 
 /*
