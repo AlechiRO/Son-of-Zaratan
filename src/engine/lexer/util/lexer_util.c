@@ -153,7 +153,7 @@ Add token to the token list
 */
 void add_token(lexer_context_s* lctx, token_type_e type, literal_s* literal) {
     char* lexeme = NULL;
-    if(lctx->current > lctx->start) 
+    if(type != TOKEN_EOF) 
         lexeme = substring(lctx->source, lctx->start, lctx->current);
     else 
         lexeme = strdup("");
@@ -222,7 +222,6 @@ void match_multiple_tokens(lexer_context_s* lctx, char expected[], token_type_e 
         }
     }
     add_token(lctx, default_type, NULL);
-    lctx->current++;
 }
 
 /*

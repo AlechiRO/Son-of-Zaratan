@@ -275,7 +275,7 @@ void test_lex_if_statement(void) {
     assert_token(tokens, 9, TOKEN_NUMBER, "2");
     assert_token(tokens, 10, TOKEN_TERMINATOR, "\n");
     assert_token(tokens, 11, TOKEN_CURLY_BRACE_RIGHT, "}");
-    assert_token(tokens, 12, TOKEN_EOF, "}");
+    assert_token(tokens, 12, TOKEN_EOF, "");
 
     for(int i = 0; i < 13; i++) {
         if(i == 3 || i ==  4 || i == 6 || i == 9)

@@ -291,7 +291,7 @@ void test_match_multiple_tokens_default(void) {
     CU_ASSERT_EQUAL(token->type, TOKEN_DOLLAR);
     CU_ASSERT_EQUAL(token_list_get_size(lctx->tokens), 1);
     CU_ASSERT_TRUE(strcmp(token->lexeme, "$") == 0);
-    CU_ASSERT_EQUAL(lctx->current, 2);
+    CU_ASSERT_EQUAL(lctx->current, 1);
 }
 
 void test_check_leading_whitespace(void) {
