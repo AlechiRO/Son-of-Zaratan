@@ -41,7 +41,7 @@ Free the memory allocated for a line struct
 */
 void destroy_line(line_s** line) {
     if((*line) == NULL || line == NULL) {
-        printf("Could not destroy line struct!\n");
+        fprintf(stderr, "Could not destroy line struct!\n");
         return;
     }
     if((*line)->buffer != NULL) 
@@ -49,7 +49,7 @@ void destroy_line(line_s** line) {
 
     free((*line));
     (*line) = NULL;
-    printf("Line struct has been destroyed!\n");
+    fprintf(stderr, "Line struct has been destroyed!\n");
 }
 
 /*
@@ -58,15 +58,17 @@ Append a line of code to the source code
 */
 void append_to_source(lexer_context_s* lctx, line_s* line) {
     char* content = line->buffer;
-    lctx->source = realloc(lctx->source, lctx->source_length + strlen(content));
+    size_t content_length = strlen(content);
+    lctx->source = realloc(lctx->source, lctx->source_length + content_length + 1);
 
     if(lctx->source == NULL) {
         fprintf(stderr, "FATAL: could not reallocate memory for source code");
         exit(EXIT_FAILURE);
     }
 
-    strcat(lctx->source, content);
-    lctx->source_length += strlen(content);
+    memcpy(lctx->source + lctx->source_length, content, content_length);
+    lctx->source_length += content_length;
+    (lctx->source)[lctx->source_length] = '\0';
 }
 
 /*
@@ -75,16 +77,17 @@ Append code to existing line of code
 @param content Code to append
 */
 void append_to_line(line_s* line, char* content) {
-    int content_length = strlen(content);
-    line->buffer = realloc(line->buffer, sizeof(line->buffer) + content_length);
+    size_t content_length = strlen(content);
+    line->buffer = realloc(line->buffer, line->length + content_length + 1);
 
     if(line->buffer == NULL) {
         fprintf(stderr, "FATAL: could not reallocate memory for line buffer");
         exit(EXIT_FAILURE);
     }
 
-    strcat(line->buffer, content);
+    memcpy(line->buffer + line->length, content, content_length);
     line->length += content_length;
+    (line->buffer)[line->length] = '\0';
 }
 
 

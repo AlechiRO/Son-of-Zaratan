@@ -126,6 +126,14 @@ void test_append_line_to_source(void) {
     CU_ASSERT_TRUE(strcmp(lctx->source, "They were betrayed by Otto") == 0);
 }
 
+void test_append_multiple_lines_to_source(void) {
+    append_to_line(line, "Pie ");
+    append_to_source(lctx, line);
+    append_to_source(lctx, line);
+    append_to_source(lctx, line);
+    CU_ASSERT_TRUE(strcmp(lctx->source, "Pie Pie Pie ") == 0);
+}
+
 void test_initialize_lexer_context(void) {
     lctx = initialize_lexer_context();
     CU_ASSERT_PTR_NULL(lctx->source);
@@ -387,6 +395,7 @@ int main(void) {
     /* Append_to_source suite */
     CU_pSuite append_to_source_suite = create_suite("append_to_source suite", set_up, clean_up);
     CU_add_test(append_to_source_suite, "append line to source", test_append_line_to_source);
+    CU_add_test(append_to_source_suite, "append multiple lines to source", test_append_multiple_lines_to_source);
 
     /* Lexer_context_initialize suite */
     CU_pSuite lexer_context_initialize_suite = create_suite("lexer_context_initialize suite", NULL, clean_up);
